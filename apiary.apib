@@ -52,19 +52,15 @@ GET /name/Philautus acutirostris
   ]
 }
 
-Get up to five type-ahead suggestions for a name
-GET /name/Bufo a/suggestions
+List of "related" names, such as names sharing the same specific name
+GET /name/Euthymia saussurei/related
 < 200
 < Content-Type: application/json
 {
   "status": 200,
-  "url": "\/_design\/taxonName\/_view\/nameString?startkey=%22Bufo+a%22&endkey=%22Bufo+a%5Cu9999%22&limit=5",
-  "suggestions": [
-    "Bufo abatus",
-    "Bufo abei",
-    "Bufo achalensis",
-    "Bufo achavali",
-    "Bufo acutirostris"
+  "url": "\/_design\/bhl\/_view\/name_synonym?key=%22Euthymia+saussurei%22",
+  "related": [
+    "Proeuthymia saussurei"
   ]
 }
 
