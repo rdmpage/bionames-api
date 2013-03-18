@@ -1,0 +1,81 @@
+RewriteEngine on
+
+# Some hosts may require you to use the `RewriteBase` directive.
+# If you need to use the `RewriteBase` directive, it should be the
+# absolute physical path to the directory that contains this htaccess file.
+#
+
+#RewriteBase /~rpage/bionames-api/
+RewriteBase /bionames-api/
+
+#---------------------------------------------------------------------------------------------------
+# Object
+
+RewriteRule ^id/(biostor/\d+)   api_id.php?id=$1  [QSA,L]
+
+
+RewriteRule ^id/(\w+)/count   api_id.php?namespace=$1&count  [QSA,L]
+
+#RewriteRule ^id/namespace   api_id.php?namespace=all&count  [QSA,L]
+
+RewriteRule ^id/(\w+)/(.*)   api_id.php?id=$2&namespace=$1  [QSA,L]
+
+RewriteRule ^id/(.*)   api_id.php?id=$1  [QSA,L]
+
+#---------------------------------------------------------------------------------------------------
+# Authors
+
+RewriteRule ^authors/(.*)/publications/taxa   api_author.php?name=$1&publications&taxa   [QSA,L]
+
+RewriteRule ^authors/(.*)/publications/years   api_author.php?name=$1&publications&years  [QSA,L]
+
+RewriteRule ^authors/(.*)/publications   api_author.php?name=$1&publications  [QSA,L]
+
+RewriteRule ^authors/(.*)/coauthors   api_author.php?name=$1&coauthors  [QSA,L]
+
+
+RewriteRule ^authors/lastname/(.*)   api_author.php?lastname=$1  [QSA,L]
+
+#---------------------------------------------------------------------------------------------------
+# Taxon name
+
+# Related names
+RewriteRule ^name/(.*)/related   api_taxon_name.php?name=$1&related  [QSA,L]
+
+# Return suggested matches for name
+RewriteRule ^name/(.*)/suggestions   api_taxon_name.php?name=$1&suggestions  [QSA,L]
+
+# Return publications tagged with this name in a given year
+RewriteRule ^name/(.*)/publications/year/([0-9]{4})   api_taxon_name.php?name=$1&publications&year=$2  [QSA,L]
+
+# Return publications tagged with this name
+RewriteRule ^name/(.*)/publications   api_taxon_name.php?name=$1&publications  [QSA,L]
+
+# Return clusters with this name
+RewriteRule ^name/(.*)   api_taxon_name.php?name=$1  [QSA,L]
+
+
+#---------------------------------------------------------------------------------------------------
+# Journals
+
+# Identifiers for each article
+RewriteRule ^journals/issn/(.*)/articles/identifiers   api_journal.php?issn=$1&articles&identifiers  [QSA,L]
+
+# Articles in a particular volume in a year
+RewriteRule ^journals/issn/(.*)/volumes/(.*)/year/(.*)   api_journal.php?issn=$1&volume=$2&year=$3  [QSA,L]
+
+# Volumes grouped by years
+RewriteRule ^journals/issn/(.*)/volumes   api_journal.php?issn=$1&volumes  [QSA,L]
+
+# Articles per journal
+RewriteRule ^journals/issn/(.*)/count   api_journal.php?issn=$1&count  [QSA,L]
+
+# Localities in articles in journal
+RewriteRule ^journals/issn/(.*)/geometry   api_journal.php?issn=$1&geometry [QSA,L]
+
+# Journal with this ISSN
+RewriteRule ^journals/issn/([0-9]{4}[\-]?[0-9]{3}[0-9X])   api_journal.php?issn=$1  [QSA,L]
+
+
+
+

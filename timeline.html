@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>BioNames API Demo: Taxon timeline</title>
+	
+	<style type="text/css" title="text/css">
+		body { font-family:sans-serif; }
+	</style>	
+	
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	
+	<script>
+		google.load("visualization", "1", {packages:["corechart"]});
+	
+
+		function show_timeline(name)
+		{
+			$("#timeline").html("");
+			
+			//$.getJSON("name/" + encodeURIComponent(name) + "/publications" + "?callback=?",
+			$.getJSON("api_bhl.php?name=" + encodeURIComponent(name) + "&callback=?",
+				function(data){
+					if (data.status == 200)
+					{		
+						var html = '';
+						var chart_data = [];
+						chart_data.push(new Array('Year','Count'));
+						for (var i in data.years)
+						{
+							
+							chart_data.push(new Array(i, data.years[i].length));
+							
+							html += '<b>' + i + '</b>';
+							for (j in data.years[i])
+							{
+								html += '<div style="background-color:whitesmoke;margin:4px;">';
+								
+								switch (data.years[i][j].type)
+								{
+									case 'item':
+										html += '[unassigned pages] ';
+										if (data.years[i][j].title)
+										{
+											html += '<a href="http://www.biodiversitylibrary.org/page/' + data.years[i][j].pages[0] + '" target="_new">';
+											html += data.years[i][j].title;
+											html += data.years[i][j].pages[0] + '<a/>';
+											html += '<br />';
+										}
+										break;
+										
+									case 'biostor':
+										html += 'BioStor article ';
+										html += '<a href="http://biostor.org/reference/' + data.years[i][j].id + '" target="_new">' + data.years[i][j].id + '</a>'+ '<br />';
+										break;
+										
+									default:
+										break;
+								}
+								
+								html += '<div>';
+								for (var k in data.years[i][j].pages)
+								{
+									// 				html += '<img style="padding:2px;border:1px solid rgb(192,192,192);" src="http://biostor.org/bhl_image.php?PageID=' + data.years[i][j].pages[k] + '&thumbnail" height="60"/>';
+					
+									html += '<img style="padding:2px;border:1px solid rgb(192,192,192);" src="http://www.biodiversitylibrary.org/pagethumb/' + data.years[i][j].pages[k] + '" height="60"/>';
+								}
+								html += '</div>';
+								
+								html += '</div>';
+										}
+						}
+						
+						var options = { title: name };
+						var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+        				chart.draw(google.visualization.arrayToDataTable(chart_data), options);
+						
+						
+						$("#timeline").html(html);
+					}
+				});
+		}
+		
+
+		
+		
+				
+	</script>
+	
+	
+</head>
+<body>
+
+	<h2>Taxon timeline</h2>
+	
+	
+	<p>Publications with this name</p>
+	<div id="chart" style="width:600px;height:200px;">[chart]</div>	
+	<div id="timeline">[list]</div>	
+
+	<script src="js/jquery.js"></script>
+	<script src="js/display.js"></script>
+	<script src="js/openurl.js"></script>
+	
+	<script>
+		var name = 'Apomys insignis';
+		//var name = 'Praomys';
+		//var name = 'Apomys';
+		//name = 'Praomys coetzeei';
+		
+		name = 'Lophuromys nudicaudus';
+		name = 'Lophuromys';
+		
+		show_timeline(name);
+	</script>
+
+
+</body>
+</html>

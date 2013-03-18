@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>BioNames API Demo: Taxon Name</title>
+	
+	<style type="text/css" title="text/css">
+		body { font-family:sans-serif; }
+	</style>	
+	
+	<script>
+	
+		function show_cluster(name)
+		{
+			$("#cluster").html("");
+			
+			$.getJSON("name/" + encodeURIComponent(name) + "?callback=?",
+				function(data){
+					if (data.status == 200)
+					{		
+						var html = '';
+						html += '<ul>';
+						for (var i in data.clusters)
+						{
+							html += '<li>';
+							html += data.clusters[i].nameComplete;
+							html += '<ul>';
+							for (j in data.clusters[i].names)
+							{
+								html += '<li>' + data.clusters[i].names[j].nameComplete + '</li>';
+							}
+							html += '</ul>';
+							html += '</li>';
+						}
+						html += '</ul>';
+						
+						$("#cluster").html(html);
+					}
+				});
+		}
+	
+
+		function show_publications(name)
+		{
+			$("#publications").html("");
+			
+			$.getJSON("name/" + encodeURIComponent(name) + "/publications" + "?callback=?",
+				function(data){
+					if (data.status == 200)
+					{		
+						for (var i in data.years)
+						{
+							for (j in data.years[i])
+							{
+								display_reference('publications', data.years[i][j]);
+							}
+						}
+					}
+				});
+		}
+		
+		function show_publications_year(name, year)
+		{
+			$("#publications_2006").html("");
+			
+			$.getJSON("name/" + encodeURIComponent(name) + "/publications/year/" + year + "?callback=?",
+				function(data){
+					if (data.status == 200)
+					{		
+						for (var i in data.years)
+						{
+							for (j in data.years[i])
+							{
+								display_reference('publications_2006', data.years[i][j]);
+							}
+						}
+					}
+				});
+		}
+		
+		
+		
+		
+				
+	</script>
+	
+	
+</head>
+<body>
+
+	<h2>Taxon name</h2>
+	
+	<h3>Taxa</h3>
+	
+	<p>Taxa with this name</p>
+	<div id="cluster">[list]</div>		
+		
+	<h3>Publications</h3>
+	
+	<p>Publications with this name in 2008</p>
+	<div id="publications_2006">[list]</div>	
+	
+	
+	<p>Publications with this name</p>
+	<div id="publications">[list]</div>	
+
+	<script src="js/jquery.js"></script>
+	<script src="js/display.js"></script>
+	<script src="js/openurl.js"></script>
+	
+	<script>
+		var name = 'Apomys insignis';
+		//var name = 'Praomys';
+		//var name = 'Apomys';
+		name = 'Praomys coetzeei';
+		
+		show_cluster(name);
+		
+		show_publications(name);
+		
+		show_publications_year(name, 2008);
+	</script>
+
+
+</body>
+</html>

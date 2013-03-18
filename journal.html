@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>BioNames API Demo: Journal</title>
+	
+	<style type="text/css" title="text/css">
+		body { font-family:sans-serif; }
+	</style>	
+	
+	<script>
+	
+		/*
+		function show_journal_map(issn)
+		{
+			$("#map").html("");
+			
+			$.getJSON("journals/issn/" + issn + "/geometry?callback=?",
+				function(data){
+					var html = '';
+					if (data.status == 200)
+					{			
+						html += '<object id="map" type="image/svg+xml" width="360" height="180"'
+							+ ' data="map.php?coordinates=' 
+							+ encodeURIComponent(JSON.stringify(data.coordinates))
+							+ '"></object>';
+					}
+					
+					$("#map").html(html);
+				});
+		}
+		*/
+	
+		function show_article_identifiers(issn)
+		{
+			$("#identifiers").html("");
+			
+			$.getJSON("journals/issn/" + issn + "/articles/identifiers?callback=?",
+				function(data){
+					var html = '';
+					if (data.status == 200)
+					{			
+						for (var i in data.years)
+						{
+							html += '<br />' + i + ' ';
+							for (j in data.years[i])
+							{
+								//html += j + '<br/>';
+								
+								if (data.years[i][j].length == 0)
+								{
+									html += '<div style="display:inline;border:1px solid black;background-color:white;width:10px;height:10px;"><a href="id/' + j + '">&nbsp;&nbsp;</a></div>';							
+								}
+								else
+								{							
+									for (k in data.years[i][j])
+									{
+										//html += data.years[i][j][k] + ' ';
+										
+										var colour = 'white';
+										if (data.years[i][j][k].indexOf('biostor') != -1)
+										{
+											colour = 'orange';
+										}
+										if (data.years[i][j][k].indexOf('doi') != -1)
+										{
+											colour = 'green';
+										}
+										html += '<div style="display:inline;border:1px solid black;background-color:' + colour + ';width:10px;height:10px;"><a href="id/' + j + '">&nbsp;&nbsp;</a></div>';
+									}
+								}
+							}
+						}
+						
+					}
+					$("#identifiers").html(html);
+				});
+		}
+	
+	
+		function year_volume_articles(issn, volume, year)
+		{
+			$("#articles").html("");
+			
+			$.getJSON("journals/issn/" + issn + "/volumes/" + volume + "/year/" + year + "?callback=?",
+				function(data){
+					if (data.status == 200)
+					{					
+						for (var i in data.articles)
+						{
+							display_reference('articles', data.articles[i]);
+						}
+					}
+				});
+		}
+						
+	
+			 function show_journal(issn)
+			  {
+				$("#journal").html("");
+								
+				$.getJSON("journals/issn/" + issn + "?callback=?",
+					function(data){
+						var html = '';
+						if (data.status == 200)
+						{							
+							html += '<h3><i>' + data.title + '</i> (ISSN ' + issn + ')</h3>';
+							
+							if (data.rssurl)
+							{
+								html += '<p><a href="' + data.rssurl + '">RSS feed</a></p>';
+							}
+							
+							if (data.preceding)
+							{
+								html += '<p>Preceding: ';
+								for (i in data.preceding)
+								{
+									html += data.preceding[i] + ' ';
+								}
+								html += '</p>';
+							}
+							if (data.succeeding)
+							{
+								html += '<p>Succeeding: ';
+								for (i in data.succeeding)
+								{
+									html += data.succeeding[i] + ' ';
+								}
+								html += '</p>';
+							}
+
+							
+							if (data.rawcoverage)
+							{
+								html += '<p>' + data.rawcoverage + '</p>';
+							}
+						}
+						else
+						{
+							html += 'Badness';
+						}
+						$("#journal").html(html);
+					});
+				}
+				
+			 function show_journal_volumes(issn)
+			  {
+				$("#volumes").html("");
+				
+				$.getJSON("journals/issn/" + issn + "/volumes?callback=?",
+					function(data){
+						var html = '';
+						if (data.status == 200)
+						{							
+							html += '<h3>Volumes</h3>';
+							
+							html += '<ul>';
+							
+							if (data.decades)
+							{
+								for (var decade in data.decades)
+								{
+									html += '<li>' + decade + '\'s';
+									html += '<ul>'
+									
+									for (var year in data.decades[decade])
+									{
+										html += '<li>' + year ;
+										html += '<ul>'
+										for (volume in data.decades[decade][year])
+										{
+											html += '<li>';
+											html += '<span onclick="year_volume_articles(\'' + issn + '\',\'' + data.decades[decade][year][volume].volume + '\',' + year + ')">';
+											html += ' vol. ' + data.decades[decade][year][volume].volume + ' (' +  data.decades[decade][year][volume].count + ' article(s))';
+											html += '</span>';	
+											html += '</li>';	
+										}
+										html += '</ul>';
+										html += '</li>';
+									}
+									html += '</ul>'
+									html += '</li>';
+								}
+							}
+							
+							html += '</ul>';
+						}
+						else
+						{
+							html += 'Badness';
+						}
+						$("#volumes").html(html);
+					});
+				}
+				
+	</script>
+	
+	
+</head>
+<body>
+
+	<h2>Journal</h2>
+	<div id="journal">[journal]</div>
+	
+	<h3>Map of localities extracted from OCR text for articles in this journal</h3>
+	<div id="map"><object id="map" type="image/svg+xml" width="360" height="180" data="map.php?issn=0006-324X"></object></div>
+	
+	<h3>Ordered list of articles, grouped by decade, then year, then volume</h3>
+	<div style="position:relative;width:100%;height:400px;border:1px solid red;">
+		<div id="volumes" style="position:absolute;left:0px;top:0px;width:300px;height:400px;overflow:auto;">[volumes]</div>
+		<div id="articles" style="position:absolute;left:300px;top:0px;width:auto;border:1px solid blue;height:400px;overflow:auto;"></div>
+	</div>
+	
+	<h3>Timeline of articles coloured by identifiers</h3>
+	<p>White means no identifier, green is DOI, orange is BioStor</p>
+	<div id="identifiers"></div>
+
+
+	<script src="js/jquery.js"></script>
+	<script src="js/display.js"></script>
+	<script src="js/openurl.js"></script>
+	
+	<script>
+		var issn = '0006-324X';
+		show_journal(issn);
+		show_journal_volumes(issn);
+		show_article_identifiers(issn);
+		//show_journal_map(issn);
+	</script>
+
+
+</body>
+</html>
