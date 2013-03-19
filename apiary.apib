@@ -121,6 +121,22 @@ GET /id/doi/10.5479/si.00963801.101-3284.465
   "status": 200
 }
 
+Get URL for thumbnail for object
+GET id/7278b4840ef8b708f87625a5e6cc84d7/thumbnail
+< 200
+< Content-Type: application/json
+{
+  "status": 200,
+  "thumbnail_url": "id\/7278b4840ef8b708f87625a5e6cc84d7\/thumbnail\/image"
+}
+
+
+Get thumbnail image for object
+GET id/7278b4840ef8b708f87625a5e6cc84d7/thumbnail/image
+< 200
+< Content-Type: image/gif
+
+
 --
 Taxon names
 The following is a section of resources related to taxonomic names
