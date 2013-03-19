@@ -79,6 +79,7 @@ function api_get_document_simplified ($id)
 		if (isset($document->thumbnail))
 		{
 			unset($document->thumbnail);
+			$document->thumbnail_url = 'id/' . $id . '/thumbnail/image';
 		}
 		if (isset($document->names))
 		{
