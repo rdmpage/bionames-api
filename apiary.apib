@@ -1694,6 +1694,27 @@ GET /journals/issn/0022-2933
   "status": 200
 }
 
+
+Get all articles from a journal
+GET /journals/issn/0022-2933/articles
+< 200
+< Content-Type: application/json
+{
+  "status": 200,
+  "url": "_design\/issn\/_view\/articles?key=\"0022-2933\"",
+  "articles": [
+    {
+      "title": "New taxa of North American Pteromalidae and Tetracampidae (Hymenoptera), with notes",
+      "year": "1993"
+    },
+    {
+      "title": "A new, sibling, tree frog from Jerusalem (Amphibia: Anura: Hylidae)",
+      "year": "2007"
+    }
+  ]
+}
+
+
 Get all point localities in articles in a journal
 GET journals/issn/0006-324X/geometry
 < 200
