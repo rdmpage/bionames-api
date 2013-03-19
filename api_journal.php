@@ -109,6 +109,52 @@ function display_articles_year_volume ($issn, $year, $volume, $callback = '')
 	api_output($obj, $callback);
 }
 
+//--------------------------------------------------------------------------------------------------
+// Journal articles in a given volume
+function display_articles ($issn, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	$url = '_design/issn/_view/articles?key=' . json_encode($issn);
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	$response_obj = json_decode($resp);
+	
+	//print_r($response_obj);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+			$obj->error = 'Not found';
+		}
+		else
+		{	
+			$obj->status = 200;
+			
+			$obj->articles = array();
+			foreach ($response_obj->rows as $row)
+			{
+				$obj->articles[] = $row->value;
+			}	
+						
+			
+		}
+	}
+	
+	api_output($obj, $callback);
+}
+
 
 
 //--------------------------------------------------------------------------------------------------
@@ -394,10 +440,19 @@ function main()
 			
 			if (!$handled)
 			{
-				if (isset($_GET['articles']) && isset($_GET['identifiers']))
+				if (isset($_GET['articles']))
 				{
-					display_issn_identifiers($issn, $callback);
-					$handled = true;
+					if (isset($_GET['identifiers']))
+					{
+						display_issn_identifiers($issn, $callback);
+						$handled = true;
+					}			
+				
+					if (!$handled)
+					{
+						display_articles($issn, $callback);
+						$handled = true;
+					}
 				}			
 			}
 			

@@ -42,6 +42,78 @@ function display_record ($id, $callback = '')
 }
 
 //--------------------------------------------------------------------------------------------------
+// Display thumbnail image
+function display_thumbnail_image ($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	// grab JSON from CouchDB
+	$couch_id = $id;
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	$found = false;
+	
+	if (isset($response_obj->thumbnail))
+	{
+		$image = $response_obj->thumbnail;
+		if (preg_match('/^data:(?<mime>image\/.*);base64/', $image, $m))
+		{
+			$found = true;
+			header("Content-type: " . $m['mime']);
+			$image = preg_replace('/^data:(?<mime>image\/.*);base64/', '', $image);
+			echo base64_decode($image);
+		}
+	}
+	
+	if (!$found)
+	{
+		header('HTTP/1.1 404 Not Found');
+	}
+}
+
+//--------------------------------------------------------------------------------------------------
+// Display information on thumbnail
+function display_thumbnail ($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	// grab JSON from CouchDB
+	$couch_id = $id;
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (isset($response_obj->thumbnail))
+		{
+			$obj->thumbnail_url = 'id/' . $id . '/thumbnail/image';
+			$obj->status = 200;
+		}
+	}
+
+
+	if ($status == 404)
+	{
+		header('HTTP/1.1 404 Not Found');
+	}	
+	
+	api_output($obj, $callback);
+}
+
+//--------------------------------------------------------------------------------------------------
 // One item in a given namespace
 function display_record_namespace ($id, $namespace, $callback = '')
 {
@@ -134,6 +206,24 @@ function main()
 		if (isset($_GET['id']))
 		{	
 			$id = $_GET['id'];
+	
+			// Thumbnail image 
+			if (isset($_GET['id']) && isset($_GET['thumbnail']))
+			{	
+				$id = $_GET['id'];
+				
+				if (isset($_GET['image']))
+				{
+					display_thumbnail_image($id, $callback);
+					$handled = true;
+				}
+				
+				if (!$handled)
+				{
+					display_thumbnail($id, $callback);
+					$handled = true;
+				}					
+			}					
 	
 			// Show record based on identifier in a given namespace
 			if (isset($_GET['id']) && isset($_GET['namespace']))

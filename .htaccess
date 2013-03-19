@@ -11,8 +11,13 @@ RewriteBase /bionames-api/
 #---------------------------------------------------------------------------------------------------
 # Object
 
-RewriteRule ^id/(biostor/\d+)   api_id.php?id=$1  [QSA,L]
+# Image (binary)
+RewriteRule ^id/(.*)/thumbnail/image   api_id.php?id=$1&thumbnail&image  [QSA,L]
 
+# Image (thumbnail)
+RewriteRule ^id/(.*)/thumbnail   api_id.php?id=$1&thumbnail  [QSA,L]
+
+RewriteRule ^id/(biostor/\d+)   api_id.php?id=$1  [QSA,L]
 
 RewriteRule ^id/(\w+)/count   api_id.php?namespace=$1&count  [QSA,L]
 
@@ -60,6 +65,9 @@ RewriteRule ^name/(.*)   api_taxon_name.php?name=$1  [QSA,L]
 
 # Identifiers for each article
 RewriteRule ^journals/issn/(.*)/articles/identifiers   api_journal.php?issn=$1&articles&identifiers  [QSA,L]
+
+# Articles in journal
+RewriteRule ^journals/issn/(.*)/articles  api_journal.php?issn=$1&articles  [QSA,L]
 
 # Articles in a particular volume in a year
 RewriteRule ^journals/issn/(.*)/volumes/(.*)/year/(.*)   api_journal.php?issn=$1&volume=$2&year=$3  [QSA,L]
