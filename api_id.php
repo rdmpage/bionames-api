@@ -64,6 +64,7 @@ function display_thumbnail_image ($id, $callback = '')
 		{
 			$found = true;
 			header("Content-type: " . $m['mime']);
+			header("Cache-control: max-age=3600");
 			$image = preg_replace('/^data:(?<mime>image\/.*);base64/', '', $image);
 			echo base64_decode($image);
 		}
