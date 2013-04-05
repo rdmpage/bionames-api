@@ -142,7 +142,7 @@ function display_record_namespace ($id, $namespace, $callback = '')
 		}
 		else
 		{	
-			$obj = $response_obj->rows[0];
+			$obj = $response_obj->rows[0]->doc;
 			$obj->status = 200;
 		}
 	}

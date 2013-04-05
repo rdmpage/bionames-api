@@ -69,7 +69,7 @@ function display_lastname ($lastname, $callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // Publications authored
-function display_authored ($name, $callback = '')
+function display_authored ($name, $fields=array('all'), $callback = '')
 {
 	global $config;
 	global $couch;
@@ -112,7 +112,9 @@ function display_authored ($name, $callback = '')
 			{
 				if ($include_docs)
 				{
-					$obj->publications[] = $row->doc;
+					$document = api_simplify_document($row->doc, $fields);
+					$obj->publications[] = $document;
+					//$obj->publications[] = $row->doc;
 				}
 				else
 				{
@@ -244,6 +246,8 @@ function display_authored_years ($name, $callback = '')
 		}
 	}
 	
+	//print_r($obj);
+	
 	api_output($obj, $callback);
 
 }
@@ -317,6 +321,15 @@ function main()
 		$callback = $_GET['callback'];
 	}
 	
+	// Optional fields to include
+	$fields = array('all');
+	if (isset($_GET['fields']))
+	{	
+		$field_string = $_GET['fields'];
+		$fields = explode(",", $field_string);
+	}
+	
+	
 	if (!$handled)
 	{
 		if (isset($_GET['lastname']))
@@ -363,7 +376,7 @@ function main()
 			if (!$handled)
 			{			
 				// show publications
-				display_authored($name, $callback);
+				display_authored($name, $fields, $callback);
 				$handled = true;
 			}
 		}

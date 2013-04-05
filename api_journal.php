@@ -110,13 +110,20 @@ function display_articles_year_volume ($issn, $year, $volume, $callback = '')
 }
 
 //--------------------------------------------------------------------------------------------------
-// Journal articles in a given volume
-function display_articles ($issn, $callback = '')
+// All articles in a journal
+function display_articles ($issn, $fields=array('all'), $callback = '')
 {
 	global $config;
 	global $couch;
 	
 	$url = '_design/issn/_view/articles?key=' . json_encode($issn);
+	
+	$include_docs = true;
+	
+	if ($include_docs)
+	{
+		$url .= '&include_docs=true';
+	}
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -145,7 +152,26 @@ function display_articles ($issn, $callback = '')
 			$obj->articles = array();
 			foreach ($response_obj->rows as $row)
 			{
-				$obj->articles[] = $row->value;
+				if ($include_docs)
+				{
+					$document = $row->doc;
+					$year = null;
+					if ($document->year)
+					{
+						$year = $document->year;
+					}
+					$document = api_get_document_simplified($row->id, $fields);
+					if ($document)
+					{
+						$obj->years[$year][$row->id] = $document;
+					}			
+				
+					$obj->articles[] = $document;
+				}
+				else
+				{
+					$obj->articles[] = $row->value;				
+				}
 			}	
 						
 			
@@ -411,6 +437,15 @@ function main()
 		$callback = $_GET['callback'];
 	}
 	
+	// Optional fields to include
+	$fields = array('all');
+	if (isset($_GET['fields']))
+	{	
+		$field_string = $_GET['fields'];
+		$fields = explode(",", $field_string);
+	}
+	
+	
 	if (!$handled)
 	{
 		
@@ -450,7 +485,7 @@ function main()
 				
 					if (!$handled)
 					{
-						display_articles($issn, $callback);
+						display_articles($issn, $fields, $callback);
 						$handled = true;
 					}
 				}			

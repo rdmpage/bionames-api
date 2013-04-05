@@ -17,7 +17,11 @@ function api_output($obj, $callback)
 	{
 		echo $callback . '(';
 	}
+	
+	//print_r($obj);
+	
 	echo json_format(json_encode($obj));
+//	echo json_encode($obj);
 	if ($callback != '')
 	{
 		echo ')';
@@ -53,7 +57,7 @@ function api_get_document ($id)
 
 //--------------------------------------------------------------------------------------------------
 // One item (of any kind)
-function api_get_document_simplified ($id)
+function api_get_document_simplified ($id, $fields=array('all'))
 {
 	global $config;
 	global $couch;
@@ -74,27 +78,62 @@ function api_get_document_simplified ($id)
 	{
 		$document = json_decode($resp);
 		
-		// simplify
-		
-		if (isset($document->thumbnail))
-		{
-			unset($document->thumbnail);
-			$document->thumbnail_url = 'id/' . $id . '/thumbnail/image';
-		}
-		if (isset($document->names))
-		{
-			unset($document->names);
-		}
-		if (isset($document->geometrey))
-		{
-			unset($document->geometrey);
-		}
-		
-		
+		$document = api_simplify_document($document, $fields);
 	}
 
 	return $document;
 }
 
+//--------------------------------------------------------------------------------------------------
+// Retain only certain fields in document
+function api_simplify_document ($document, $fields=array('all'))
+{		
+	if (in_array('all', $fields))
+	{
+		return $document;
+	}
+	else
+	{		
+		$doc = new stdclass;
+		
+		// simplify
+		foreach ($document as $key => $value)
+		{
+			switch ($key)
+			{
+				case 'title':
+				case 'year':
+				case 'author':
+					if (in_array($key, $fields))
+					{
+						$doc->{$key} = $document->{$key};
+					}
+					break;
+					
+				case 'journal':
+					foreach ($document->journal as $subkey => $subvalue)
+					{
+						if (in_array($subkey, $fields))
+						{
+							$doc->{$subkey} = $document->journal->{$subkey};
+						}
+					}
+					break;
+					
+				case 'thumbnail':
+					if (in_array($key, $fields))
+					{
+						$doc->thumbnail_url = 'id/' . $document->_id . '/thumbnail/image';
+					}
+					break;
+					
+				default:
+					break;
+			}
+		}
+		
+		return $doc;
+	}	
+}
 
 ?>

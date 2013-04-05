@@ -72,7 +72,7 @@ function clusters_with_name($name, $callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // Question is how scalable this is if we return documents as well as ids?
-function publications_with_name($name, $year = '', $callback = '')
+function publications_with_name($name, $year = '', $fields=array('all'), $callback = '')
 {
 	global $config;
 	global $couch;
@@ -217,7 +217,7 @@ function publications_with_name($name, $year = '', $callback = '')
 			{
 				foreach ($years[$year] as $id)
 				{
-					$document = api_get_document_simplified($id);
+					$document = api_get_document_simplified($id, $fields);
 					if ($document)
 					{
 						$obj->years[$year][$id] = $document;
@@ -365,6 +365,15 @@ function main()
 		$callback = $_GET['callback'];
 	}
 	
+	// Optional fields to include
+	$fields = array('all');
+	if (isset($_GET['fields']))
+	{	
+		$field_string = $_GET['fields'];
+		$fields = explode(",", $field_string);
+	}
+	
+	
 	if (!$handled)
 	{
 		if (isset($_GET['name']))
@@ -380,7 +389,7 @@ function main()
 					{
 						$year = $_GET['year'];
 					}
-					publications_with_name($name, $year, $callback);
+					publications_with_name($name, $year, $fields, $callback);
 					$handled = true;
 				}
 			}
