@@ -13,8 +13,8 @@ function default_display()
 }
 
 //--------------------------------------------------------------------------------------------------
-// One item (of any kind)
-function display_record ($id, $callback = '')
+// One taxon concept
+function display_concept ($id, $callback = '')
 {
 	global $config;
 	global $couch;
@@ -41,6 +41,7 @@ function display_record ($id, $callback = '')
 	api_output($obj, $callback);
 }
 
+/*
 //--------------------------------------------------------------------------------------------------
 // Display thumbnail image
 function display_thumbnail_image ($id, $callback = '')
@@ -113,64 +114,7 @@ function display_thumbnail ($id, $callback = '')
 	
 	api_output($obj, $callback);
 }
-
-//--------------------------------------------------------------------------------------------------
-// One item in a given namespace
-function display_record_namespace ($id, $namespace, $callback = '')
-{
-	global $config;
-	global $couch;
-	
-	$url = '_design/identifier/_view/' . $namespace . '?key=' . urlencode('"' . $id . '"') . '&include_docs=true';
-	
-	//echo $url;
-	
-	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
-
-	$response_obj = json_decode($resp);
-	
-	$obj = new stdclass;
-	$obj->status = 404;
-	if (isset($response_obj->error))
-	{
-		$obj->error = $response_obj->error;
-	}
-	else
-	{
-		if (count($response_obj->rows) == 0)
-		{
-		}
-		else
-		{	
-			$obj = $response_obj->rows[0]->doc;
-			$obj->status = 200;
-		}
-	}
-
-
-	if ($status == 404)
-	{
-		header('HTTP/1.1 404 Not Found');
-	}	
-	
-	api_output($obj, $callback);
-}
-
-//--------------------------------------------------------------------------------------------------
-function display_namespace_count ($namespace, $callback = '')
-{
-	global $config;
-	global $couch;
-	
-	$url = '_design/count/_view/identifier?key=' . urlencode('"' . $namespace . '"') . '&reduce=true';
-	
-	//echo $url;
-	
-	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
-	
-	header("Content-type: text/plain");
-	echo json_format($resp);
-}
+*/
 
 
 //--------------------------------------------------------------------------------------------------
@@ -192,15 +136,7 @@ function main()
 	{	
 		$callback = $_GET['callback'];
 	}
-		
-	// Show record based on identifier in a given namespace
-	if (isset($_GET['count']) && isset($_GET['namespace']))
-	{	
-		$namespace = $_GET['namespace'];
-		display_namespace_count($namespace, $callback);
-		$handled = true;
-	}				
-	
+			
 	if (!$handled)
 	{
 		// If show a single record
@@ -208,6 +144,7 @@ function main()
 		{	
 			$id = $_GET['id'];
 	
+			/*
 			// Thumbnail image 
 			if (isset($_GET['id']) && isset($_GET['thumbnail']))
 			{	
@@ -224,20 +161,13 @@ function main()
 					display_thumbnail($id, $callback);
 					$handled = true;
 				}					
-			}					
-	
-			// Show record based on identifier in a given namespace
-			if (isset($_GET['id']) && isset($_GET['namespace']))
-			{	
-				$id = $_GET['id'];
-				$namespace = $_GET['namespace'];
-				display_record_namespace($id, $namespace, $callback);
-				$handled = true;
-			}				
+			}		
 			
+			*/			
+	
 			if (!$handled)
 			{
-				display_record($id, $callback);
+				display_concept($id, $callback);
 				$handled = true;
 			}
 		}

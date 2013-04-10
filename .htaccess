@@ -25,6 +25,7 @@ RewriteRule ^id/(.*)/thumbnail/image   api_id.php?id=$1&thumbnail&image  [QSA,L]
 RewriteRule ^id/(.*)/thumbnail   api_id.php?id=$1&thumbnail  [QSA,L]
 
 RewriteRule ^id/(biostor/\d+)   api_id.php?id=$1  [QSA,L]
+#RewriteRule ^id/(gbif/\d+)   api_id.php?id=$1  [QSA,L]
 
 RewriteRule ^id/(\w+)/count   api_id.php?namespace=$1&count  [QSA,L]
 
@@ -44,7 +45,6 @@ RewriteRule ^authors/(.*)/publications/years   api_author.php?name=$1&publicatio
 RewriteRule ^authors/(.*)/publications   api_author.php?name=$1&publications  [QSA,L]
 
 RewriteRule ^authors/(.*)/coauthors   api_author.php?name=$1&coauthors  [QSA,L]
-
 
 RewriteRule ^authors/lastname/(.*)   api_author.php?lastname=$1  [QSA,L]
 
@@ -66,6 +66,15 @@ RewriteRule ^name/(.*)/publications   api_taxon_name.php?name=$1&publications  [
 # Return clusters with this name
 RewriteRule ^name/(.*)   api_taxon_name.php?name=$1  [QSA,L]
 
+
+#---------------------------------------------------------------------------------------------------
+# Taxon name
+
+# Image associated with concept
+#RewriteRule ^taxon/(.*)/image   api_concept.php?id=$1  [QSA,L]
+
+# Concept
+RewriteRule ^taxon/(.*)   api_concept.php?id=$1  [QSA,L]
 
 #---------------------------------------------------------------------------------------------------
 # Journals
