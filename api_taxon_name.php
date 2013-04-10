@@ -307,6 +307,7 @@ function name_related($name, $callback = '')
 	global $config;
 	global $couch;
 	
+	// BHL page co-occurrence
 	$url = "/_design/bhl/_view/name_synonym?key=" . urlencode(json_encode($name));
 		
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -341,6 +342,41 @@ function name_related($name, $callback = '')
 			$obj->related = array_values(array_unique($obj->related));
 		}
 	}
+	
+	// Classifications
+	
+	$url = "/_design/classification/_view/gbif_synonyms?key=" . urlencode(json_encode($name));
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	$response_obj = json_decode($resp);
+		
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+		}
+		else
+		{	
+			$obj->status = 200;
+			unset($obj->error);
+			if (!isset($obj->related))
+			{
+				$obj->related = array();
+			}
+			foreach ($response_obj->rows as $row)
+			{
+				$obj->related[] = $row->value;
+			}
+			
+			$obj->related = array_values(array_unique($obj->related));
+		}
+	}
+	
 	
 	api_output($obj, $callback);
 }
