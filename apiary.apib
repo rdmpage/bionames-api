@@ -1397,7 +1397,7 @@ GET name/Apomys/publications
   }
 }
 
-Publications tagged with a taxon name in a given year
+Publications tagged with a taxon name in a given year. By default returns complete publication details, use ?fields to filter
 GET name/Apomys/publications/year/2006
 < 200
 < Content-Type: application/json
@@ -1630,6 +1630,34 @@ GET name/Apomys/publications/year/2006
   }
 }
 
+Publications tagged with a taxon name, filtered using list of fields
+GET name/Apomys/publications/year/2006?fields=title,year,thumbnail
+< 200
+< Content-Type: application/json
+{
+  "status": 200,
+  "url": "_design\/publication\/_view\/tags?startkey=%5B%22Apomys%22%2C%222006%22%5D&endkey=%5B%22Apomys%22%2C%222006%22%5D&reduce=false",
+  "years": {
+    "2006": {
+      "biostor\/65879": {
+        "title": "Synopsis and Biogeography of the Mammals of Camiguin Island, Philippines",
+        "year": "2006",
+        "thumbnail_url": "id\/biostor\/65879\/thumbnail\/image"
+      },
+      "biostor\/65896": {
+        "title": "The Mammals of Mt. Kitanglad Nature Park, Mindanao, Philippines",
+        "year": "2006",
+        "thumbnail_url": "id\/biostor\/65896\/thumbnail\/image"
+      },
+      "biostor\/65937": {
+        "title": "A New Species of Forest Mouse, Genus Apomys (Mammalia: Rodentia: Muridae), from Camiguin Island, Philippines",
+        "year": "2006",
+        "thumbnail_url": "id\/biostor\/65937\/thumbnail\/image"
+      }
+    }
+  }
+}
+
 List of "related" names, such as names sharing the same specific name
 GET /name/Euthymia saussurei/related
 < 200
@@ -1656,6 +1684,220 @@ GET /name/Bufo a/suggestions
     "Bufo achavali",
     "Bufo acutirostris"
   ]
+}
+
+--
+Taxon concept
+A taxon concept is a node in a classification, such as a GBIF taxon
+--
+
+Get details for a taxon in the GBIF taxonomy with id 4812886 (the genus Austrohoplochaetella Jamieson, 1971)
+GET /taxon/gbif/4812886
+< 200
+< Content-Type: application/json
+{
+  "_id": "gbif\/4812886",
+  "_rev": "1-6702254162d094abe3b78b6371005168",
+  "type": "taxonConcept",
+  "source": "http:\/\/ecat-dev.gbif.org\/checklist\/1",
+  "nameAccordingTo": "Interim Register of Marine and Nonmarine Genera",
+  "sourceIdentifier": "4812886",
+  "scientificName": "Austrohoplochaetella Jamieson, 1971",
+  "taxonRank": "genus",
+  "canonicalName": "Austrohoplochaetella",
+  "author": "Jamieson, 1971",
+  "parent_id": "2254",
+  "children": [
+    {
+      "scientificName": "Austrohoplochaetella albidus (Jackson, 1931)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella albidus",
+      "author": "(Jackson, 1931)",
+      "sourceIdentifier": "4812893"
+    },
+    {
+      "scientificName": "Austrohoplochaetella bistichus (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella bistichus",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812889"
+    },
+    {
+      "scientificName": "Austrohoplochaetella brancasteriensis (Michaelsen, 1910)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella brancasteriensis",
+      "author": "(Michaelsen, 1910)",
+      "sourceIdentifier": "4812919"
+    },
+    {
+      "scientificName": "Austrohoplochaetella colliensis (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella colliensis",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812925"
+    },
+    {
+      "scientificName": "Austrohoplochaetella galei (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella galei",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812929"
+    },
+    {
+      "scientificName": "Austrohoplochaetella harveyensis (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella harveyensis",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812921"
+    },
+    {
+      "scientificName": "Austrohoplochaetella hortensis (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella hortensis",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812923"
+    },
+    {
+      "scientificName": "Austrohoplochaetella imparicystis (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella imparicystis",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812901"
+    },
+    {
+      "scientificName": "Austrohoplochaetella kendricki Jamieson, 1971",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella kendricki",
+      "author": "Jamieson, 1971",
+      "sourceIdentifier": "4812910"
+    },
+    {
+      "scientificName": "Austrohoplochaetella longicystis (Nicholls & Jackson, 1926)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella longicystis",
+      "author": "(Nicholls & Jackson, 1926)",
+      "sourceIdentifier": "4812917"
+    },
+    {
+      "scientificName": "Austrohoplochaetella maecenatis (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella maecenatis",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812891"
+    },
+    {
+      "scientificName": "Austrohoplochaetella modestus (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella modestus",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812911"
+    },
+    {
+      "scientificName": "Austrohoplochaetella monostichus (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella monostichus",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812906"
+    },
+    {
+      "scientificName": "Austrohoplochaetella nokanenaensis (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella nokanenaensis",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812913"
+    },
+    {
+      "scientificName": "Austrohoplochaetella prestonianus (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella prestonianus",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812915"
+    },
+    {
+      "scientificName": "Austrohoplochaetella purpurascens (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella purpurascens",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812895"
+    },
+    {
+      "scientificName": "Austrohoplochaetella rubescens (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella rubescens",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812899"
+    },
+    {
+      "scientificName": "Austrohoplochaetella suctorius (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella suctorius",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812887"
+    },
+    {
+      "scientificName": "Austrohoplochaetella swarbricki (Nicholls & Jackson, 1926)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella swarbricki",
+      "author": "(Nicholls & Jackson, 1926)",
+      "sourceIdentifier": "4812927"
+    },
+    {
+      "scientificName": "Austrohoplochaetella syndetoporus (Jackson, 1931)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella syndetoporus",
+      "author": "(Jackson, 1931)",
+      "sourceIdentifier": "4812897"
+    },
+    {
+      "scientificName": "Austrohoplochaetella torbayensis (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella torbayensis",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812904"
+    },
+    {
+      "scientificName": "Austrohoplochaetella whistleri (Michaelsen, 1907)",
+      "taxonRank": "species",
+      "canonicalName": "Austrohoplochaetella whistleri",
+      "author": "(Michaelsen, 1907)",
+      "sourceIdentifier": "4812908"
+    }
+  ],
+  "ancestors": [
+    {
+      "sourceIdentifier": "1",
+      "scientificName": "Animalia",
+      "taxonRank": "kingdom",
+      "canonicalName": "Animalia"
+    },
+    {
+      "sourceIdentifier": "42",
+      "scientificName": "Annelida",
+      "taxonRank": "phylum",
+      "canonicalName": "Annelida"
+    },
+    {
+      "sourceIdentifier": "255",
+      "scientificName": "Clitellata",
+      "taxonRank": "class",
+      "canonicalName": "Clitellata"
+    },
+    {
+      "sourceIdentifier": "5958860",
+      "scientificName": "Crassiclitellata Jamieson, 1988",
+      "taxonRank": "order",
+      "canonicalName": "Crassiclitellata",
+      "author": "Jamieson, 1988"
+    },
+    {
+      "sourceIdentifier": "2254",
+      "scientificName": "Megascolecidae Rosa, 1891",
+      "taxonRank": "family",
+      "canonicalName": "Megascolecidae",
+      "author": "Rosa, 1891"
+    }
+  ],
+  "status": 200
 }
 
 --
@@ -13407,8 +13649,8 @@ GET authors/A A Giaretta/publications
   ]
 }
 
-Get publications grouped by year
-GET authors/A A Giaretta/publications/year
+Get publications by author with filtered fields
+GET authors/A A sGiaretta/publications?fields=title,thumbnail,year,pages
 < 200
 < Content-Type: application/json
 {
@@ -13416,221 +13658,30 @@ GET authors/A A Giaretta/publications/year
   "url": "_design\/author\/_view\/name?key=%22A+A+Giaretta%22&include_docs=true",
   "publications": [
     {
-      "_id": "42f5fdfafed0ba299229cd7be057e91f",
-      "_rev": "1-b5202ef99cb475d33377167d85c5ad87",
-      "type": "article",
-      "provenance": {
-        "mysql": {
-          "id": "1360120",
-          "modified": "2013-02-24 14:25:59"
-        },
-        "crossref": {
-          "time": 1362072788,
-          "url": "http:\/\/dx.doi.org\/10.2307\/1447345"
-        }
-      },
-      "citation_string": "A A Giaretta, R J Sawaya (1998) Second species of Psyllophryne (Anura: Brachycephalidae). Copeia, 1998(4): 985--987",
       "title": "Second species of Psyllophryne (Anura: Brachycephalidae)",
-      "journal": {
-        "name": "Copeia",
-        "volume": "1998",
-        "issue": "4",
-        "pages": "985--987",
-        "identifier": [
-          {
-            "id": "0045-8511",
-            "type": "issn"
-          }
-        ]
-      },
-      "year": "1998",
-      "identifier": [
-        {
-          "type": "doi",
-          "id": "10.2307\/1447345"
-        },
-        {
-          "type": "jstor",
-          "id": "1447345"
-        }
-      ],
-      "author": [
-        {
-          "firstname": "A A",
-          "lastname": "Giaretta",
-          "name": "A A Giaretta"
-        },
-        {
-          "firstname": "R J",
-          "lastname": "Sawaya",
-          "name": "R J Sawaya"
-        }
-      ],
-      "publisher": "JSTOR"
+      "pages": "985--987",
+      "year": "1998"
     },
     {
-      "_id": "8f8bb00da0483ba625e44041d0135053",
-      "_rev": "3-eabde961cbfe9682b94b48dd47a3c0f8",
-      "type": "article",
-      "provenance": {
-        "mysql": {
-          "id": "1672275",
-          "modified": "2013-02-02 22:27:13"
-        },
-        "mendeley": {
-          "time": "2013-03-06T13:07:06+0000",
-          "local_uuid": "e2b03053-9da3-49c1-8709-acb181fc0ac1"
-        }
-      },
-      "citation_string": "A A Giaretta, M.n.d.c. Kokubum (2003) A new species of Pseudopaludicola (Anura, Leptodactylidae) from northern Brazil. Zootaxa, 383: 1--8",
       "title": "A new species of Pseudopaludicola (Anura, Leptodactylidae) from northern Brazil",
-      "journal": {
-        "name": "Zootaxa",
-        "volume": "383",
-        "pages": "1--8",
-        "identifier": [
-          {
-            "id": "1175-5326",
-            "type": "issn"
-          }
-        ]
-      },
+      "pages": "1--8",
       "year": "2003",
-      "link": [
-        {
-          "url": "http:\/\/www.mapress.com\/zootaxa\/2003f\/z00383f.pdf",
-          "anchor": "LINK"
-        },
-        {
-          "url": "http:\/\/www.mapress.com\/zootaxa\/2003\/zt00383.pdf",
-          "anchor": "PDF"
-        }
-      ],
-      "thumbnail": "data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAACOCAYAAADHPa2wAAAABGdBTUEAALGPC\/xhBQAAAAFzUkdC\r\nAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAZiS0dE\r\nAP8A\/wD\/oL2nkwAAAAlwSFlzAAAsSwAALEsBpT2WqQAAGVhJREFUeNrtnTmMJOd1x39V3dMzPcfO\r\nsTeXyzUpUqIOBwIMEQYsCATswJACBXJgh8oNCEoNGFKkVIqd23BiQIBCBlSizCYESAYtkdwlteSe\r\nMztnz\/RZDt77+71pznDJ6eLuSq4HLKa3jq++693HBw000EADDTTQQAMNNNBAAw000EADDTTQQAMN\r\nNNBAAw008AShqKGNtYsXL157\/vnni7feeusRcB\/oAofefgVM\/PcqMPZ7FdABjrydFaDlzx76vycF\r\nJXAFmAOGwIH\/ngMGwLw\/t+PXWj6OCbAM9NO4+rN0pD3Ly6+\/\/joPHz7822984xs\/e\/nll9urq6v\/\r\n9uabb\/4zcMMHNucd3QIeAi95h+\/6t9eAP\/gAX8AW7ADYBN7HFu1zhdXVVaqqKouiWC2KYr4sy363\r\n2y0mk0nLr3eGw+H8ZDKZW15eZmdn50pRFOOiKEZFUYxHo9FKWZbDoigmRVF8NB6P+zs7O09nQV57\r\n7TVu3bq18O1vf\/vi+vo6R0dH5958881emsyKwJIO8K4v0NAX4RDbnRXwkS\/OxP89EfjhD3\/Id77z\r\nnfH3v\/\/98fb29tXl5eX7o9ForSzL8cLCwuH+\/v65drs96PV6G61W6\/LXvva12+PxuOj3+52tra1r\r\nly5dur28vHw0HA5b3\/ve9\/bu3bvHT37yk\/yJAljCNp\/mowdsnzTOmUjWd7\/7Xe7evfv33\/zmN392\r\n7dq1uTfeeONff\/GLX\/wTcM0\/PvIJX8OwZd8Xo+8L1PVnKl+gksCo95\/Uoji8CPwD8IFP2GXgS8C\/\r\nA38J7AJ3MOz+K+A\/gH8E\/gV4DnjFf0\/DOWAReN3bvA18CPzOx3mMCsyEIT\/\/+c+pquqXN2\/e\/Lsr\r\nV65Uv\/71rx9hi3zHP1T6\/7d8wofpde2OYupvNfXc5wo\/\/elP+cEPfkC73f4icK8oij2gqKpqt6qq\r\nd1utVncymdwEyqIoDsuyrEaj0Vy73b46Ho\/fBl4ry\/LmeDzeaLfbF6uqejAYDPIntNHu+98D4JFf\r\n\/xjUwdSvYiip3T3v\/w6wBT\/EGGaF7a4FDGMe+Tttf6\/we7vAHnCPJ8BDvvWtb9Fut+c2Nzf\/HJhf\r\nWlo6AKiqqlhcXOzv7Owsrays9Pr9\/tzCwsKw1WpN9vb2Ftrt9rjb7Q4fPHiwtrGxsTMYDOZGo9FH\r\nRVFs\/upXv8qfKDEsWSA26cDH+bGNV8eCrPqCnPfJb2PkaQsjRyNMgsIXYQ7Y8HcklRTp3TZG2h4+\r\niQUpigKfrK\/4ZPWwzVQURdGytak6fm9ISIM97\/t5n+AJhmF3J5NTWWCmAp\/4QC1jI5jWJ3506vln\r\nAQqChExOua\/dPd33PO4Jhu0NNNBAAw000EADDTTQQAN\/NFCHYjgHvAy8h5lExpiSNcK072XCJ9LF\r\ntOJtTNOdB76ImUleAX6Lacml37uAWYFlE7uKWYQvelsf+L3n\/HqFWQ6k7UMYLnuYpv1l4G3MUtDx\r\nfzuY+X\/bf697369hWngHMwrKSr3u799Oc7BFDT6cmYyLDsvAX\/iEv+4TsO0T+wHw135tz\/9dwOw4\r\n7\/okLPsidjGrasuvdQhtWI6jrDGPgOu+AOe9vfcxs8wXfEE7Pkmyq\/0S89VsYNbdVcxBNvDfE1+Q\r\nA8L5tObfHfoi\/4+3\/aIv7rr3\/Q3grVknsw4MaWPm5RG2+0ufBHnUXvVB9gizxNgnQQa3IWGYLLxN\r\nTfpVzAY2TIshjBv58\/LsDQlbmrBK5owln1CN+ZK38zCNQ5g9xgyCu4S1Vv0Z+N+OPycP4p6P8akv\r\nyDkf3MA7d8U7+47\/v41hzFd9Ad5OA\/oC8HvgZg39+JOAOkjWc8DfENbPAiMJL2E7soW5ZBcwErWI\r\nka0xQZsbcKiLqc9zPJhBZCX\/KwgeMJeu93mCDqkGGnjqIEw46Vpxhuce951pFzBT\/y8+4fdJzz\/1\r\nyZsVxBtWMRKkSJItTGw8whh\/iUk0Bcbkz2OSj+T8FYwPidztY9LVRW9LOsEYEzV3CEln1\/tR+PcO\r\nMZFYAROSwG74N1a9\/SNvv+fPLGP61KOntSB1MPU5n9g5QqwdEPqEJC0paB2fkBbGe0qM0euZ\/fTs\r\nKiYg7E893yGC1Tr+nQnGj7LOIhG6T4jnA\/89779Jbc09rYUQ1KWHZDldDLz0SZI+oKgT6Qb5ryZH\r\niqAiGMdpofR8lb7b8vem3aj6dofQruVa1UIJu\/SdgtCFdF39a6ff6t\/If0\/8\/8XUGM48mbPCGqa8\r\ndTHU1wCk\/OVAuSMMmzS4A4y8XCCkLil1Ij3d9HeOUM76GPYc+nVtAgVLPMT0I41T5EyxYiuEcimF\r\n8x6GRYvefz27nCZ\/y+8vEBg28Gv\/TYTGngnqwJAln5gj7\/C8T5bsR\/M+mS1fgC6xu\/cITVjPaoAd\r\nQtkUb1nHyFffJ3GRiKUVuZknSNyY0I2EPXA8GEPvTIjokRbHd3o7vTfgePhSpgSHPAMY0sGY9gWM\r\nPCymQd33Tq\/6BPSxXasdW\/q9AWFPWvTFXfT2tXA7wPOEkXDXvztMizDELAX73vZtPp3B7yxGwZmC\r\nqk+DuqSsVY7bk4Tq4gUiWxWB6mPCMgxG+iQ5Zfrd9TbVrqzHRwRtH2CLc0SQnxaBXSKXkqTE2HcI\r\nXvBMQB0YsoCJpC0ftKyi8wQmdAn0nsN2pML+u9huV6rCCrGAkoZ6RIrCCiEuS1i4i4nRIkUim2Bk\r\nrkNYBDYwsVs87JlakDowJCtbp9FP0dscDf9Z2q8+4dr0fZHC8Slt5XvPSqBeAw000EADDcwMdYm9\r\n14lkFOkbyoPYetqD\/GOCOsTeRSz1a5HQZNuYiPl7mgX5TFAHhkgJO6ldKX8NNPDHCa3Zm\/g\/0zvM\r\n7oXL\/vjp9\/Vb94vHtMMp705fP+netIfxJG8np7Q5E9TBQy5gAWO3iICHA\/+7ipm0e35vhfDinSfy\r\n9tp+rY0ZH7exzSJrrgLp5B\/Z8ba2CfsWmF1rGxMy5JTaxQyODzEBpO3vyMa1gHkIl4iFlplfxlKZ\r\nfHqE72PT+yRv6AMs+3gmU0wdGKLAsulANvktdF1OoT5m81IokILd5PGTf0NVIBYIh5HsZTngTu3K\r\nrH+UrssHon6qZIaiXOTwUp\/03a7\/\/8C\/L3ub5kvJqip+oP7tMWPRgzqY+jy2q+XTOMR2jRYKwn+Q\r\ns3Jl8a0w7LjhE3uPEBTk5JJJX74HuYizO1Z9KTHjpsz5GuMjLHFfFl5FScr3MvHJly9FFRfU9jkf\r\n2x7HsUlW5wW\/P5M\/vi6x9zzhyr3jE94lSBKEJ3CTIBVaoB3CEqsFlJW3h8XR7qcF3Pb7I588pSbL\r\nc7iM7WjFDW8Q2HDRv6\/+Zlcxqd\/ttBlEVpd8kdeI4A2Nd54aIjDrwBANQEEIfR+kBihfu0iQdnou\r\nGCDxWIESImEiZ3LjHmGRksKqLoExcvH2CNIlz1+LIDGy9lYEluTyHron162i+DWmFYJMydUsntPj\r\nGfAYrmA7FMInkfO1c6BCj0i8V8jQPrbTNjG+8ogolbTt9+U7\/51P4hXCu5gnX7t5z393\/fect7vg\r\n3zrwduW9VCxAC8OsRQKjWxgGH3o\/FgghZd\/7+CImNPwP4Wc\/E9SBIcIMkQRFwOedmxmrQnEU\/rNL\r\npB5ICGh5O33C+6jFPS3Ybdo\/kqNK8n1hZz99d8Rxn87079z2tP9FmCZpcCaoY0EuYDtkTATADfzv\r\nHzgeUbLn1w8Iu9cGIWrew3bZEyvP9KxBXcHW2mk5CkPipRTH6R0shtxO74tPNJ68Bv504CTjYr4H\r\nJwdQn2TGyL+n77f4uEkj\/y452czxaaA45Vq+nsdYUg91+RjUIWW9SCRu3sMklxbGzFewvDvVV5RI\r\n+ZAI51Fclpi\/SNkCEcVyH0sAkibcJcieJLh5IvAOTCxewchhTkBVwB7eJ0lMfUzSu0rUuOoRxS2v\r\nYTyyjwkj76R2aoM6TCdiyBUmHkrS6HuH9wi7kiYxS2ASOyWlDf33EbEL+95OxpxcDEzPKPJQ7c8T\r\nUqCye4c+wR2\/LlNL1oVGqU8Df0abQ7W98lifSTgrChef8tqz1OcGGmiggQYaeOagDqZ2BTNp94nw\r\nnzVMVM3OnR5RNaGBU6AOPWQec+GCiYLnvN2XiMynAsvVaBbkMVBX9HvWDU5rU2b5Bhr4\/wVKUy4e\r\n80w59f+TQm3KdP8kOM0e9rhQnJPey987LcSndcL1z7XgQB08ZB0r072L1cfqEvnpI8y+pSIBu4Rj\r\nSqYRDVopcQeYUPDA3z9HnKKQj7a4RES7XMFsVzLjfER4HWUmGXqbVwjn1DrhLZTrQNEy24Qvv+1j\r\n+p2PJdd2UXJr17979sNDqCfIax9j2PKVXySqKiiYYBdj6ArXUYSHEjuznUt+bflKcr2qnMeuIgPy\r\na2tChW0qgJ8TTJXzuE8YHCHS5yC8mXK4adPIlqaTg9SuQpXk8p0J6gpy0E7MaK3wGe1i+aI1+Upj\r\n1gTklGglZyoOS8XRstEwJ30qgEKLokTRQbqvxM8uEepzjjDrK1hOhkVtgFzdTl5OlSlUUMaQKHg2\r\nk8GxLpL1BSKY4T2MnKimyApmqlZoUCYTSmeWlXUBK9Onkhrys+cAtduYW1jmfUUgQkR9dNI7m0TI\r\nDv7uXf\/3on9ziLmbFTghLHsXi3K56P340Nt\/lcCyib\/7ZeA\/mTHav04XrszZOrxF9FUBBTKDz2M7\r\nKcfxqkgAhKm+5HgSv\/iD6ieK3Gk3i8woOlIkKmOJ6L5CjHLbJzm81A5Tz+aTFERqhbUzhZLWgSEX\r\ngT\/DAsZUiOYBhiWXiBDO9\/3vVzBGr3gm+UTe98Hq8BedQrOeFks8Yo6IjryGMdOKIEEKvjtPhKse\r\npfvKex\/49x755K57X\/aIXHj5QOTwuophqWKTtYGG3s5Tj+1VNR7R+LZPfI6ZlePpyAelGFpVDs0M\r\n+2KajGWfADmjRF4UtahilX1\/b4UI68xmHEW9jPz\/YsgTjExBhDKJnx0SnsvLRASmyk+tczwESu88\r\n9VonkppywRkFqanWiKqOamI1iHxSm0hOrkmiE3fy+4qIVyyUyIhih6upNjRGSUF6R5GK0zFWmXSJ\r\ndIrsSnBop74oqjFHQJ4Z6kpHWMNQuMAY+CK2szU4HaW3gZGIAYbe14kCyKqVUmAxspex3S+6f8\/b\r\nWsdI4otEuQ3547XDFbH4ALOpyfeuDbCNMeWX0mIvYExb4rIkNW02BV7fIQ6i7BDSVgn8F1HA+UxQ\r\nB4YocFq7RDWjcsHLXFRMoqpIj6LUB+kZ5ZeIEedIyNwuaRFysc3pyEnSsxB0Xpg6IXJXivSexFwI\r\n3SjXGFabekYS45mhDh6yilXpETO9TpT2u0DUn7pMaO8tQpRUaXApkYcYti16O7n+1kt+Xcz5wJ9R\r\n9LlKmZdEHK4W4JV0v+vflVaeo+WlmV\/FhJJVjFw9xCjBywTjX0z\/RNaeupQlxqcqOy2fjD3\/K6Wq\r\n8olWaL\/igJ8jdplqH14glC4VnBH2rBE5HYdEqW9hico2yQ\/TxcijsrC0WcTYCwI71O8JEeKTo1d6\r\n3uaG35eLQRRAdRzPDHXpIUuEqKhFzmXAVcladiXJ77nW73TpPWFSzjERiE8o6n2c2lwk6L10EBXe\r\nl6QlOi89SQw5B3ZnoUAmEtWMPOJ4EpKen9m9UAeGnMcYrErr5Uh40XrReaG9GOsittMuYLu0T5QA\r\nFL94gO34fErzApEmILvZHqYfvORtP+\/feQcjlzJG7mICwgveV7W\/gAV6v+jjUkFN2crueBuHhLh+\r\nH7NSTPz+u8xIsupKacuVQrXD5giLbk7KkXIn7V1YlZNrcuC2FMhssl8haL2URgVrK\/1NIH0iY6Gi\r\nH5WSpmJnfeLE6nxuoXJbhHUSFIaE2N9P750Z6sAQ2auUUCkTgjKfZG+SeSEngmrXKx1NaWN306Bb\r\nacKkiyxhO\/oeQXZKIvdP0lAL41HbGCbklLmCKHa54uMQGczVUyX2KvRVhs6DND4wDJ05tLSOBQEj\r\nW9IjtNs308StpkXIqV9rhFYuqUfSynJaQJ2+IDuW+q0EU5lglnzypUxKGNAxryVGvnKJWS2cDIXi\r\nOcvp+kWiRCAE39ORF5kszyT21uVTF0nIfnOhfGamMjGI2U5\/X5KX\/A4yWko8baW2sp9ECp8mXpMi\r\nMtrBeIeCskccJ2u57q90GPlspC9N563kfESIdLqZUtrqIlk3CEWpgzHvHczwt0yYLG5hcrwK09wg\r\ndvwRxpTP+fX3fMCXCT6Qz1\/PKQhgxr91DEP2\/Nt9f2ceY7jKGJZ2LyPnBiH6Ct7zb0uXeQfTsc4R\r\nUfYTzEs6hxlN32bG4zfqwBDRfWnO0nRV6jUz+n2ihu8hcXqOdqgyeLXTlYElPSMvwjD9XyYUKZAS\r\nArL9TAqnijCvYVgjaUriL4Q3UjpW4Qud8\/H1nEix9J6Z9JC6rL2XvGOy3GpSzvvAZJrIOsoqUZxf\r\nk75KkAwJASsE851O5BT5E1mSxk9qZ4048ignkT4iSnSISavMuJRI2aqkqO5wnETLsiwyOHPiZx0k\r\na4lIchkSu\/MDTMKR5HKNyBXRwsk8LtOD9A+driCHlCzIFwhz\/z62U5VIqk0g0XbTn5MYLDKnnXwf\r\nI6HL\/v6y91dKo+ZmTBRGuOXPZMECQiH9DSYhnhnqLBObGaMS\/bMsf1qZbzHladN1fk4RKdqV04UB\r\nJuk5adRSIHtT14UN01q1PJ+SxrIulF3CcnapH9pg0rtmOi2ojgXZwDyGCiCQIe4lH9CRd\/gRtpuv\r\nYFilwcm72PPfLxDkSqLpEYEJ2pnvYbt1mTCTq8LDCwRmge3eDzAmnU8\/yEfw3fb39ogi\/rcwMvUq\r\n4bncwsKBOsDXvR\/XfS5\/i5G4p7ogXcIcovolR5jpQvXYpXGr8IywJlfoEaas+CQo2kOMV4wTnxz5\r\nJbJFVxqz9A\/pGNk6KzFc9qsi9UNlnorUpqp0Z1+7MOwCwXs6REDFmaGuAmaqt6idmpUuLdByemZI\r\nBCeIRGhxh0QkvexcIjtb6X7lC7PJcaVTrmL5M3Kc1x5huBRpyYELvXQ\/L5YsChpvPupC0qWO13jq\r\nppMFDBvEqLUoiu6rMG\/hZUJKUmbtdYws6H0xZQ1M53m8SoiwG4TfXQt6g9CU76d+FZh+IAyQJ\/KC\r\nPzN9Is8djJx2CUHiJmZAlNtYVoCbmDCjAmdbmG4106kJdekh8hiKPGUGLqabT97M387m9wx6V8xz\r\n+tSbXHPkpBNDFQShe9m0nr2W2kja8cIMneKQT3rQptAiymQiLJv5+L+6woC+5L9lYOsQZvQJEbGo\r\nUnkPCUfUhwSGKLRTktBdTGC4T9REkX\/9GkYmHmB58suEXpM1+g\/8O0fersicYoSvY4LGgb\/\/kT\/7\r\nVcIMk42mMu\/I3rZFkO3fM2Nsbx0YsuiDFAbkBVEJI9meIMhMdp3q\/BHt8A1MKtvF6LW8gNl3rbis\r\nfSK4O0ecSPN+RJjIZWjU\/YeEzz+fkqPJFhmVPS0HUwjLRKJkMprpxOg6mLpIi+olqliYalLp2DoI\r\nd2omOyIL2764+74AOq1NZEXWXvEhkR8VAlBpP9VKnMMwlnRNRcnEvKX0PSD4X5m+J+vAg\/QtlQ\/c\r\n8jZz+KmEkTNDXYeCfd07KdFSzh4wo955wgRyjQi+VqjOdYxJvkIIBYqjvUxUdnsPw8ZVwkSy7c++\r\nTMQCf4gxXB2JtENUK10iJLE\/EFH4X+Z4yOseoQuJz3QwIaGFGRJ3MJK96uOQQHFmqKuA2ZoPQEqW\r\n\/M0SGwXTxcRO6k+R3pOzSd+RNKRnq9RWK7UtxlxOPStzzXSf9B0x7ukiaMPUjgSYUXpW330mfOrr\r\n2M7b9r+b2E55geAtt4lCMzvYTlRyqPI11giSIZ1gi4gEuZwmUkccadJ1nrsWbEAU0LxK8ItzRLC3\r\ngrVlnNSCt739Ff+msEgxyMKiTYLvXPJx3WJGSauOBen7xI2880qEed8XQrtMIaWSduSBk81ok+A\/\r\n7fSOFvAOEbEiqS27dsVzSl+sQ8I7OSb4itIFxHy1KfKxTFJec0aUFvAgtTuX+n+SfewzQ10kSwd1\r\nbREnbCqwQWlpmoAlwiQv46AkGQUJyP2qMKIeEewAQc9lGskWAd3P5KwOyKTppHu1fKuuMKAbhD9j\r\niDFu0WrVte0QBZO3CAeVbGByWvWwXXmBOLtw339fIhZllL4hTfw3HPeX1AnVGe99JqgLQxSJCMdr\r\n9kIwWGGMnp1MvZd1iBwbnLEIjlfInmbsQ+rFigYaaOCZgplI1o9+9COqqsrF8I83XljzVVWdek+g\r\nZ056Jz97Uluf9pknAH1g9OMf\/\/jMDczE1MfjMWVZtjqdzlyr1arK0vSww8PDYjgcFuPxmKqqWFtb\r\nmxRFQVEUHB0dFZ1Op9re3i7H43HRarWqoig4d+7cpCxL9vf3y6Ioqrm5OVqtVtXr9crRaMRwOCza\r\n7Xa1trY2KcuSsiw5PDws5ufnq93d3XIwGBStVqsCmJ+ff+Ir0mq1KMty1G63n3psrzKJFPOas6YW\r\nich4HY6imu4V5oIdYUrbEFMk5T+XbUkxUB0iLFUhRvOY9DXAJDswpfTDz3HuTwOdxDCTcbEOsVeT\r\nJ6+bjHI6Zls2LVlGsyfxLhFKqsg\/VQNVqI1C\/3OGlYyZOZtWdqTdz3HSHzeXTVHNBhpooIEGGmig\r\ngQYaaKCBBhpooIEGGmiggQYaaKCBx8D\/AgooFdMPhpVRAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDEy\r\nLTEyLTEwVDE0OjM3OjQ1KzAwOjAwMqa3fgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMi0xMi0xMFQx\r\nNDozNzo0NSswMDowMEP7D8IAAAAddEVYdFNvZnR3YXJlAEdQTCBHaG9zdHNjcmlwdCA5LjA2aqYM\r\nNQAAAABJRU5ErkJggg==\r\n",
-      "author": [
-        {
-          "firstname": "A A",
-          "lastname": "Giaretta",
-          "name": "A A Giaretta"
-        },
-        {
-          "firstname": "M.n.d.c.",
-          "lastname": "Kokubum",
-          "name": "M.n.d.c. Kokubum"
-        }
-      ]
+      "thumbnail_url": "id\/8f8bb00da0483ba625e44041d0135053\/thumbnail\/image"
     }
   ]
-}{
+}
+
+Get publication count grouped by year
+GET authors/A A Giaretta/publications/years
+< 200
+< Content-Type: application/json
+{
   "status": 200,
-  "url": "_design\/author\/_view\/name?key=%22A+A+Giaretta%22&include_docs=true",
-  "publications": [
-    {
-      "_id": "42f5fdfafed0ba299229cd7be057e91f",
-      "_rev": "1-b5202ef99cb475d33377167d85c5ad87",
-      "type": "article",
-      "provenance": {
-        "mysql": {
-          "id": "1360120",
-          "modified": "2013-02-24 14:25:59"
-        },
-        "crossref": {
-          "time": 1362072788,
-          "url": "http:\/\/dx.doi.org\/10.2307\/1447345"
-        }
-      },
-      "citation_string": "A A Giaretta, R J Sawaya (1998) Second species of Psyllophryne (Anura: Brachycephalidae). Copeia, 1998(4): 985--987",
-      "title": "Second species of Psyllophryne (Anura: Brachycephalidae)",
-      "journal": {
-        "name": "Copeia",
-        "volume": "1998",
-        "issue": "4",
-        "pages": "985--987",
-        "identifier": [
-          {
-            "id": "0045-8511",
-            "type": "issn"
-          }
-        ]
-      },
-      "year": "1998",
-      "identifier": [
-        {
-          "type": "doi",
-          "id": "10.2307\/1447345"
-        },
-        {
-          "type": "jstor",
-          "id": "1447345"
-        }
-      ],
-      "author": [
-        {
-          "firstname": "A A",
-          "lastname": "Giaretta",
-          "name": "A A Giaretta"
-        },
-        {
-          "firstname": "R J",
-          "lastname": "Sawaya",
-          "name": "R J Sawaya"
-        }
-      ],
-      "publisher": "JSTOR"
-    },
-    {
-      "_id": "8f8bb00da0483ba625e44041d0135053",
-      "_rev": "3-eabde961cbfe9682b94b48dd47a3c0f8",
-      "type": "article",
-      "provenance": {
-        "mysql": {
-          "id": "1672275",
-          "modified": "2013-02-02 22:27:13"
-        },
-        "mendeley": {
-          "time": "2013-03-06T13:07:06+0000",
-          "local_uuid": "e2b03053-9da3-49c1-8709-acb181fc0ac1"
-        }
-      },
-      "citation_string": "A A Giaretta, M.n.d.c. Kokubum (2003) A new species of Pseudopaludicola (Anura, Leptodactylidae) from northern Brazil. Zootaxa, 383: 1--8",
-      "title": "A new species of Pseudopaludicola (Anura, Leptodactylidae) from northern Brazil",
-      "journal": {
-        "name": "Zootaxa",
-        "volume": "383",
-        "pages": "1--8",
-        "identifier": [
-          {
-            "id": "1175-5326",
-            "type": "issn"
-          }
-        ]
-      },
-      "year": "2003",
-      "link": [
-        {
-          "url": "http:\/\/www.mapress.com\/zootaxa\/2003f\/z00383f.pdf",
-          "anchor": "LINK"
-        },
-        {
-          "url": "http:\/\/www.mapress.com\/zootaxa\/2003\/zt00383.pdf",
-          "anchor": "PDF"
-        }
-      ],
-      "thumbnail": "data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAACOCAYAAADHPa2wAAAABGdBTUEAALGPC\/xhBQAAAAFzUkdC\r\nAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAZiS0dE\r\nAP8A\/wD\/oL2nkwAAAAlwSFlzAAAsSwAALEsBpT2WqQAAGVhJREFUeNrtnTmMJOd1x39V3dMzPcfO\r\nsTeXyzUpUqIOBwIMEQYsCATswJACBXJgh8oNCEoNGFKkVIqd23BiQIBCBlSizCYESAYtkdwlteSe\r\nMztnz\/RZDt77+71pznDJ6eLuSq4HLKa3jq++693HBw000EADDTTQQAMNNNBAAw000EADDTTQQAMN\r\nNNBAAw008AShqKGNtYsXL157\/vnni7feeusRcB\/oAofefgVM\/PcqMPZ7FdABjrydFaDlzx76vycF\r\nJXAFmAOGwIH\/ngMGwLw\/t+PXWj6OCbAM9NO4+rN0pD3Ly6+\/\/joPHz7822984xs\/e\/nll9urq6v\/\r\n9uabb\/4zcMMHNucd3QIeAi95h+\/6t9eAP\/gAX8AW7ADYBN7HFu1zhdXVVaqqKouiWC2KYr4sy363\r\n2y0mk0nLr3eGw+H8ZDKZW15eZmdn50pRFOOiKEZFUYxHo9FKWZbDoigmRVF8NB6P+zs7O09nQV57\r\n7TVu3bq18O1vf\/vi+vo6R0dH5958881emsyKwJIO8K4v0NAX4RDbnRXwkS\/OxP89EfjhD3\/Id77z\r\nnfH3v\/\/98fb29tXl5eX7o9ForSzL8cLCwuH+\/v65drs96PV6G61W6\/LXvva12+PxuOj3+52tra1r\r\nly5dur28vHw0HA5b3\/ve9\/bu3bvHT37yk\/yJAljCNp\/mowdsnzTOmUjWd7\/7Xe7evfv33\/zmN392\r\n7dq1uTfeeONff\/GLX\/wTcM0\/PvIJX8OwZd8Xo+8L1PVnKl+gksCo95\/Uoji8CPwD8IFP2GXgS8C\/\r\nA38J7AJ3MOz+K+A\/gH8E\/gV4DnjFf0\/DOWAReN3bvA18CPzOx3mMCsyEIT\/\/+c+pquqXN2\/e\/Lsr\r\nV65Uv\/71rx9hi3zHP1T6\/7d8wofpde2OYupvNfXc5wo\/\/elP+cEPfkC73f4icK8oij2gqKpqt6qq\r\nd1utVncymdwEyqIoDsuyrEaj0Vy73b46Ho\/fBl4ry\/LmeDzeaLfbF6uqejAYDPIntNHu+98D4JFf\r\n\/xjUwdSvYiip3T3v\/w6wBT\/EGGaF7a4FDGMe+Tttf6\/we7vAHnCPJ8BDvvWtb9Fut+c2Nzf\/HJhf\r\nWlo6AKiqqlhcXOzv7Owsrays9Pr9\/tzCwsKw1WpN9vb2Ftrt9rjb7Q4fPHiwtrGxsTMYDOZGo9FH\r\nRVFs\/upXv8qfKDEsWSA26cDH+bGNV8eCrPqCnPfJb2PkaQsjRyNMgsIXYQ7Y8HcklRTp3TZG2h4+\r\niQUpigKfrK\/4ZPWwzVQURdGytak6fm9ISIM97\/t5n+AJhmF3J5NTWWCmAp\/4QC1jI5jWJ3506vln\r\nAQqChExOua\/dPd33PO4Jhu0NNNBAAw000EADDTTQQAN\/NFCHYjgHvAy8h5lExpiSNcK072XCJ9LF\r\ntOJtTNOdB76ImUleAX6Lacml37uAWYFlE7uKWYQvelsf+L3n\/HqFWQ6k7UMYLnuYpv1l4G3MUtDx\r\nfzuY+X\/bf697369hWngHMwrKSr3u799Oc7BFDT6cmYyLDsvAX\/iEv+4TsO0T+wHw135tz\/9dwOw4\r\n7\/okLPsidjGrasuvdQhtWI6jrDGPgOu+AOe9vfcxs8wXfEE7Pkmyq\/0S89VsYNbdVcxBNvDfE1+Q\r\nA8L5tObfHfoi\/4+3\/aIv7rr3\/Q3grVknsw4MaWPm5RG2+0ufBHnUXvVB9gizxNgnQQa3IWGYLLxN\r\nTfpVzAY2TIshjBv58\/LsDQlbmrBK5owln1CN+ZK38zCNQ5g9xgyCu4S1Vv0Z+N+OPycP4p6P8akv\r\nyDkf3MA7d8U7+47\/v41hzFd9Ad5OA\/oC8HvgZg39+JOAOkjWc8DfENbPAiMJL2E7soW5ZBcwErWI\r\nka0xQZsbcKiLqc9zPJhBZCX\/KwgeMJeu93mCDqkGGnjqIEw46Vpxhuce951pFzBT\/y8+4fdJzz\/1\r\nyZsVxBtWMRKkSJItTGw8whh\/iUk0Bcbkz2OSj+T8FYwPidztY9LVRW9LOsEYEzV3CEln1\/tR+PcO\r\nMZFYAROSwG74N1a9\/SNvv+fPLGP61KOntSB1MPU5n9g5QqwdEPqEJC0paB2fkBbGe0qM0euZ\/fTs\r\nKiYg7E893yGC1Tr+nQnGj7LOIhG6T4jnA\/89779Jbc09rYUQ1KWHZDldDLz0SZI+oKgT6Qb5ryZH\r\niqAiGMdpofR8lb7b8vem3aj6dofQruVa1UIJu\/SdgtCFdF39a6ff6t\/If0\/8\/8XUGM48mbPCGqa8\r\ndTHU1wCk\/OVAuSMMmzS4A4y8XCCkLil1Ij3d9HeOUM76GPYc+nVtAgVLPMT0I41T5EyxYiuEcimF\r\n8x6GRYvefz27nCZ\/y+8vEBg28Gv\/TYTGngnqwJAln5gj7\/C8T5bsR\/M+mS1fgC6xu\/cITVjPaoAd\r\nQtkUb1nHyFffJ3GRiKUVuZknSNyY0I2EPXA8GEPvTIjokRbHd3o7vTfgePhSpgSHPAMY0sGY9gWM\r\nPCymQd33Tq\/6BPSxXasdW\/q9AWFPWvTFXfT2tXA7wPOEkXDXvztMizDELAX73vZtPp3B7yxGwZmC\r\nqk+DuqSsVY7bk4Tq4gUiWxWB6mPCMgxG+iQ5Zfrd9TbVrqzHRwRtH2CLc0SQnxaBXSKXkqTE2HcI\r\nXvBMQB0YsoCJpC0ftKyi8wQmdAn0nsN2pML+u9huV6rCCrGAkoZ6RIrCCiEuS1i4i4nRIkUim2Bk\r\nrkNYBDYwsVs87JlakDowJCtbp9FP0dscDf9Z2q8+4dr0fZHC8Slt5XvPSqBeAw000EADDcwMdYm9\r\n14lkFOkbyoPYetqD\/GOCOsTeRSz1a5HQZNuYiPl7mgX5TFAHhkgJO6ldKX8NNPDHCa3Zm\/g\/0zvM\r\n7oXL\/vjp9\/Vb94vHtMMp705fP+netIfxJG8np7Q5E9TBQy5gAWO3iICHA\/+7ipm0e35vhfDinSfy\r\n9tp+rY0ZH7exzSJrrgLp5B\/Z8ba2CfsWmF1rGxMy5JTaxQyODzEBpO3vyMa1gHkIl4iFlplfxlKZ\r\nfHqE72PT+yRv6AMs+3gmU0wdGKLAsulANvktdF1OoT5m81IokILd5PGTf0NVIBYIh5HsZTngTu3K\r\nrH+UrssHon6qZIaiXOTwUp\/03a7\/\/8C\/L3ub5kvJqip+oP7tMWPRgzqY+jy2q+XTOMR2jRYKwn+Q\r\ns3Jl8a0w7LjhE3uPEBTk5JJJX74HuYizO1Z9KTHjpsz5GuMjLHFfFl5FScr3MvHJly9FFRfU9jkf\r\n2x7HsUlW5wW\/P5M\/vi6x9zzhyr3jE94lSBKEJ3CTIBVaoB3CEqsFlJW3h8XR7qcF3Pb7I588pSbL\r\nc7iM7WjFDW8Q2HDRv6\/+Zlcxqd\/ttBlEVpd8kdeI4A2Nd54aIjDrwBANQEEIfR+kBihfu0iQdnou\r\nGCDxWIESImEiZ3LjHmGRksKqLoExcvH2CNIlz1+LIDGy9lYEluTyHron162i+DWmFYJMydUsntPj\r\nGfAYrmA7FMInkfO1c6BCj0i8V8jQPrbTNjG+8ogolbTt9+U7\/51P4hXCu5gnX7t5z393\/fect7vg\r\n3zrwduW9VCxAC8OsRQKjWxgGH3o\/FgghZd\/7+CImNPwP4Wc\/E9SBIcIMkQRFwOedmxmrQnEU\/rNL\r\npB5ICGh5O33C+6jFPS3Ybdo\/kqNK8n1hZz99d8Rxn87079z2tP9FmCZpcCaoY0EuYDtkTATADfzv\r\nHzgeUbLn1w8Iu9cGIWrew3bZEyvP9KxBXcHW2mk5CkPipRTH6R0shtxO74tPNJ68Bv504CTjYr4H\r\nJwdQn2TGyL+n77f4uEkj\/y452czxaaA45Vq+nsdYUg91+RjUIWW9SCRu3sMklxbGzFewvDvVV5RI\r\n+ZAI51Fclpi\/SNkCEcVyH0sAkibcJcieJLh5IvAOTCxewchhTkBVwB7eJ0lMfUzSu0rUuOoRxS2v\r\nYTyyjwkj76R2aoM6TCdiyBUmHkrS6HuH9wi7kiYxS2ASOyWlDf33EbEL+95OxpxcDEzPKPJQ7c8T\r\nUqCye4c+wR2\/LlNL1oVGqU8Df0abQ7W98lifSTgrChef8tqz1OcGGmiggQYaeOagDqZ2BTNp94nw\r\nnzVMVM3OnR5RNaGBU6AOPWQec+GCiYLnvN2XiMynAsvVaBbkMVBX9HvWDU5rU2b5Bhr4\/wVKUy4e\r\n80w59f+TQm3KdP8kOM0e9rhQnJPey987LcSndcL1z7XgQB08ZB0r072L1cfqEvnpI8y+pSIBu4Rj\r\nSqYRDVopcQeYUPDA3z9HnKKQj7a4RES7XMFsVzLjfER4HWUmGXqbVwjn1DrhLZTrQNEy24Qvv+1j\r\n+p2PJdd2UXJr17979sNDqCfIax9j2PKVXySqKiiYYBdj6ArXUYSHEjuznUt+bflKcr2qnMeuIgPy\r\na2tChW0qgJ8TTJXzuE8YHCHS5yC8mXK4adPIlqaTg9SuQpXk8p0J6gpy0E7MaK3wGe1i+aI1+Upj\r\n1gTklGglZyoOS8XRstEwJ30qgEKLokTRQbqvxM8uEepzjjDrK1hOhkVtgFzdTl5OlSlUUMaQKHg2\r\nk8GxLpL1BSKY4T2MnKimyApmqlZoUCYTSmeWlXUBK9Onkhrys+cAtduYW1jmfUUgQkR9dNI7m0TI\r\nDv7uXf\/3on9ziLmbFTghLHsXi3K56P340Nt\/lcCyib\/7ZeA\/mTHav04XrszZOrxF9FUBBTKDz2M7\r\nKcfxqkgAhKm+5HgSv\/iD6ieK3Gk3i8woOlIkKmOJ6L5CjHLbJzm81A5Tz+aTFERqhbUzhZLWgSEX\r\ngT\/DAsZUiOYBhiWXiBDO9\/3vVzBGr3gm+UTe98Hq8BedQrOeFks8Yo6IjryGMdOKIEEKvjtPhKse\r\npfvKex\/49x755K57X\/aIXHj5QOTwuophqWKTtYGG3s5Tj+1VNR7R+LZPfI6ZlePpyAelGFpVDs0M\r\n+2KajGWfADmjRF4UtahilX1\/b4UI68xmHEW9jPz\/YsgTjExBhDKJnx0SnsvLRASmyk+tczwESu88\r\n9VonkppywRkFqanWiKqOamI1iHxSm0hOrkmiE3fy+4qIVyyUyIhih6upNjRGSUF6R5GK0zFWmXSJ\r\ndIrsSnBop74oqjFHQJ4Z6kpHWMNQuMAY+CK2szU4HaW3gZGIAYbe14kCyKqVUmAxspex3S+6f8\/b\r\nWsdI4otEuQ3547XDFbH4ALOpyfeuDbCNMeWX0mIvYExb4rIkNW02BV7fIQ6i7BDSVgn8F1HA+UxQ\r\nB4YocFq7RDWjcsHLXFRMoqpIj6LUB+kZ5ZeIEedIyNwuaRFysc3pyEnSsxB0Xpg6IXJXivSexFwI\r\n3SjXGFabekYS45mhDh6yilXpETO9TpT2u0DUn7pMaO8tQpRUaXApkYcYti16O7n+1kt+Xcz5wJ9R\r\n9LlKmZdEHK4W4JV0v+vflVaeo+WlmV\/FhJJVjFw9xCjBywTjX0z\/RNaeupQlxqcqOy2fjD3\/K6Wq\r\n8olWaL\/igJ8jdplqH14glC4VnBH2rBE5HYdEqW9hico2yQ\/TxcijsrC0WcTYCwI71O8JEeKTo1d6\r\n3uaG35eLQRRAdRzPDHXpIUuEqKhFzmXAVcladiXJ77nW73TpPWFSzjERiE8o6n2c2lwk6L10EBXe\r\nl6QlOi89SQw5B3ZnoUAmEtWMPOJ4EpKen9m9UAeGnMcYrErr5Uh40XrReaG9GOsittMuYLu0T5QA\r\nFL94gO34fErzApEmILvZHqYfvORtP+\/feQcjlzJG7mICwgveV7W\/gAV6v+jjUkFN2crueBuHhLh+\r\nH7NSTPz+u8xIsupKacuVQrXD5giLbk7KkXIn7V1YlZNrcuC2FMhssl8haL2URgVrK\/1NIH0iY6Gi\r\nH5WSpmJnfeLE6nxuoXJbhHUSFIaE2N9P750Z6sAQ2auUUCkTgjKfZG+SeSEngmrXKx1NaWN306Bb\r\nacKkiyxhO\/oeQXZKIvdP0lAL41HbGCbklLmCKHa54uMQGczVUyX2KvRVhs6DND4wDJ05tLSOBQEj\r\nW9IjtNs308StpkXIqV9rhFYuqUfSynJaQJ2+IDuW+q0EU5lglnzypUxKGNAxryVGvnKJWS2cDIXi\r\nOcvp+kWiRCAE39ORF5kszyT21uVTF0nIfnOhfGamMjGI2U5\/X5KX\/A4yWko8baW2sp9ECp8mXpMi\r\nMtrBeIeCskccJ2u57q90GPlspC9N563kfESIdLqZUtrqIlk3CEWpgzHvHczwt0yYLG5hcrwK09wg\r\ndvwRxpTP+fX3fMCXCT6Qz1\/PKQhgxr91DEP2\/Nt9f2ceY7jKGJZ2LyPnBiH6Ct7zb0uXeQfTsc4R\r\nUfYTzEs6hxlN32bG4zfqwBDRfWnO0nRV6jUz+n2ihu8hcXqOdqgyeLXTlYElPSMvwjD9XyYUKZAS\r\nArL9TAqnijCvYVgjaUriL4Q3UjpW4Qud8\/H1nEix9J6Z9JC6rL2XvGOy3GpSzvvAZJrIOsoqUZxf\r\nk75KkAwJASsE851O5BT5E1mSxk9qZ4048ignkT4iSnSISavMuJRI2aqkqO5wnETLsiwyOHPiZx0k\r\na4lIchkSu\/MDTMKR5HKNyBXRwsk8LtOD9A+driCHlCzIFwhz\/z62U5VIqk0g0XbTn5MYLDKnnXwf\r\nI6HL\/v6y91dKo+ZmTBRGuOXPZMECQiH9DSYhnhnqLBObGaMS\/bMsf1qZbzHladN1fk4RKdqV04UB\r\nJuk5adRSIHtT14UN01q1PJ+SxrIulF3CcnapH9pg0rtmOi2ojgXZwDyGCiCQIe4lH9CRd\/gRtpuv\r\nYFilwcm72PPfLxDkSqLpEYEJ2pnvYbt1mTCTq8LDCwRmge3eDzAmnU8\/yEfw3fb39ogi\/rcwMvUq\r\n4bncwsKBOsDXvR\/XfS5\/i5G4p7ogXcIcovolR5jpQvXYpXGr8IywJlfoEaas+CQo2kOMV4wTnxz5\r\nJbJFVxqz9A\/pGNk6KzFc9qsi9UNlnorUpqp0Z1+7MOwCwXs6REDFmaGuAmaqt6idmpUuLdByemZI\r\nBCeIRGhxh0QkvexcIjtb6X7lC7PJcaVTrmL5M3Kc1x5huBRpyYELvXQ\/L5YsChpvPupC0qWO13jq\r\nppMFDBvEqLUoiu6rMG\/hZUJKUmbtdYws6H0xZQ1M53m8SoiwG4TfXQt6g9CU76d+FZh+IAyQJ\/KC\r\nPzN9Is8djJx2CUHiJmZAlNtYVoCbmDCjAmdbmG4106kJdekh8hiKPGUGLqabT97M387m9wx6V8xz\r\n+tSbXHPkpBNDFQShe9m0nr2W2kja8cIMneKQT3rQptAiymQiLJv5+L+6woC+5L9lYOsQZvQJEbGo\r\nUnkPCUfUhwSGKLRTktBdTGC4T9REkX\/9GkYmHmB58suEXpM1+g\/8O0fersicYoSvY4LGgb\/\/kT\/7\r\nVcIMk42mMu\/I3rZFkO3fM2Nsbx0YsuiDFAbkBVEJI9meIMhMdp3q\/BHt8A1MKtvF6LW8gNl3rbis\r\nfSK4O0ecSPN+RJjIZWjU\/YeEzz+fkqPJFhmVPS0HUwjLRKJkMprpxOg6mLpIi+olqliYalLp2DoI\r\nd2omOyIL2764+74AOq1NZEXWXvEhkR8VAlBpP9VKnMMwlnRNRcnEvKX0PSD4X5m+J+vAg\/QtlQ\/c\r\n8jZz+KmEkTNDXYeCfd07KdFSzh4wo955wgRyjQi+VqjOdYxJvkIIBYqjvUxUdnsPw8ZVwkSy7c++\r\nTMQCf4gxXB2JtENUK10iJLE\/EFH4X+Z4yOseoQuJz3QwIaGFGRJ3MJK96uOQQHFmqKuA2ZoPQEqW\r\n\/M0SGwXTxcRO6k+R3pOzSd+RNKRnq9RWK7UtxlxOPStzzXSf9B0x7ukiaMPUjgSYUXpW330mfOrr\r\n2M7b9r+b2E55geAtt4lCMzvYTlRyqPI11giSIZ1gi4gEuZwmUkccadJ1nrsWbEAU0LxK8ItzRLC3\r\ngrVlnNSCt739Ff+msEgxyMKiTYLvXPJx3WJGSauOBen7xI2880qEed8XQrtMIaWSduSBk81ok+A\/\r\n7fSOFvAOEbEiqS27dsVzSl+sQ8I7OSb4itIFxHy1KfKxTFJec0aUFvAgtTuX+n+SfewzQ10kSwd1\r\nbREnbCqwQWlpmoAlwiQv46AkGQUJyP2qMKIeEewAQc9lGskWAd3P5KwOyKTppHu1fKuuMKAbhD9j\r\niDFu0WrVte0QBZO3CAeVbGByWvWwXXmBOLtw339fIhZllL4hTfw3HPeX1AnVGe99JqgLQxSJCMdr\r\n9kIwWGGMnp1MvZd1iBwbnLEIjlfInmbsQ+rFigYaaOCZgplI1o9+9COqqsrF8I83XljzVVWdek+g\r\nZ056Jz97Uluf9pknAH1g9OMf\/\/jMDczE1MfjMWVZtjqdzlyr1arK0vSww8PDYjgcFuPxmKqqWFtb\r\nmxRFQVEUHB0dFZ1Op9re3i7H43HRarWqoig4d+7cpCxL9vf3y6Ioqrm5OVqtVtXr9crRaMRwOCza\r\n7Xa1trY2KcuSsiw5PDws5ufnq93d3XIwGBStVqsCmJ+ff+Ir0mq1KMty1G63n3psrzKJFPOas6YW\r\nich4HY6imu4V5oIdYUrbEFMk5T+XbUkxUB0iLFUhRvOY9DXAJDswpfTDz3HuTwOdxDCTcbEOsVeT\r\nJ6+bjHI6Zls2LVlGsyfxLhFKqsg\/VQNVqI1C\/3OGlYyZOZtWdqTdz3HSHzeXTVHNBhpooIEGGmig\r\ngQYaaKCBBhpooIEGGmiggQYaaKCBx8D\/AgooFdMPhpVRAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDEy\r\nLTEyLTEwVDE0OjM3OjQ1KzAwOjAwMqa3fgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMi0xMi0xMFQx\r\nNDozNzo0NSswMDowMEP7D8IAAAAddEVYdFNvZnR3YXJlAEdQTCBHaG9zdHNjcmlwdCA5LjA2aqYM\r\nNQAAAABJRU5ErkJggg==\r\n",
-      "author": [
-        {
-          "firstname": "A A",
-          "lastname": "Giaretta",
-          "name": "A A Giaretta"
-        },
-        {
-          "firstname": "M.n.d.c.",
-          "lastname": "Kokubum",
-          "name": "M.n.d.c. Kokubum"
-        }
-      ]
-    }
-  ]
+  "url": "_design\/author\/_view\/year?startkey=%5B%22A+A+Giaretta%22%5D&endkey=%5B%22A+A+Giaretta%22%2C%7B%7D%5D&group_level=2",
+  "years": {
+    "1998": 1,
+    "2003": 1
+  }
 }
 
 Get taxa published by author
