@@ -104,13 +104,14 @@ function api_simplify_document ($document, $fields=array('all'))
 				case 'title':
 				case 'year':
 				case 'author':
+				case 'journal':
 					if (in_array($key, $fields))
 					{
 						$doc->{$key} = $document->{$key};
 					}
 					break;
 					
-				case 'journal':
+				/*case 'journal':
 					foreach ($document->journal as $subkey => $subvalue)
 					{
 						if (in_array($subkey, $fields))
@@ -118,7 +119,7 @@ function api_simplify_document ($document, $fields=array('all'))
 							$doc->{$subkey} = $document->journal->{$subkey};
 						}
 					}
-					break;
+					break; */
 					
 				case 'thumbnail':
 					if (in_array($key, $fields))

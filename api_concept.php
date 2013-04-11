@@ -41,6 +41,96 @@ function display_concept ($id, $callback = '')
 	api_output($obj, $callback);
 }
 
+//--------------------------------------------------------------------------------------------------
+// Publications with name(s) used for taxon concept
+function publications_with_name($id, $fields=array('all'), $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	// 1. Get concept 
+	$couch_id = $id;
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{	
+		$obj->status = 200;
+		
+		$taxon_concept = json_decode($resp);
+		
+		// Build list of names for this concept
+		$obj->names = array();
+		$obj->names[] = $taxon_concept->canonicalName;
+		
+		// Concept synonyms
+		if (isset($taxon_concept->synonyms))
+		{
+			foreach ($taxon_concept->synonyms as $synonym)
+			{
+				$obj->names[] = $synonym->canonicalName;
+			}
+		}
+		
+		$obj->names = array_unique($obj->names);
+		
+		$obj->hits = array();
+		
+		// now search for these names
+		foreach ($obj->names as $name)
+		{
+		
+			$startkey = array($name);
+			$endkey = array($name, new stdclass);
+			
+			$url = '_design/publication/_view/tags?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
+			$include_docs = false;
+	
+			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+			$response_obj = json_decode($resp);
+
+			if (isset($response_obj->error))
+			{
+			}
+			else
+			{
+				foreach ($response_obj->rows as $row)
+				{
+					$obj->hits[$name][] = $row->value;				
+				}				
+			}
+		}
+		
+		// Post process
+		foreach ($obj->hits as $k => $v)
+		{
+			foreach ($v as $publication_id)
+			{
+				if (!isset($obj->publications[$publication_id]))
+				{
+					$obj->publications[$publication_id] = api_get_document_simplified($publication_id, array('title', 'author', 'year', 'journal', 'thumbnail'));
+				}
+				$obj->publications[$publication_id]->tags[] = $k;
+			}
+		
+		}
+		
+		unset($obj->hits);
+		
+	}	
+	
+	api_output($obj, $callback);
+}
+
 /*
 //--------------------------------------------------------------------------------------------------
 // Display thumbnail image
@@ -136,6 +226,15 @@ function main()
 	{	
 		$callback = $_GET['callback'];
 	}
+	
+	// Optional fields to include
+	$fields = array('all');
+	if (isset($_GET['fields']))
+	{	
+		$field_string = $_GET['fields'];
+		$fields = explode(",", $field_string);
+	}
+	
 			
 	if (!$handled)
 	{
@@ -143,7 +242,13 @@ function main()
 		if (isset($_GET['id']))
 		{	
 			$id = $_GET['id'];
-	
+			
+			if (isset($_GET['publications']))
+			{	
+				publications_with_name($id, $fields, $callback);
+				$handled = true;
+			}
+				
 			/*
 			// Thumbnail image 
 			if (isset($_GET['id']) && isset($_GET['thumbnail']))
