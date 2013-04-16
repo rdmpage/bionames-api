@@ -104,6 +104,7 @@ function api_simplify_document ($document, $fields=array('all'))
 				case 'title':
 				case 'year':
 				case 'author':
+				case 'identifier':
 				case 'journal':
 					if (in_array($key, $fields))
 					{

@@ -73,6 +73,11 @@ RewriteRule ^name/(.*)   api_taxon_name.php?name=$1  [QSA,L]
 
 RewriteRule ^taxon/(.*)/publications   api_concept.php?id=$1&publications  [QSA,L]
 
+RewriteRule ^taxon/(.*)/timeline   api_concept.php?id=$1&timeline  [QSA,L]
+
+RewriteRule ^taxon/(.*)/thumbnail   api_concept.php?id=$1&thumbnail  [QSA,L]
+
+
 RewriteRule ^taxon/(.*)   api_concept.php?id=$1  [QSA,L]
 
 #---------------------------------------------------------------------------------------------------

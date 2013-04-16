@@ -1,2 +1,5 @@
 # Configuration file with passwords
 config.inc.php
+
+# Temporary image files
+tmp/
