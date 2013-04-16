@@ -131,81 +131,140 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 	api_output($obj, $callback);
 }
 
-/*
 //--------------------------------------------------------------------------------------------------
-// Display thumbnail image
-function display_thumbnail_image ($id, $callback = '')
+// Publication dates for all taxa rooted on this node in classification
+function taxon_timeline ($id, $callback = '')
 {
 	global $config;
 	global $couch;
 	
-	// grab JSON from CouchDB
-	$couch_id = $id;
+	$id = str_replace('gbif/', '', $id);
 	
-	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	$startkey = array((Integer)$id);
+	$endkey = array((Integer)$id, date("Y"));
 	
-	$response_obj = json_decode($resp);
+	$url = '_design/classification/_view/gbif_year?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&group_level=2';
 	
-	$found = false;
-	
-	if (isset($response_obj->thumbnail))
-	{
-		$image = $response_obj->thumbnail;
-		if (preg_match('/^data:(?<mime>image\/.*);base64/', $image, $m))
-		{
-			$found = true;
-			header("Content-type: " . $m['mime']);
-			header("Cache-control: max-age=3600");
-			$image = preg_replace('/^data:(?<mime>image\/.*);base64/', '', $image);
-			echo base64_decode($image);
-		}
-	}
-	
-	if (!$found)
-	{
-		header('HTTP/1.1 404 Not Found');
-	}
-}
-
-//--------------------------------------------------------------------------------------------------
-// Display information on thumbnail
-function display_thumbnail ($id, $callback = '')
-{
-	global $config;
-	global $couch;
-	
-	// grab JSON from CouchDB
-	$couch_id = $id;
-	
-	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
 	$response_obj = json_decode($resp);
 	
 	$obj = new stdclass;
 	$obj->status = 404;
+	$obj->url = $url;
+	
 	if (isset($response_obj->error))
 	{
 		$obj->error = $response_obj->error;
 	}
 	else
 	{
-		if (isset($response_obj->thumbnail))
+		if (count($response_obj->rows) == 0)
 		{
-			$obj->thumbnail_url = 'id/' . $id . '/thumbnail/image';
+			$obj->error = 'Not found';
+		}
+		else
+		{	
 			$obj->status = 200;
+			$obj->years = array();
+			foreach ($response_obj->rows as $row)
+			{
+				$obj->years[$row->key[1]] = $row->value; 
+			}
 		}
 	}
-
-
-	if ($status == 404)
-	{
-		header('HTTP/1.1 404 Not Found');
-	}	
 	
 	api_output($obj, $callback);
 }
-*/
 
+
+//--------------------------------------------------------------------------------------------------
+// Display taxon thumbnail (currently EOL only)
+function taxon_thumbnail ($id, $callback = '')
+{	
+	if (preg_match('/eol\/(?<id>\d+)$/', $id, $m))
+	{
+		$eol_id = $m['id'];
+		
+		$dir = floor($eol_id / 1000);
+		
+		$dir = dirname(__FILE__) . '/tmp/' . $dir;
+		if (!file_exists($dir))
+		{
+			$oldumask = umask(0); 
+			mkdir($dir, 0777);
+			umask($oldumask);
+		}		
+
+		$image_filename = $dir . '/' . $eol_id . '.jpg';
+		
+		if (!file_exists($image_filename))
+		{
+			// go fetch image
+			$image_url = ''; 
+			$url = 'http://eol.org/api/pages/1.0/' . $eol_id . '.json?images=2&details=true';
+			
+			$json = get($url);
+			
+			//echo $json;
+			
+			if ($json != '')
+			{
+				$obj = json_decode($json);
+				
+				foreach ($obj->dataObjects as $dataObject)
+				{
+					if (($dataObject->dataType == 'http://purl.org/dc/dcmitype/StillImage') && ($image_url == ''))
+					{
+						if (isset($dataObject->eolThumbnailURL))
+						{
+							$image_url = $dataObject->eolThumbnailURL;
+							
+							// hack to get 88x88 image
+							
+							if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
+							{
+								$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
+							}
+							
+							//echo $image_url . "\n";
+							
+							
+						}
+					}
+				}
+				
+				if ($image_url != '')
+				{
+					// grab image and cache it
+					
+					$image = get($image_url);
+					if ($image)
+					{
+						file_put_contents($image_filename, $image);
+					}
+		
+					
+					
+				}
+			}
+		}
+		
+		if (file_exists($image_filename))
+		{
+			$image = file_get_contents($image_filename);
+			header("Content-type: image/jpeg");
+			echo $image;
+		}
+		else
+		{
+			$image = file_get_contents(dirname(__FILE__) . '/images/88x88.png');
+			header("Content-type: image/png");
+			echo $image;
+		}
+
+	}
+}
 
 //--------------------------------------------------------------------------------------------------
 function main()
@@ -248,6 +307,19 @@ function main()
 				publications_with_name($id, $fields, $callback);
 				$handled = true;
 			}
+			
+			if (isset($_GET['timeline']))
+			{	
+				taxon_timeline($id, $callback);
+				$handled = true;
+			}
+
+			if (isset($_GET['thumbnail']))
+			{	
+				taxon_thumbnail($id, $callback);
+				$handled = true;
+			}
+			
 				
 			/*
 			// Thumbnail image 
@@ -270,6 +342,7 @@ function main()
 			
 			*/			
 	
+			// Default is just show this object.
 			if (!$handled)
 			{
 				display_concept($id, $callback);
