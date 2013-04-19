@@ -182,6 +182,39 @@ function taxon_timeline ($id, $callback = '')
 // Display taxon thumbnail (currently EOL only)
 function taxon_thumbnail ($id, $callback = '')
 {	
+	global $config;
+	global $couch;
+	
+	$has_image = false;
+
+	// For GBIF try and grab EOL identifier
+	if (preg_match('/gbif\/(?<id>\d+)$/', $id, $m))
+	{
+		// Get mapping to EOL...
+		// grab JSON from CouchDB
+		$couch_id = $id;
+			
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+		
+		$response_obj = json_decode($resp);
+		
+		if (isset($response_obj->error))
+		{
+		}
+		else
+		{
+			$obj = json_decode($resp);
+			
+			if (isset($obj->identifier))
+			{
+				if (isset($obj->identifier->eol))
+				{
+					$id = 'eol/' . $obj->identifier->eol[0];
+				}
+			}
+		}
+	}
+
 	if (preg_match('/eol\/(?<id>\d+)$/', $id, $m))
 	{
 		$eol_id = $m['id'];
@@ -252,18 +285,20 @@ function taxon_thumbnail ($id, $callback = '')
 		
 		if (file_exists($image_filename))
 		{
+			$has_image = true;
 			$image = file_get_contents($image_filename);
 			header("Content-type: image/jpeg");
 			echo $image;
 		}
-		else
-		{
-			$image = file_get_contents(dirname(__FILE__) . '/images/88x88.png');
-			header("Content-type: image/png");
-			echo $image;
-		}
-
 	}
+	
+	if (!$has_image)
+	{
+		$image = file_get_contents(dirname(__FILE__) . '/images/88x88.png');
+		header("Content-type: image/png");
+		echo $image;
+	}
+	
 }
 
 //--------------------------------------------------------------------------------------------------

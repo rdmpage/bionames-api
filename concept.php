@@ -302,6 +302,56 @@ svg .brush .resize path {
 				});
 		}
 		
+		// "Wall"
+		function show_wall(concept)
+		{
+			$("#wall").html("");
+			
+			//alert("http://bionames.org/bionames-api/cell.php?id=" + concept + "&callback=?");
+			
+			$.getJSON("http://bionames.org/bionames-api/cell.php?id=" + concept + "&callback=?",
+				function(data){
+					if (data.status == 200)
+					{
+						var html = '';
+						
+						html += '<div>';
+						
+						for (var i in data.cells) {
+							var count = 0;
+						   	for (var j in data.cells[i].ids) {
+						    	html += '<div style="display:block;float:left;width:60px;height:80px;margin:4px;background-color:#EEEEEE;">';
+						      
+						      	// text
+							  	html += '<div style="overflow:hidden;text-overflow:ellipsis;background-color:#CCCCCC;color:white;font-size:12px;height:16px;">';
+								if (count == 0) {
+									html += data.cells[i].label;
+								} else {
+									html += '&nbsp;';
+								}								
+								html += '</div>';
+								
+								// image
+								html += '<div style="text-align:center">';
+								html += '<a href="concept.php?id=gbif/' + data.cells[i].ids[j] + '">';
+								html += '<img src="http://bionames.org/bionames-api/taxon/gbif/' + data.cells[i].ids[j] + '/thumbnail" width="60"/></div>';								
+								html += '</a>';
+								html += '</div>';
+								
+								html += '</div>';
+								
+								count++;
+							}
+						}
+						html += '<div style="clear: both"></div> <!-- This goes after the last floated element - no floating elements are allowed on either side of this. -->';	
+						html += '</div>';
+						
+						$("#wall").html(html);
+					}
+				});
+		}
+		
+		
 		// Publications with a timeline
 		function show_publications(name)
 		{
@@ -411,18 +461,21 @@ svg .brush .resize path {
 	<h1>Taxon concept</h1>
 	
 	<div style="position:relative;">
-		<div style="float:right;top:0px;width:400px;border-left:1px rgb(128,128,128) dotted;padding-left:10px;">
+		<div style="float:right;top:0px;width:400px;height:auto;border-left:1px rgb(128,128,128) dotted;padding-left:10px;">
 			<div id="eol"></div>
 			<div id="chart" style="width:300px;height:100px;">[chart]</div>	
 			<h3>Classification</h3>
 			<div id="classification">[classification]</div>
 			<h3>Info</h3>
-			<div id="info">[info]</div>		
+			<div id="info">[info]</div>	
 		</div>
 	
 		<h2 id="name">[name]</h2>
 		
 		<div id="namemap">Names</div>
+		
+		<h3>Wall</h3>
+		<div id="wall">[wall]</div>		
 		
 		<h3>Publications</h3>
 		<div id="publications">[publications]</div>
@@ -438,6 +491,7 @@ svg .brush .resize path {
 		var concept = "<?php echo $id;?>";
 		show_classification(concept);
 		show_timeline(concept);
+		show_wall(concept);
 	</script>
 
 
