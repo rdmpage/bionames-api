@@ -96,6 +96,8 @@ function api_simplify_document ($document, $fields=array('all'))
 	{		
 		$doc = new stdclass;
 		
+		$doc->_id = $document->_id; // ensure
+		
 		// simplify
 		foreach ($document as $key => $value)
 		{

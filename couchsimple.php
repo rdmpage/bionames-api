@@ -110,12 +110,12 @@ class CouchSimple
 					$obj->_rev = $rev;
 					$resp = $this->send("PUT", "/" . $this->database . "/" . urlencode($id), json_encode($obj));
 				}
-				var_dump($resp);
+				//var_dump($resp);
 	
 			default:
 				break;			
 		}
-		var_dump($resp);
+		//var_dump($resp);
      }
  }
 

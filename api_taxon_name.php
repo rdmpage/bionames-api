@@ -301,7 +301,52 @@ function name_suggest($name, $limit = 5, $callback = '')
 }
 
 //--------------------------------------------------------------------------------------------------
-// Nmaes that are "related" e.g. possible synonyms
+// Names that share same epithet and author (handy for searching for possible synonyms)
+function name_same_epithet_author($epithet, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	$url = "/_design/taxonName/_view/epithet_author?key=" . urlencode('"' . $epithet . '"');
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	//echo $resp;
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+			$obj->error = 'Not found';
+		}
+		else
+		{	
+			$obj->status = 200;
+			$obj->names = array();
+			foreach ($response_obj->rows as $row)
+			{
+				$obj->names[] = $row->value;
+			}
+			
+			$obj->names = array_values(array_unique($obj->names));
+		}
+	}
+	
+	api_output($obj, $callback);
+}
+
+//--------------------------------------------------------------------------------------------------
+// Names that are "related" e.g. possible synonyms
 function name_related($name, $callback = '')
 {
 	global $config;
@@ -382,6 +427,49 @@ function name_related($name, $callback = '')
 }
 
 
+//--------------------------------------------------------------------------------------------------
+// Return taxon concepts that include this name
+function name_to_concept($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	$url = "/_design/classification/_view/name_to_concept?key=" . urlencode('"' . $id . '"');
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	//echo $resp;
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+			$obj->error = 'Not found';
+		}
+		else
+		{	
+			$obj->status = 200;
+			$obj->concepts = array();
+			foreach ($response_obj->rows as $row)
+			{
+				$obj->concepts[] = $row->value;
+			}
+		}
+	}
+	
+	api_output($obj, $callback);
+}
+
 
 //--------------------------------------------------------------------------------------------------
 function main()
@@ -412,6 +500,25 @@ function main()
 	
 	if (!$handled)
 	{
+	
+	
+		// Queries based on identifier
+		if (isset($_GET['id']))
+		{	
+			$id = $_GET['id'];
+
+			if (!$handled)
+			{
+				if (isset($_GET['concepts']))
+				{	
+					name_to_concept($id, $callback);
+					$handled = true;
+				}
+			}
+		}
+			
+
+		// Queries based on name string	
 		if (isset($_GET['name']))
 		{	
 			$name = $_GET['name'];
@@ -447,8 +554,15 @@ function main()
 					$handled = true;
 				}
 			}
-			
-			
+
+			if (!$handled)
+			{
+				if (isset($_GET['epithet']))
+				{	
+					name_same_epithet_author($name, $callback);
+					$handled = true;
+				}
+			}
 			
 			if (!$handled)
 			{

@@ -1,89 +1,105 @@
-function display_reference(id, reference)
+function display_reference(data)
 {
 	var html = "";
 	
-	html += "<table class=\"table\">";
-	html += "<tbody>";
-	html += "<tr>";
-	html += "<td style=\"text-align:center;width:100px;\">";
-	if (reference.thumbnail)
+	html += "<div class=\"pub\">";
+	
+	if (data.thumbnail)
 	{
-		html += "<img style=\"box-shadow:2px 2px 2px #ccc;width:64px;border:1px solid rgb(228,228,228);\" src=\"" + reference.thumbnail + "\">";
+		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '"/></div>';
+//		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '"/></div>';
+	}					
+	if (data.thumbnail_url)
+	{
+		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '"/></div>';
+//		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '"/></div>';
+	}					
+	
+	if (data.title)
+	{
+		html += '<div class="title">' 
+			+ '<a href="mockup_publication.php?id=' + data._id + '">'
+			+ data.title 
+			+ '</a>'
+			+ '</div>';
+		//document.title = data.title;
 	}
-	html += "</td>";
+						
+	html += '<div class="meta">';
 	
-	html += "<td class=\"item-data\">";
-
-	html += "<p>";
-	html += "<a href=\"id/" + reference._id + "\">";
-	html += reference.title;
-	html += "</a>";
-	html += "</p>";
 	
-	html += "<div>";
-	
-	if (reference.author)
+	html += '<div>';
+	if (data.author)
 	{
-		var authors = [];
-		
-		for (var j in reference.author)
+		html += 'by ';
+		for (var j in data.author)
 		{
-			if (reference.author[j].name)
-			{
-				authors.push(reference.author[j].name);
-			}
+			html += data.author[j].name + ' ';
 		}
-		html += "by " + authors.join(", ") + "<br />";
-		
 	}
+	html += '</div>';
 	
-	if (reference.journal)
+	html += '<div>';
+	if (data.journal)
 	{
-		html += "Published in " + reference.journal.name;
-		if (reference.journal.pages)
+		if (data.journal.name)
 		{
-			html += " pages <b>" + reference.journal.pages.replace(/--/, "-") + "</b>";
+			html += '<span class="journal">' + data.journal.name + '</span>';
 		}
-		html += "<br />";
-	}
-	
-	html += "</div>";
-	
-	html += "<span class=\"Z3988\" title=\"" + referenceToOpenUrl(reference) + "\"></span>";								
-	
-	if (reference.identifier)
-	{
-		html += "<div class=\"item-links\">";
-		for (var j in reference.identifier)
+		if (data.journal.volume)
 		{
-			switch (reference.identifier[j].type)
+			html += ' ' + data.journal.volume;
+		}
+		if (data.journal.issue)
+		{
+			html += '(' + data.journal.issue + ')';
+		}
+		if (data.journal.pages)
+		{
+			html += ' pages ' + data.journal.pages;
+		}
+	}
+	if (data.year)
+	{
+		html += ' (' + data.year + ')';
+	}
+	html += '</div>';
+	
+	if (data.identifier)
+	{
+		html += '<ul>';
+		for (var j in data.identifier)
+		{
+			switch (data.identifier[j].type)
 			{
 				case "biostor":
-					html += "<a href=\"http://biostor.org/reference/" + reference.identifier[j].id + "\" target=\"_new\"><i class=\"icon-external-link\"></i>biostor.org/reference/" + reference.identifier[j].id + "</a></li>";
+					html += "<li><a href=\"http://biostor.org/reference/" + data.identifier[j].id + "\" target=\"_new\">biostor.org/reference/" + data.identifier[j].id + "</a></li>";
+					break;
+
+				case "cinii":
+					html += "<li><a href=\"http://ci.nii.ac.jp/naid/" + data.identifier[j].id + "\" target=\"_new\">ci.nii.ac.jp/naid/" + data.identifier[j].id + "</a></li>";
 					break;
 					
 				case "doi":
-					html += "<a href=\"http://dx.doi.org/" + reference.identifier[j].id + "\" target=\"_new\"><i class=\"icon-external-link\"></i>dx.doi.org/" + reference.identifier[j].id + "</a></li>";
+					html += "<li><a href=\"http://dx.doi.org/" + data.identifier[j].id + "\" target=\"_new\">dx.doi.org/" + data.identifier[j].id + "</a></li>";
 					break;
 
 				case "handle":
-					html += "<a href=\"http://hdl.handle.net/" + reference.identifier[j].id + "\" target=\"_new\"><i class=\"icon-external-link\"></i>hdl.handle.net/" + reference.identifier[j].id + "</a></li>";
+					html += "<li><a href=\"http://hdl.handle.net/" + data.identifier[j].id + "\" target=\"_new\">hdl.handle.net/" + data.identifier[j].id + "</a></li>";
+					break;
+
+				case "jstor":
+					html += "<li><a href=\"http://www.jstor.org/stable" + data.identifier[j].id + "\" target=\"_new\">www.jstor.org/stable/" + data.identifier[j].id + "</a></li>";
 					break;
 					
 				default:
 					break;
 			}
-		}
-		html += "</div>";
+		}	
+		html += '</ul>';
 	}
-	
-	
-	
-	html += "</td>";
-	html += "</tr>";	
-	html += "</tbody>";
-	html += "</table>";
+	html += "<span class=\"Z3988\" title=\"" + referenceToOpenUrl(data) + "\"></span>";								
+	html += '</div>';
 
-	//$("#" + id).html(html);
-	$(html).appendTo("#" + id);
+	return html;
 }			

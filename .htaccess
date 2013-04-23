@@ -36,6 +36,7 @@ RewriteRule ^id/(\w+)/(.*)   api_id.php?id=$2&namespace=$1  [QSA,L]
 
 RewriteRule ^id/(.*)   api_id.php?id=$1  [QSA,L]
 
+
 #---------------------------------------------------------------------------------------------------
 # Authors
 
@@ -53,6 +54,12 @@ RewriteRule ^authors/lastname/(.*)   api_author.php?lastname=$1  [QSA,L]
 #---------------------------------------------------------------------------------------------------
 # Taxon name
 
+# Concepts [note that this requires name GUID as parameter, not name string]
+RewriteRule ^name/(.*)/concepts   api_taxon_name.php?id=$1&concepts [QSA,L]
+
+# Epithet
+RewriteRule ^name/(.*)/epithet   api_taxon_name.php?name=$1&epithet  [QSA,L]
+
 # Related names
 RewriteRule ^name/(.*)/related   api_taxon_name.php?name=$1&related  [QSA,L]
 
@@ -67,6 +74,12 @@ RewriteRule ^name/(.*)/publications   api_taxon_name.php?name=$1&publications  [
 
 # Return clusters with this name
 RewriteRule ^name/(.*)   api_taxon_name.php?name=$1  [QSA,L]
+
+#---------------------------------------------------------------------------------------------------
+# Publication
+
+RewriteRule ^publication/(.*)/names  api_publication.php?id=$1&names   [QSA,L]
+
 
 #---------------------------------------------------------------------------------------------------
 # Taxon concept (classification)

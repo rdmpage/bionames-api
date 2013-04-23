@@ -275,9 +275,40 @@ function taxon_thumbnail ($id, $callback = '')
 					if ($image)
 					{
 						file_put_contents($image_filename, $image);
-					}
-		
-					
+						
+						/*
+						// store in CouchDB
+						$obj = new stdclass;
+						$obj->_id = 'eol/' . $eol_id;
+						
+						$image_type = exif_imagetype($image_filename);
+						switch ($image_type)
+						{
+							case IMAGETYPE_GIF:
+								$mime_type = 'image/gif';
+								break;
+							case IMAGETYPE_JPEG:
+								$mime_type = 'image/jpg';
+								break;
+							case IMAGETYPE_PNG:
+								$mime_type = 'image/png';
+								break;
+							case IMAGETYPE_TIFF_II:
+							case IMAGETYPE_TIFF_MM:
+								$mime_type = 'image/tif';
+								break;
+							default:
+								$mime_type = 'image/gif';
+								break;
+						}
+						
+						$image = file_get_contents($image_filename);
+						$base64 = chunk_split(base64_encode($image));
+						$obj->thumbnail = 'data:' . $mime_type . ';base64,' . $base64;				
+						
+						$couch->add_update_or_delete_document($obj,  $obj->_id);
+						*/
+					}					
 					
 				}
 			}
