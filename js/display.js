@@ -4,16 +4,25 @@ function display_reference(data)
 	
 	html += "<div class=\"pub\">";
 	
+	var has_thumbnail = false;
 	if (data.thumbnail)
 	{
-		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '"/></div>';
+		has_thumbnail = true;
+		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" /></div>';
 //		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '"/></div>';
 	}					
 	if (data.thumbnail_url)
 	{
-		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '"/></div>';
-//		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '"/></div>';
+		has_thumbnail = true;
+		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '" /></div>';
+//		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '" width="60"/></div>';
 	}					
+	
+	if (!has_thumbnail)
+	{
+		html += '<div class="thumbnail"></div>';
+	}
+	
 	
 	if (data.title)
 	{
@@ -34,7 +43,10 @@ function display_reference(data)
 		html += 'by ';
 		for (var j in data.author)
 		{
-			html += data.author[j].name + ' ';
+			html += '<a href="mockup_author.php?name=' + data.author[j].name + '">'
+			html += data.author[j].name;
+			html += '</a>';
+			html += '; ';
 		}
 	}
 	html += '</div>';
@@ -98,7 +110,7 @@ function display_reference(data)
 		}	
 		html += '</ul>';
 	}
-	html += "<span class=\"Z3988\" title=\"" + referenceToOpenUrl(data) + "\"></span>";								
+	html += "<span class=\"Z3988\" title=\"" + referenceToOpenUrl(data) + "\"></span>";		
 	html += '</div>';
 
 	return html;

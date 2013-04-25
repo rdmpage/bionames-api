@@ -82,16 +82,29 @@ if (isset($_GET['name']))
 </head>
 <body>
 
-<div style="top:0px;height:40px;">&nbsp;</div>
+<div style="top:0px;height:40px;">
+	<div style="float:right;">
+		<a href="mockup_index.php">Home</a>
+		&nbsp;
+		<a href="mockup_dashboard.php">Dashboard</a>
+	</div>
+
+	<form method="GET" action="mockup_search.php">
+		<input class="search-input" name="q" placeholder="Search" style="width: 22em; padding-left: 2em;" type="text" value="">
+		<input type="submit" value="Search">
+	</form>
+</div>
+
 <div style="top:0px;float:right;width:280px;padding:10px;">
 	<div id="metadata">Metadata</div>
 	<div id="coauthors">Coauthors</div>
-	<div id="timeline">Timeline</div>
 	<div id="taxa">Names published</div>
-	<div id="related">Related names</div>
 </div>
 
 	<div id="title" style="font-size:200%;line-height:150%"></div>
+
+	<div style="border:1px solid rgb(128,128,128);height:60px;width:400px;">timeline thingy</div>
+
 	<div id="publications">Publications</div>
 
 
@@ -193,7 +206,7 @@ if (isset($_GET['name']))
 						for (var i in data.publications)
 						{
 							var html = $('#publications').html();
-							$('#publications').html(html + display_reference(data.publications[i]));
+							$('#publications').html(html + display_reference(data.publications[i]) + '<br/>');
 						}
 					}
 				});

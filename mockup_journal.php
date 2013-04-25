@@ -41,6 +41,12 @@ if (isset($_GET['journal']))
 	  color: #2e3033;
 	}
 	
+	
+	.search-input {
+		font-size:24px;
+	}
+	
+	
 	.pub .thumbnail {
 	  float: left;
 	  width: 40px;
@@ -91,7 +97,19 @@ if (isset($_GET['journal']))
 </head>
 <body>
 
-<div style="top:0px;height:40px;">&nbsp;</div>
+<div style="top:0px;height:40px;">
+	<div style="float:right;">
+		<a href="mockup_index.php">Home</a>
+		&nbsp;
+		<a href="mockup_dashboard.php">Dashboard</a>
+	</div>
+
+	<form method="GET" action="mockup_search.php">
+		<input class="search-input" name="q" placeholder="Search" style="width: 22em; padding-left: 2em;" type="text" value="">
+		<input type="submit" value="Search">
+	</form>
+</div>
+
 <div style="top:0px;float:right;width:280px;padding:10px;">
 	<div id="metadata">Metadata</div>
 	<div id="identifiers">Identifiers</div>
@@ -353,6 +371,36 @@ if (isset($_GET['journal']))
 						}
 						html += '<div style="clear:both;"></div>';
 						html += '</div>';
+
+						html += '<h3>Links</h3>';
+						html += '<div style="width:200px;position:relative;">';
+						for (var i in data.years)
+						{
+							for (j in data.years[i])
+							{
+								var colour = 'rgb(228,228,228)';
+								for (k in data.years[i][j])
+								{
+									if (data.years[i][j][k].indexOf('LINK') != -1)
+									{
+										colour = 'orange';
+									}
+									if (data.years[i][j][k].indexOf('PDF') != -1)
+									{
+										colour = 'green';
+									}
+								}
+								html += '<div style="float:left;width:20px;height:20px;">';
+								html += '<a href="mockup_publication.php?id=' + j + '">';
+								html += '<div style="width:16px;height:16px;background-color:' + colour + ';margin:2px;"></div>';
+								html += '</a>';
+								html += '</div>';
+							}
+						}
+						html += '<div style="clear:both;"></div>';
+						html += '</div>';
+
+
 						
 					}
 					$("#identifiers").html(html);

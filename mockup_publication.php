@@ -26,6 +26,11 @@ $id = $_GET['id'];
 	  color: #2e3033;
 	}
 	
+	
+	.search-input {
+		font-size:24px;
+	}
+		
 	.pub .thumbnail {
 	  float: left;
 	  width: 40px;
@@ -89,7 +94,23 @@ $id = $_GET['id'];
 </head>
 <body onload="$(window).resize()">
 
-<div style="top:0px;height:40px;">&nbsp;</div>
+<div style="top:0px;height:40px;">
+	<div style="float:right;">
+		<a href="mockup_index.php">Home</a>
+		&nbsp;
+		<a href="mockup_dashboard.php">Dashboard</a>
+	</div>
+
+	<form method="GET" action="mockup_search.php">
+		<input class="search-input" name="q" placeholder="Search" style="width: 22em; padding-left: 2em;" type="text" value="">
+		<input type="submit" value="Search">
+	</form>
+</div>
+
+<div style="top:40px;height:40px;background-color:rgb(240,240,240);width:100%;">
+	<span id="title" style="font-size:150%;font-weight-bold;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;"></span>
+</div>
+
 <div style="top:0px;float:right;width:280px;padding:10px;">
 	<div id="metadata"></div>
 	<h3>❝Cite</h3>
@@ -126,6 +147,8 @@ $id = $_GET['id'];
 					{
 						html += '<div class="title">' + data.title + '</div>';
 						document.title = data.title;
+						
+						$('#title').html(data.title);
 					}
 										
 					html += '<div class="meta">';
@@ -303,7 +326,7 @@ $id = $_GET['id'];
 							var html = '';
 							html += '<div style="text-align:center;">';
 							html += '<div>∅ Restricted access digital version available</div>';
-							html += '<img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" width="400" />';
+							html += '<img style="border:1px solid rgb(128,128,128);padding:10px;" src="' + data.thumbnail + '" width="400" />';
 							html += '</div>';
 							$('#doc').html(html);
 						}
