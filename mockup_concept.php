@@ -10,8 +10,26 @@ $id = $_GET['id'];
 	<title>BioNames API Demo: Concept</title>
 	
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
+
 	
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+	<!-- Google Maps -->
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	
+	<script>
+    	var map; // Google map
+    
+      function initialize() {
+        var myOptions = {
+        	center: new google.maps.LatLng(0, 0),
+          	zoom: 2,
+           mapTypeId: google.maps.MapTypeId.TERRAIN,
+           streetViewControl: false
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+      }
+	</script>	
 	
 	
 	<style type="text/css" title="text/css">
@@ -136,6 +154,47 @@ $id = $_GET['id'];
         			}
         		});
         }
+        
+
+      function gbif_map(id)
+      {
+      	
+      	$.getJSON("get_gbif_geojson.php?id=" + id + "&callback=?",
+			function(geojson){
+
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < geojson.coordinates.length; i++) {
+          var coords = geojson.coordinates[i];
+          var cell = coords[0];
+          
+			var square = [
+				new google.maps.LatLng(cell[0][1],cell[0][0]),
+				new google.maps.LatLng(cell[1][1],cell[1][0]),
+				new google.maps.LatLng(cell[2][1],cell[2][0]),
+				new google.maps.LatLng(cell[3][1],cell[3][0]),
+				new google.maps.LatLng(cell[0][1],cell[0][0])
+				];
+			bounds.extend(square[0]);
+			bounds.extend(square[2]);
+			
+			var polygon = new google.maps.Polygon({
+				paths: square,
+				strokeColor: 'blue',
+				strokeOpacity: 0.7,
+				strokeWeight: 1.0,
+				fillColor: 'blue',
+				fillOpacity: 0.7,
+				map:map
+				});
+        }
+        map.fitBounds(bounds); 
+
+						
+
+			}
+		);
+      
+      }        
 	
 	
 		function show_classification(concept)
@@ -201,8 +260,13 @@ $id = $_GET['id'];
 						$("#classification").html(html);
 						
 						// Classification-specific info
+						/*
 						html = '<img src="http://data.gbif.org/species/' + data.sourceIdentifier + '/overviewMap.png" width="360"/>';
 						$("#info").html(html);
+						*/
+						
+						gbif_map(data.sourceIdentifier);
+						
 						
 						// Accepted name
 
@@ -405,7 +469,7 @@ $id = $_GET['id'];
 	
 	
 </head>
-<body>
+<body onload="initialize()">
 
 <div style="top:0px;height:40px;">
 	<div style="float:right;">
@@ -433,7 +497,8 @@ $id = $_GET['id'];
 		<div id="classification">[classification]</div>
 		
 			<h3>Info</h3>
-			<div id="info">[info]</div>	
+			<!--<div id="info">[info]</div>	-->
+			<div id="map_canvas" style="width:400px; height:200px;float:right;top:0px;"></div>  
 		
 		</div>
 	
