@@ -54,8 +54,8 @@
 
 
 
-<div id="issn" style="float:right;margin:20px;width:500px;">Journals</div>
-<div id="publishers" style="float:right;margin:20px;width:500px;">Journals</div>
+<div id="issn" style="float:right;margin:20px;width:400px;">Journals</div>
+<div id="publishers" style="float:right;margin:20px;width:400px;">Journals</div>
 <div id="identifiers" style="float:right;margin:20px;">Identifiers</div>
 <div id="links" style="float:right;margin:20px;">Links</div>
 <div id="documents" style="float:right;margin:20px;">Documents</div>

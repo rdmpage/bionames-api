@@ -15,7 +15,7 @@ $id = $_GET['id'];
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
-	
+		
 	<style type="text/css" title="text/css">
 			
 	body {
