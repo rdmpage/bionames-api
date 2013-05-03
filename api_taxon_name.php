@@ -388,9 +388,8 @@ function name_related($name, $callback = '')
 		}
 	}
 	
-	// Classifications
-	
-	$url = "/_design/classification/_view/gbif_synonyms?key=" . urlencode(json_encode($name));
+	// Names that one or more classifications say are synonyms
+	$url = "/_design/classification/_view/synonyms?key=" . urlencode(json_encode($name));
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -469,6 +468,62 @@ function name_to_concept($id, $callback = '')
 	
 	api_output($obj, $callback);
 }
+
+//--------------------------------------------------------------------------------------------------
+// Return taxon concepts that include this name
+function name_did_you_mean($name, $callback = '')
+{
+	global $config;
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	
+	$cmd = $config['simstring'] . ' -d ' . $config['simstring_db'] . ' -t 0.8 cosine';
+	
+	$descriptorspec = array(
+	   0 => array("pipe", "r"),
+	   1 => array("pipe", "w")
+	);
+	
+	$process = proc_open($cmd, $descriptorspec, $pipes);
+	
+	if (is_resource($process)) {
+		fwrite($pipes[0], $name . "\n"); // NOTE: add \n to end of string!
+		fclose($pipes[0]);
+	
+		$output = stream_get_contents($pipes[1]);
+		fclose($pipes[1]);
+	
+		$return_value = proc_close($process);
+		
+		
+		if ($return_value == 0)
+		{
+			$obj->status = 200;
+			
+			// clean
+			$lines = explode("\n", $output);
+			
+			$hits = array();
+			foreach ($lines as $line)
+			{
+				if (preg_match('/^\s+/', $line))
+				{
+					$hits[] = trim($line);
+				}
+			}
+			$hits = array_unique($hits);
+			
+			//print_r($hits);
+			//print_r(array($name));
+			
+			
+			$obj->names = array_values(array_diff($hits, array($name)));
+		}
+	}
+	api_output($obj, $callback);
+}
+
 
 
 //--------------------------------------------------------------------------------------------------
@@ -563,6 +618,16 @@ function main()
 					$handled = true;
 				}
 			}
+			
+			if (!$handled)
+			{
+				if (isset($_GET['didyoumean']))
+				{	
+					name_did_you_mean($name, $callback);
+					$handled = true;
+				}
+			}
+			
 			
 			if (!$handled)
 			{

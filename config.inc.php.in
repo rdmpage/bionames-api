@@ -50,6 +50,9 @@ if ($config['proxy_name'] != '')
 	}
 }
 
+// SimString----------------------------------------------------------------------------------------
+$config['simstring'] = '/usr/local/bin/simstring';
+$config['simstring_db'] = dirname(__FILE__) . '/db/all_names.db';
 
 
 	

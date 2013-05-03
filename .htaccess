@@ -27,6 +27,7 @@ RewriteRule ^id/(.*)/thumbnail   api_id.php?id=$1&thumbnail  [QSA,L]
 RewriteRule ^id/(biostor/\d+)   api_id.php?id=$1  [QSA,L]
 RewriteRule ^id/(cluster/\d+)   api_id.php?id=$1  [QSA,L]
 RewriteRule ^id/(gbif/\d+)   	api_id.php?id=$1  [QSA,L]
+RewriteRule ^id/(ncbi/\d+)   	api_id.php?id=$1  [QSA,L]
 
 RewriteRule ^id/(\w+)/count   api_id.php?namespace=$1&count  [QSA,L]
 
@@ -53,6 +54,9 @@ RewriteRule ^authors/lastname/(.*)   api_author.php?lastname=$1  [QSA,L]
 
 #---------------------------------------------------------------------------------------------------
 # Taxon name
+
+# Return names that are like this name ("did you mean")
+RewriteRule ^name/(.*)/didyoumean   api_taxon_name.php?name=$1&didyoumean  [QSA,L]
 
 # Concepts [note that this requires name GUID as parameter, not name string]
 RewriteRule ^name/(.*)/concepts   api_taxon_name.php?id=$1&concepts [QSA,L]

@@ -3,3 +3,8 @@ config.inc.php
 
 # Temporary image files
 tmp/
+
+# Did you mean database
+db/*.db
+db/*.cdb
+db/*.txt
