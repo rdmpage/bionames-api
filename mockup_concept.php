@@ -212,6 +212,22 @@ $id = $_GET['id'];
 						sourcePrefix['http://ecat-dev.gbif.org/checklist/1'] = 'gbif';
 						sourcePrefix['http://www.ncbi.nlm.nih.gov/taxonomy'] = 'ncbi';
 						
+						// logo
+						switch (sourcePrefix[data.source])
+						{
+							case 'gbif':
+								$('#logo').attr('src', 'images/logo_leaf.gif');
+								break;
+								
+							case 'ncbi':
+								$('#logo').attr('src','images/ncbi-twitter.jpg');
+								break;
+								
+							default:
+								break;
+						}
+								
+						
 						
 						// Classification (nodes immediately above and below)	
 						html += '<ul class="classification">';
@@ -265,7 +281,19 @@ $id = $_GET['id'];
 						$("#info").html(html);
 						*/
 						
-						gbif_map(data.sourceIdentifier);
+						switch (sourcePrefix[data.source])
+						{
+							case 'gbif':
+								gbif_map(data.sourceIdentifier);
+								break;
+								
+							case 'ncbi':
+								$('#map_canvas').hide();
+								break;
+								
+							default:
+								break;
+						}
 						
 						
 						// Accepted name
@@ -301,12 +329,23 @@ $id = $_GET['id'];
 						     for (var j in data.identifier.ion)
 						     {
 						     	html += '<li>';
-						     	html += '<span>';
+						     	html += '<span style="padding:2px;background-color:orange;-webkit-border-radius:4px;">';
 						     	html += '<a href="mockup_taxon_name.php?id=cluster/' + j + '">';
 						     	html += data.identifier.ion[j].nameComplete;
 						     	html += '</a>';
 						   	    html += '</span>';
-							  	html += '<ul>';
+						   	    
+						   	    // identifier
+						   	    
+						   	    html += '<ul>';
+						   	    html += '<li>';
+						   	    html += 'urn:lsid:organismnames.com:name:' + j;
+						   	    html += '</li>';
+						   	    html += '</ul>';
+						   	    
+						   	    
+						   	    // publication
+						   	    html += '<ul>';
 						     	if (data.identifier.ion[j].publication)
 						     	{
 						     		html += '<li>';
@@ -485,7 +524,9 @@ $id = $_GET['id'];
 </div>
 
 <div style="top:40px;height:40px;background-color:#66FF66;">
-<div style="float:right"><img src="images/logo_leaf.gif" height="40"/></div>
+<!-- <div style="float:right"><img src="images/logo_leaf.gif" height="40"/></div> -->
+<!--<div style="float:right"><img id="logo" src="images/ncbi-twitter.jpg" height="40"/></div> -->
+<div style="float:right"><img id="logo" src="" height="40"/></div>
 </div>
 
 	<div style="position:relative;">

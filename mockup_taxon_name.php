@@ -162,6 +162,7 @@ $id = $_GET['id'];
 							}
 						}
 						
+						show_related(data.nameComplete);
 						
 						
 						// Publications with this name string
@@ -242,6 +243,13 @@ $id = $_GET['id'];
 										html += '<div style="float:right;"><img src="images/logo_leaf.gif" width="48"/></div>';
 										html += '</div>';
 								}									
+
+								if (data.concepts[i].concept.match(/ncbi/))
+								{
+										html += '<div>' + 'According to NCBI';										
+										html += '<div style="float:right;"><img src="images/ncbi-twitter.jpg" width="48"/></div>';
+										html += '</div>';
+								}									
 								
 								if (data.concepts[i].eol)
 								{
@@ -312,6 +320,31 @@ $id = $_GET['id'];
 				});
 		}
 		
+		function show_related(name)
+		{
+			$("#related").html("");
+			
+			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/related?callback=?",
+				function(data){
+					if (data.status == 200)
+					{	
+						if (data.related.length > 0) {					
+							var html = '<h3>Related names</h3>';
+							html += '<div>';
+							for (var i in data.related)
+							{
+								var s = data.related[i];
+								html += '<a href="mockup_search.php?q=' + encodeURIComponent(s) + '">' + s + '</a>' + '<br />';
+							}
+							html += '</div>';
+							var current_html = $("#related").html();
+							$("#related").html(current_html + html);
+						}
+					}
+				});
+		}
+		
+		
 	</script>	
 </head>
 <body>
@@ -338,6 +371,7 @@ $id = $_GET['id'];
 	<p>Names with same epithet + author, names with same epithet that co-occur, names with same genus, any name we have evidence may be related.</p>
 	-->
 	<div id="concepts"></div>	
+	<div id="related"></div>
 	<div id="epithet"></div>
 	
 </div>
