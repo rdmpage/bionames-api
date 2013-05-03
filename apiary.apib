@@ -142,6 +142,17 @@ Taxon names
 The following is a section of resources related to taxonomic names
 --
 
+Get names that resemble this name (supports "did you mean" suggestions)
+GET /name/Dobsonia andersoni/didyoumean
+< 200
+< Content-Type: application/json
+{
+  "status": 200,
+  "names": [
+    "Dobsonia anderseni"
+  ]
+}
+
 Get information on a taxonomic name
 GET /name/Philautus acutirostris
 < 200
