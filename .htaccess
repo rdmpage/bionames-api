@@ -100,6 +100,8 @@ RewriteRule ^taxon/(.*)   api_concept.php?id=$1  [QSA,L]
 #---------------------------------------------------------------------------------------------------
 # Journals
 
+# ISSN
+
 # Identifiers for each article
 RewriteRule ^journals/issn/(.*)/articles/identifiers   api_journal.php?issn=$1&articles&identifiers  [QSA,L]
 
@@ -121,6 +123,26 @@ RewriteRule ^journals/issn/(.*)/geometry   api_journal.php?issn=$1&geometry [QSA
 # Journal with this ISSN
 RewriteRule ^journals/issn/([0-9]{4}[\-]?[0-9]{3}[0-9X])   api_journal.php?issn=$1  [QSA,L]
 
+# OCLC
+
+# Identifiers for each article
+RewriteRule ^journals/oclc/(.*)/articles/identifiers   api_journal.php?oclc=$1&articles&identifiers  [QSA,L]
+
+# Articles in a particular volume in a year
+RewriteRule ^journals/oclc/(.*)/volumes/(.*)/year/(.*)   api_journal.php?oclc=$1&volume=$2&year=$3  [QSA,L]
+
+# Volumes grouped by years
+RewriteRule ^journals/oclc/(.*)/volumes   api_journal.php?oclc=$1&volumes  [QSA,L]
+
+# Articles per journal
+RewriteRule ^journals/oclc/(.*)/count   api_journal.php?oclc=$1&count  [QSA,L]
+
+# Localities in articles in journal
+RewriteRule ^journals/oclc/(.*)/geometry   api_journal.php?oclc=$1&geometry [QSA,L]
+
+
+# Journal with this OCLC
+RewriteRule ^journals/oclc/(\d+)   api_journal.php?oclc=$1  [QSA,L]
 
 
 

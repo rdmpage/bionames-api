@@ -51,6 +51,8 @@
 <h2>Examples</h2>
 
 <div><a href="mockup_concept.php?id=gbif/2432854"><img src="http://bionames.org/bionames-api/taxon/eol/15607/thumbnail" />Pteropus</a></div>
+<div><a href="mockup_concept.php?id=gbif/2433223"><img src="http://bionames.org/bionames-api/taxon/eol/42168/thumbnail" />Lonchophylla</a></div>
+
 
 
 	<script src="js/jquery.js"></script>

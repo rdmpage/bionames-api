@@ -75,6 +75,70 @@ $id = $_GET['id'];
 	  font-style: italic;
 	}
 	
+	/* snippet */
+
+ .snippet {
+ 	border-bottom:1px solid rgb(192,192,192);
+	border-right:1px solid rgb(192,192,192);
+	border-top:1px solid rgb(228,228,228);
+	border-left:1px solid rgb(228,228,228);
+ 	padding:10px;
+ 	width:500px;
+ 	height:180px; /* hack */
+ }
+ 
+ 
+  .snippet a {
+	text-decoration: none;
+	color:inherit;
+ } 
+ 
+  .snippet .thumbnail_blank {
+ 	float: left;
+ 	width:88px;
+ 	height:100px;
+ 	border:1px solid rgb(228,228,228);
+ }
+ 
+ .snippet .thumbnail {
+ 	float: left;
+ 	width:88px;
+ 	border:1px solid rgb(228,228,228);
+ }
+ 
+ .snippet .details {
+ 	margin-left:100px;
+ } 
+ 
+ .snippet .title {
+ 	white-space: nowrap;
+ 	overflow:hidden;
+	text-overflow: ellipsis;
+	padding-bottom:0.5em;
+ 	
+ }
+ 
+ .snippet .metadata {
+ 	color: rgb(128,128,128);
+ 	font-size:80%;
+ } 
+ 
+ .snippet .journal {
+	font-style:italic;
+ }
+ 
+
+.snippet .identifier {
+ 	list-style-type: none; padding: 0px; margin: 0px;
+ } 
+ 
+ .snippet .identifier li {
+ 	color:black;
+ 	white-space: nowrap;
+ 	overflow:hidden;
+	text-overflow: ellipsis;
+ }	
+	
 	</style>
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -111,7 +175,7 @@ $id = $_GET['id'];
           					author = author.replace(/\(/, '');
           					author = author.replace(/\)/, '');  	
 							
-							html += '<span style="color:rgb(128,128,128);">This name was published by </span><b>' + author + '</b>' + ' ' + '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">more by this author...</a>';
+							html += '<span style="color:rgb(128,128,128);">This name was published by </span><b>' + author + '</b>' + ' ' + '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">more by this authority...</a>';
 						}
 						$("#cluster").html(html);
 						
@@ -123,7 +187,7 @@ $id = $_GET['id'];
 							if (data.names[i].publication)
 							{
 								var html = $("#cluster").html();
-								html += '<div style="padding-left:60px;"';
+								html += '<div ';
 								if (data.names[i].publishedInCitation) {
 									html += ' id="publication' + data.names[i].publishedInCitation + '"';
 								}								
@@ -188,7 +252,9 @@ $id = $_GET['id'];
 				$.getJSON("http://bionames.org/bionames-api/id/" + publishedInCitation[id] + "?callback=?",
 					function(data){
 						if (data.status == 200) {
-							$('#publication' + publishedInCitation[id]).html(display_reference(data));
+							//$('#publication' + publishedInCitation[id]).html(display_reference(data));
+							
+							show_snippet('publication' + publishedInCitation[id], data);
 						}
 					});
 			}
@@ -381,11 +447,14 @@ $id = $_GET['id'];
 
 	<h3>Publications mentioning this name</h3>
 	<div style="border:1px solid rgb(128,128,128);height:60px;width:400px;">timeline thingy</div>
-	<div id="publications">[list]</div>	
+	<div id="publications" style="width:400px;">[list]</div>
+	
+	
 
 	<script src="js/jquery.js"></script>
 	<script src="js/display.js"></script>
 	<script src="js/openurl.js"></script>
+	<script src="js/snippet.js"></script>
 
 
 <script type="text/javascript">

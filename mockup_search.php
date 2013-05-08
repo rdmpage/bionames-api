@@ -19,28 +19,11 @@ function search($query, $callback = '')
 	// clean
 	$query = str_replace(",", "", $query);
 	
-	
-	/*
-	$facets = array('name', 'canonicalName', 'title', 'publication');
-	//$facets = array('publication');
-	
-	$search_terms = array();
-	foreach ($facets as $key)
-	{
-		$search_terms[] =  $key . ':"' . addcslashes($query, '"') . '"';
-	}
-	
-	$url = "_design/search/_search/all?q=" . urlencode(join(" OR ", $search_terms)) . '&limit=100';
-	*/
 
-	$url = "_design/search/_view/short?key=" . urlencode(json_encode($query)) . '&limit=100';
+	$url = "_design/search/_view/short?key=" . urlencode(json_encode($query)) . '&limit=1000';
 
-	
-	//echo $url;
 		
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
-	
-	//echo $resp;
 	
 	$response_obj = json_decode($resp);
 	
@@ -69,13 +52,13 @@ function search($query, $callback = '')
 		{
 			$results->facets[$type] = array();
 		}
-		if (!isset($results->facets[$type][$row->id]))
+		if (!isset($results->facets[$type][$row->value->id]))
 		{
-			$results->facets[$type][$row->id] = new stdclass;
-			$results->facets[$type][$row->id]->count = 0;
-			$results->facets[$type][$row->id]->term = $row->value->term;
+			$results->facets[$type][$row->value->id] = new stdclass;
+			$results->facets[$type][$row->value->id]->count = 0;
+			$results->facets[$type][$row->value->id]->term = $row->value->term;
 		}
-		$results->facets[$type][$row->id]->count++;
+		$results->facets[$type][$row->value->id]->count++;
 	}
 	
 	/*
@@ -84,165 +67,131 @@ function search($query, $callback = '')
 	echo '</pre>';
 	*/
 	
+	$ids = array();
 	
-	// aggregate
-	/*
-	$results = new stdclass;
-	$results->facets = array();
+	$facet_key_order = array(
+		'nameCluster',
+
+		'taxonConcept',
+		'article',
+		'book',
+		'chapter',
+		'generic'
+	);
 	
-	foreach ($response_obj->rows as $row)
+//	foreach ($results->facets as $facet => $hits)
+
+	foreach ($facet_key_order as $facet)
 	{
-		if (isset($row->fields->type))
+		if (isset($results->facets[$facet]))
 		{
-			$type = $row->fields->type;
-			if (!isset($results->facets[$type]))
-			{
-				$results->facets[$type] = array();
-			}
-			$results->facets[$type][] = $row;
-		}
-	}
-	*/
-	//exit();
-	
-	
-	echo '<div style="width:600px;">';
-	foreach ($results->facets as $facet => $hits)
-	{
-		echo '<div style="font-size:150%">';
-		
-		switch ($facet)
-		{
-			case 'nameCluster':
-				echo 'Name';
-				break;
-				
-			case 'taxonConcept':
-				echo 'Taxon';
-				break;
-				
-			case 'article':
-				echo 'Publication';
-				break;
-			
-			default:
-				echo '[unknown]';
-				break;
-		}
-		
-		
-		echo '</div>';
-		
-		foreach ($hits as $id => $value)
-		{
-			echo '<div style="padding-bottom:20px;padding-left:20px;">';
-			echo '<div style="float:right;border:1px solid rgb(228,228,228);width:16px;font-size:100%;text-align:center;">»</div>';
-		
 			switch ($facet)
 			{
 				case 'nameCluster':
-					echo '<a href="mockup_taxon_name.php?id=' . $id . '">';
-					echo $value->term;
-					echo '</a>';					
+					echo '<div style="background-color:green;color:white;">Names</div>';
 					break;
 					
 				case 'taxonConcept':
-					echo '<a href="mockup_concept.php?id=' . $id . '">';
-					echo $value->term ;
-					echo '</a>';
+					echo '<div style="background-color:green;color:white;">Taxa</div>';
 					break;
-
+					
 				case 'article':
-					echo '<a href="mockup_publication.php?id=' . $id . '">';
-					echo $value->term ;
-					echo '</a>';
+					echo '<div style="background-color:green;color:white;">Articles(s)</div>';
 					break;
 					
-					
+				case 'book':
+				case 'chapter':
+				case 'generic':
+					echo '<div style="background-color:green;color:white;">Publications</div>';
+					break;
+				
 				default:
-					echo '[unknown]';
+					echo '[unknown] facet "' . $facet . '"';
 					break;
 			}
-			
-			echo '</div>';
-		}
 		
-		
-		/*
-		//$n = min(10, count($hits));
-		$n = count($hits);
-		for ($i=0;$i<$n;$i++)
-		{
-			echo '<div style="padding-bottom:20px;padding-left:20px;">';
-			echo '<div style="float:right;border:1px solid rgb(228,228,228);width:16px;font-size:100%;text-align:center;">»</div>';
 			
-			foreach ($hits[$i]->fields as $k => $v)
+			echo '<div >';
+			
+			$hits = $results->facets[$facet];
+			
+			foreach ($hits as $id => $value)
 			{
-				switch ($k)
+				$ids[] =  $id;
+	//			echo '<div style="padding-bottom:20px;padding-left:20px;">';
+	//			echo '<div style="float:right;border:1px solid rgb(228,228,228);width:16px;font-size:100%;text-align:center;">»</div>';
+	
+				//echo '<div style="float:right;">';
+				echo '<div style="float:left;">';
+			
+				switch ($facet)
 				{
-					case 'name':
-						echo '<a href="mockup_taxon_name.php?id=' . $hits[$i]->id . '">';
-						echo $v;
-						echo '</a>';
+					case 'nameCluster':
+						echo '<a href="mockup_taxon_name.php?id=' . $id . '">';
+						echo $value->term;
+						echo '</a>';					
+						echo ' [' . $value->count . ']';
 						break;
 						
-					case 'canonicalName':
-						echo $v;
+					case 'taxonConcept':
+						if (1)
+						{
+							echo '<div id="id' . str_replace("/", "_", $id) . '"></div>';
+						}
+						else
+						{
+							echo '<a href="mockup_concept.php?id=' . $id . '">';
+							echo $value->term ;
+							echo '</a>';
+							echo ' [' . $value->count . ']';
+						}
+						break;
+	
+					case 'article':
+					case 'book':
+					case 'chapter':
+					case 'generic':
+						if (1)
+						{
+							echo '<div id="id' . $id . '"></div>';
+						}
+						else
+						{
+							echo '<a href="mockup_publication.php?id=' . $id . '">';
+							echo $value->term ;
+							echo '</a>';
+							echo ' [' . $value->count . ']';
+						}
 						break;
 						
-					case 'publication':
-						echo '<a href="mockup_publication.php?id=' . $hits[$i]->id . '">';
-						echo $v;
-						echo '</a>';
-						break;
 						
 					default:
+						echo '[unknown]';
 						break;
 				}
+				
+				echo '</div>';
 			}
-			
-			echo '</div>';
-		}
-		if ($n < count($hits))
-		{
-			echo '<div>More...</div>';
-		}
-		*/
-	}
-	echo '</div>';	
-
-	/*
-	echo '<pre>';
-	print_r($results);
-	echo '</pre>';
-	
-	foreach ($response_obj->rows as $row)
-	{
-	
-		echo '<div>';
-		echo $row->id;
-		
-		foreach ($row->fields as $k => $v)
-		{
-			switch ($k)
-			{
-				case 'name':
-				case 'canonicalName':
-				case 'publication':
-					echo $v;
-					break;
-					
-				default:
-					break;
-			}
+			echo '<div style="clear:both;"></div>';
 		}
 		echo '</div>';
-	
 	}
-	*/
+	//echo '</div>';
+	
+	
+	echo '<script>
+		did_you_mean(\'' . addcslashes($query, "'") . '\');
+	</script>';
+	
+	echo '<script>';
+	foreach ($ids as $id)
+	{
+		echo 'do_snippets("' . $id . '");';
+	}
+	echo '</script>';
 }
 
-$q = $_GET['q'];
+$q = trim($_GET['q']);
 
 ?>
 
@@ -314,22 +263,122 @@ $q = $_GET['q'];
 	  font-style: italic;
 	}
 	
+	/* snippet */
+
+ .snippet {
+ 	border-bottom:1px solid rgb(192,192,192);
+	border-right:1px solid rgb(192,192,192);
+	border-top:1px solid rgb(228,228,228);
+	border-left:1px solid rgb(228,228,228);
+ 	padding:10px;
+ 	width:300px;
+ 	margin:10px;
+ 	/*height:180px;*/ /* hack */
+ }
+ 
+ 
+  .snippet a {
+	text-decoration: none;
+	color:inherit;
+ } 
+ 
+  .snippet .thumbnail_blank {
+ 	float: left;
+ 	width:60px;
+ 	height:88px;
+ 	border:1px solid rgb(228,228,228);
+ }
+ 
+ .snippet .thumbnail {
+ 	float: left;
+ 	height:88px;
+ 	border:1px solid rgb(228,228,228);
+ }
+ 
+ .snippet .details {
+ 	margin-left:100px;
+ } 
+ 
+ .snippet .title {
+ 	white-space: nowrap;
+ 	overflow:hidden;
+	text-overflow: ellipsis;
+	padding-bottom:0.5em;
+ 	
+ }
+ 
+ .snippet .metadata {
+ 	color: rgb(128,128,128);
+ 	font-size:80%;
+ } 
+ 
+ .snippet .journal {
+	font-style:italic;
+ }
+ 
+
+.snippet .identifier {
+ 	list-style-type: none; padding: 0px; margin: 0px;
+ } 
+ 
+ .snippet .identifier li {
+ 	color:black;
+ 	white-space: nowrap;
+ 	overflow:hidden;
+	text-overflow: ellipsis;
+ }	
+		
+	
 	</style>
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	
-	<!-- documentcloud -->
-	<!--[if (!IE)|(gte IE 8)]><!-->
-	<link href="public/assets/viewer-datauri.css" media="screen" rel="stylesheet" type="text/css" />
-	<link href="public/assets/plain-datauri.css" media="screen" rel="stylesheet" type="text/css" />
-	<!--<![endif]-->
-	<!--[if lte IE 7]>
-	<link href="public/assets/viewer.css" media="screen" rel="stylesheet" type="text/css" />
-	<link href="public/assets/plain.css" media="screen" rel="stylesheet" type="text/css" />
-	<![endif]-->
+	<script src="js/snippet.js"></script>
 	
-	<script src="public/assets/viewer.js" type="text/javascript" charset="utf-8"></script>
-	<script src="public/assets/templates.js" type="text/javascript" charset="utf-8"></script>			
+	
+	<script>
+		function did_you_mean(name)
+		{
+			$("#didyoumean").html("");
+			
+			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/didyoumean?callback=?",
+				function(data){
+					if (data.status == 200)
+					{		
+						var html = '';
+						if (data.names.length > 0) {
+							html += '<b>Did you mean:</b>';
+							html += '<ul>';
+							
+							for (var i in data.names) {
+								html += '<li>';
+								html += '<a href="mockup_search.php?q=' + encodeURIComponent(data.names[i]) + '">' + data.names[i] + '</a>';
+								html += '</li>';
+							}
+							html += '</ul>';
+							
+							$("#didyoumean").html(html);
+						}
+					}
+				});
+		}
+		
+		
+		function do_snippets(id) {
+			$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
+				function(data){
+					if (data.status == 200)
+					{		
+						var element_id = 'id' + id;
+						element_id = element_id.replace(/\//, '_');
+						
+						show_snippet(element_id, data);
+					}
+				});
+		}
+		
+	</script>
+
 
 </head>
 <body>
@@ -351,6 +400,8 @@ $q = $_GET['q'];
 
 <h1>Search</h1>
 
+<div id="didyoumean"></div>
+
 <?php
 
 search($q);
@@ -360,6 +411,7 @@ search($q);
 <script src="js/jquery.js"></script>
 	<script src="js/display.js"></script>
 	<script src="js/openurl.js"></script>
+
 
 
 </body>

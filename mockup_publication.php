@@ -117,6 +117,10 @@ $id = $_GET['id'];
 	<div id="cite"></div>
 	<h3>Names published</h3>
 	<div id="names"></div>
+
+	<!-- to do -->
+	<h3>Localities, specimens, cites/cited by, sequences, phylogeny, etc.</h3>
+	
 </div>
 
 <div id="doc"><span>Display object here</span></div>
@@ -175,8 +179,9 @@ $id = $_GET['id'];
 						{
 							html += '<span class="journal">';
 							
-							// Do we have an ISSN
+							// Do we have an ISSN?
 							var issn = '';
+							var oclc = '';
 							if (data.journal.identifier)
 							{
 								for (var j in data.journal.identifier)
@@ -185,6 +190,10 @@ $id = $_GET['id'];
 									{
 										case 'issn':
 											issn = data.journal.identifier[j].id;
+											break;
+
+										case 'oclc':
+											oclc = data.journal.identifier[j].id;
 											break;
 											
 										default:
@@ -199,7 +208,11 @@ $id = $_GET['id'];
 							}
 							else
 							{
-								html += '<a href="mockup_journal.php?journal=' + data.journal.name + '">';							
+								if (oclc != '') {
+								html += '<a href="mockup_journal.php?oclc=' + oclc + '">';
+								} else {								
+									html += '<a href="mockup_journal.php?journal=' + data.journal.name + '">';	
+								}
 							}
 							html += data.journal.name;
 							

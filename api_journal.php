@@ -15,13 +15,41 @@ function default_display()
 }
 
 //--------------------------------------------------------------------------------------------------
-// One journal
+// One journal (ISSN)
 function display_issn ($issn, $callback = '')
 {
 	global $config;
 	global $couch;
 	
 	$couch_id = 'issn/' . $issn;
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		$obj = json_decode($resp);
+		$obj->status = 200;
+	}
+
+	api_output($obj, $callback);
+}	
+
+//--------------------------------------------------------------------------------------------------
+// One journal (OCLC)
+function display_oclc ($oclc, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	$couch_id = 'oclc/' . $oclc;
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
 	
@@ -58,17 +86,36 @@ function display_articles
 
 //--------------------------------------------------------------------------------------------------
 // Journal articles in a given volume
-function display_articles_year_volume ($issn, $year, $volume, $callback = '')
+function display_articles_year_volume ($namespace, $value, $year, $volume, $callback = '')
 {
 	global $config;
 	global $couch;
 	
 	$decade = floor($year/10) * 10;
 	
+	switch ($namespace)
+	{
+		case 'oclc':
+			$startkey = array((Integer)$value, $decade, (Integer)$year, $volume);
+			$endkey = array((Integer)$value, $decade, (Integer)$year, $volume, new stdclass);
+
+			$url = '_design/oclc/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&reduce=false&include_docs=true';
+			break;
+			
+		case 'issn':
+		default:
+			$startkey = array($value, $decade, (Integer)$year, $volume);
+			$endkey = array($value, $decade, (Integer)$year, $volume, new stdclass);
+			$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&reduce=false&include_docs=true';
+			break;			
+	}
+	
+	
+	/*
 	$startkey = array($issn, $decade, (Integer)$year, $volume);
 	$endkey = array($issn, $decade, (Integer)$year, $volume, new stdclass);
 	$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&reduce=false&include_docs=true';
-	
+	*/
 	//echo $url;
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -111,12 +158,22 @@ function display_articles_year_volume ($issn, $year, $volume, $callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // All articles in a journal
-function display_articles ($issn, $fields=array('all'), $callback = '')
+function display_articles ($namespace, $value, $fields=array('all'), $callback = '')
 {
 	global $config;
 	global $couch;
 	
-	$url = '_design/issn/_view/articles?key=' . json_encode($issn);
+	switch ($namespace)
+	{
+		case 'oclc':
+			$url = '_design/oclc/_view/articles?startkey=' . json_encode($value);
+			break;
+			
+		case 'issn':
+		default:
+			$url = '_design/issn/_view/articles?startkey=' . json_encode($value);
+			break;			
+	}
 	
 	$include_docs = true;
 	
@@ -185,15 +242,35 @@ function display_articles ($issn, $fields=array('all'), $callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // Journal volumes clustered by decade
-function display_issn_decade_volumes ($issn, $callback = '')
+function display_article_decade_volumes ($namespace, $value, $callback = '')
 {
 	global $config;
 	global $couch;
 	
+	switch ($namespace)
+	{
+		case 'oclc':
+			$startkey = array((Integer)$value);
+			$endkey = array((Integer)$value, new stdclass);
+
+			$url = '_design/oclc/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&group_level=4';
+			break;
+			
+		case 'issn':
+		default:
+			$startkey = array($value);
+			$endkey = array($value, new stdclass);
+		
+			$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&group_level=4';
+			break;			
+	}
+	
+	/*
 	$startkey = array($issn);
 	$endkey = array($issn, new stdclass);
 	
 	$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&group_level=4';
+	*/
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -250,15 +327,33 @@ function display_issn_decade_volumes ($issn, $callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // Status of article identifiers for a journal
-function display_issn_identifiers ($issn, $callback = '')
+function display_article_identifiers ($namespace, $value, $callback = '')
 {
 	global $config;
 	global $couch;
 	
-	$startkey = array($issn);
-	$endkey = array($issn, new stdclass);
 	
-	$url = '_design/issn/_view/identifier?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey);
+	$startkey = array($value);
+	$endkey = array($value, new stdclass);
+	
+	switch ($namespace)
+	{
+		case 'oclc':
+			$startkey = array((Integer)$value);
+			$endkey = array((Integer)$value, new stdclass);
+
+			$url = '_design/oclc/_view/identifier?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey);
+			break;
+			
+		case 'issn':
+		default:
+			$startkey = array($value);
+			$endkey = array($value, new stdclass);
+		
+			$url = '_design/issn/_view/identifier?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey);
+			break;			
+	}
+			
 	
 	//echo $url;
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -316,13 +411,22 @@ function display_issn_identifiers ($issn, $callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // Articles per journal
-function display_issn_count ($callback = '')
+function display_article_count ($namespace, $callback = '')
 {
 	global $config;
 	global $couch;
 	
-	
-	$url = '_design/issn/_view/count?group_level=2';
+	switch ($namespace)
+	{
+		case 'oclc':
+			$url = '_design/oclc/_view/count?group_level=2';
+			break;
+			
+		case 'issn':
+		default:
+			$url = '_design/issn/_view/count?group_level=2';
+			break;
+	}	
 	
 	//echo $url;
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -352,14 +456,31 @@ function display_issn_count ($callback = '')
 			$obj->journals = array();
 			foreach ($response_obj->rows as $row)
 			{
-				$issn = $row->key[0];
-				if (!isset($obj->journals[$issn]))
+				switch ($namespace)
 				{
-					$obj->journals[$issn] = new stdclass;
-					$obj->journals[$issn]->count = 0;
-					$obj->journals[$issn]->name = $row->key[1];					
+					case 'oclc':
+						$oclc = $row->key[0];
+						if (!isset($obj->journals[$oclc]))
+						{
+							$obj->journals[$oclc] = new stdclass;
+							$obj->journals[$oclc]->count = 0;
+							$obj->journals[$oclc]->name = $row->key[1];					
+						}
+						$obj->journals[$oclc]->count += $row->value;
+						break;
+						
+					case 'issn':
+					default:
+						$issn = $row->key[0];
+						if (!isset($obj->journals[$issn]))
+						{
+							$obj->journals[$issn] = new stdclass;
+							$obj->journals[$issn]->count = 0;
+							$obj->journals[$issn]->name = $row->key[1];					
+						}
+						$obj->journals[$issn]->count += $row->value;
+						break;
 				}
-				$obj->journals[$issn]->count += $row->value;
 			}	
 		}
 	}
@@ -371,12 +492,22 @@ function display_issn_count ($callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // Geometry of articles
-function display_issn_geometry($issn, $callback = '')
+function display_article_geometry($namespace, $value, $callback = '')
 {
 	global $config;
 	global $couch;
 	
-	$url = '_design/issn/_view/points?key="' . $issn . '"';
+	switch ($namespace)
+	{
+		case 'oclc':
+			$url = '_design/oclc/_view/points?key="' . $value . '"';
+			break;
+			
+		case 'issn':
+		default:
+			$url = '_design/issn/_view/points?key="' . $value . '"';
+			break;
+	}
 	
 	//echo $url;
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -448,16 +579,16 @@ function main()
 	
 	if (!$handled)
 	{
-		
-		if (isset($_GET['issn']))
+		// OCLC
+		if (isset($_GET['oclc']))
 		{	
-			$issn = $_GET['issn'];
+			$oclc = $_GET['oclc'];
 			
 			if (!$handled)
 			{
 				if (isset($_GET['volumes']))
 				{
-					display_issn_decade_volumes($issn, $callback);
+					display_article_decade_volumes('oclc', $oclc, $callback);
 					$handled = true;
 				}
 			}
@@ -468,7 +599,80 @@ function main()
 				{
 					$year = $_GET['year'];
 					$volume = $_GET['volume'];
-					display_articles_year_volume($issn, $year, $volume, $callback);
+					display_articles_year_volume('oclc', $oclc, $year, $volume, $callback);
+					$handled = true;
+				}	
+			}
+			
+			
+			if (!$handled)
+			{
+				if (isset($_GET['articles']))
+				{
+					if (isset($_GET['identifiers']))
+					{
+						display_article_identifiers('oclc', $oclc, $callback);
+						$handled = true;
+					}			
+				
+					if (!$handled)
+					{
+						display_articles('oclc', $oclc, $fields, $callback);
+						$handled = true;
+					}
+				}			
+			}
+			
+			if (!$handled)
+			{
+				if (isset($_GET['geometry']) )
+				{
+					display_article_geometry('oclc', $oclc, $callback);
+					$handled = true;
+				}			
+			}
+			
+						
+			if (!$handled)
+			{
+				if (isset($_GET['count']) )
+				{
+					display_article_count('oclc', $callback);
+					$handled = true;
+				}			
+			}
+			
+			
+			if (!$handled)
+			{
+				display_oclc($oclc, $callback);
+				$handled = true;			
+			}
+			
+		}
+		
+	
+		// ISSN	
+		if (isset($_GET['issn']))
+		{	
+			$issn = $_GET['issn'];
+			
+			if (!$handled)
+			{
+				if (isset($_GET['volumes']))
+				{
+					display_article_decade_volumes('issn', $issn, $callback);
+					$handled = true;
+				}
+			}
+			
+			if (!$handled)
+			{
+				if (isset($_GET['volume']) && isset($_GET['year']))
+				{
+					$year = $_GET['year'];
+					$volume = $_GET['volume'];
+					display_articles_year_volume('issn', $issn, $year, $volume, $callback);
 					$handled = true;
 				}	
 			}
@@ -479,13 +683,13 @@ function main()
 				{
 					if (isset($_GET['identifiers']))
 					{
-						display_issn_identifiers($issn, $callback);
+						display_article_identifiers('issn', $issn, $callback);
 						$handled = true;
 					}			
 				
 					if (!$handled)
 					{
-						display_articles($issn, $fields, $callback);
+						display_articles('issn', $issn, $fields, $callback);
 						$handled = true;
 					}
 				}			
@@ -495,7 +699,7 @@ function main()
 			{
 				if (isset($_GET['geometry']) )
 				{
-					display_issn_geometry($issn, $callback);
+					display_article_geometry('issn', $issn, $callback);
 					$handled = true;
 				}			
 			}
@@ -505,7 +709,7 @@ function main()
 			{
 				if (isset($_GET['count']) )
 				{
-					display_issn_count($callback);
+					display_article_count('issn', $callback);
 					$handled = true;
 				}			
 			}

@@ -478,7 +478,7 @@ function name_did_you_mean($name, $callback = '')
 	$obj = new stdclass;
 	$obj->status = 404;
 	
-	$cmd = $config['simstring'] . ' -d ' . $config['simstring_db'] . ' -t 0.8 cosine';
+	$cmd = $config['simstring'] . ' -d ' . $config['simstring_db'] . ' -t 0.75 cosine';
 	
 	$descriptorspec = array(
 	   0 => array("pipe", "r"),

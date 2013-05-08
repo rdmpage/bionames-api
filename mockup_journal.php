@@ -133,6 +133,32 @@ if (isset($_GET['journal']))
 	var journal = "<?php echo $journal;?>";
 
 	
+	// Details about journal
+	function display_journal_from_oclc (oclc)
+	{
+		$.getJSON("http://bionames.org/bionames-api/journals/oclc/" + oclc + "?callback=?",
+			function(data){
+				if (data.status == 200)
+				{
+					$('#title').html(data.title);
+					
+					$('#metadata').html('');
+					
+					var html = '';
+					html += '<table>';
+					html += '<tbody style="font-size:80%;">';
+					html += '<tr>';
+					html += '<td align="right" valign="top" style="color:rgb(128,128,128);">' + 'OCLC' + '</td>';
+					html += '<td valign="top">' + oclc + '</td>';
+					html += '</tr>';
+					html += '</tbody>';
+					html += '</table>';
+					
+					$('#metadata').html(html);
+					
+				}
+			});
+	}	
 
 	// Details about journal
 	function display_journal_from_issn (issn)
@@ -250,11 +276,27 @@ if (isset($_GET['journal']))
 			});
 	}
 	
-		function year_volume_articles(issn, volume, year)
+		function year_volume_articles(ns, value, volume, year)
 		{
 			$("#articles").html("");
 			
-			$.getJSON("journals/issn/" + issn + "/volumes/" + volume + "/year/" + year + "?callback=?",
+			var url = '';
+			switch (ns)
+			{
+				case 'oclc':
+					url = 'http://bionames.org/bionames-api/journals/oclc/' + value + '/volumes/' + volume + '/year/' + year;
+					break;
+					
+				case 'issn':
+				default:
+					url = 'http://bionames.org/bionames-api/journals/issn/' + value + '/volumes/' + volume + '/year/' + year;
+					break;
+			}
+			url += '?callback=?';
+			
+			
+//			$.getJSON("journals/issn/" + issn + "/volumes/" + volume + "/year/" + year + "?callback=?",
+			$.getJSON(url,
 				function(data){
 					if (data.status == 200)
 					{					
@@ -272,11 +314,27 @@ if (isset($_GET['journal']))
 						
 	
 	
-			 function show_journal_volumes_from_issn(issn)
+			 function show_journal_volumes(ns, value)
 			  {
 				$("#volumes").html("");
 				
-				$.getJSON("http://bionames.org/bionames-api/journals/issn/" + issn + "/volumes?callback=?",
+				var url = '';
+				switch (ns)
+				{
+					case 'oclc':
+						url = 'http://bionames.org/bionames-api/journals/oclc/' + value + '/volumes';
+						break;
+						
+					case 'issn':
+					default:
+						url = 'http://bionames.org/bionames-api/journals/issn/' + value + '/volumes';
+						break;
+				}
+				url += '?callback=?';
+				
+				
+//				$.getJSON("http://bionames.org/bionames-api/journals/issn/" + issn + "/volumes?callback=?",
+				$.getJSON(url,
 					function(data){
 						var html = '';
 						if (data.status == 200)
@@ -299,7 +357,7 @@ if (isset($_GET['journal']))
 										for (volume in data.decades[decade][year])
 										{
 											html += '<li>';
-											html += '<span onclick="year_volume_articles(\'' + issn + '\',\'' + data.decades[decade][year][volume].volume + '\',' + year + ')">';
+											html += '<span onclick="year_volume_articles(\'' + ns + '\', \'' + value + '\',\'' + data.decades[decade][year][volume].volume + '\',' + year + ')">';
 											html += ' vol. ' + data.decades[decade][year][volume].volume + ' (' +  data.decades[decade][year][volume].count + ' article(s))';
 											html += '</span>';	
 											html += '</li>';	
@@ -322,11 +380,25 @@ if (isset($_GET['journal']))
 					});
 				}
 	
-		function show_article_identifiers(issn)
+		function show_article_identifiers(ns, value)
 		{
 			$("#identifiers").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/journals/issn/" + issn + "/articles/identifiers?callback=?",
+			var url = '';
+			switch (ns)
+			{
+				case 'oclc':
+					url = 'http://bionames.org/bionames-api/journals/oclc/' + value + '/articles/identifiers';
+					break;
+					
+				case 'issn':
+				default:
+					url = 'http://bionames.org/bionames-api/journals/issn/' + value + '/articles/identifiers';
+					break;
+			}
+			url += '?callback=?';
+			
+			$.getJSON(url,
 				function(data){
 					var html = '';
 					if (data.status == 200)
@@ -412,8 +484,20 @@ if (isset($_GET['journal']))
 	if (issn != '')
 	{
 		display_journal_from_issn(issn);
-		show_journal_volumes_from_issn(issn);
-		show_article_identifiers(issn);
+		show_journal_volumes('issn', issn);
+		show_article_identifiers('issn', issn);
+	}
+	
+	if (oclc != '')
+	{
+		display_journal_from_oclc(oclc);
+		show_journal_volumes('oclc', oclc);
+		show_article_identifiers('oclc', oclc);
+	}
+	
+	if (journal != '')
+	{		
+		$('#title').html(journal);
 	}
 
 	
