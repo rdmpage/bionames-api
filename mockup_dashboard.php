@@ -64,7 +64,8 @@
 	<script src="js/jquery.js"></script>
 	<script src="js/display.js"></script>
 	<script src="js/openurl.js"></script>
-
+	<script src="js/snippet.js"></script>
+	
 <script type="text/javascript">
 	
 		function show_identifiers()

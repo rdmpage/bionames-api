@@ -153,7 +153,7 @@ function search($query, $callback = '')
 					case 'generic':
 						if (1)
 						{
-							echo '<div id="id' . $id . '"></div>';
+							echo '<div id="id' . str_replace("/", "_", $id) . '"></div>';
 						}
 						else
 						{
@@ -186,7 +186,7 @@ function search($query, $callback = '')
 	echo '<script>';
 	foreach ($ids as $id)
 	{
-		echo 'do_snippets("' . $id . '");';
+		echo 'display_snippets("' . $id . '");';
 	}
 	echo '</script>';
 }
@@ -273,7 +273,8 @@ $q = trim($_GET['q']);
  	padding:10px;
  	width:300px;
  	margin:10px;
- 	/*height:180px;*/ /* hack */
+ 	height:120px;
+ 	overflow:hidden;
  }
  
  
@@ -287,6 +288,7 @@ $q = trim($_GET['q']);
  	width:60px;
  	height:88px;
  	border:1px solid rgb(228,228,228);
+ 	background-color:rgb(242,242,242);
  }
  
  .snippet .thumbnail {
@@ -297,6 +299,8 @@ $q = trim($_GET['q']);
  
  .snippet .details {
  	margin-left:100px;
+ 	width:200px;
+ 	overflow:hidden;
  } 
  
  .snippet .title {
@@ -364,18 +368,6 @@ $q = trim($_GET['q']);
 		}
 		
 		
-		function do_snippets(id) {
-			$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
-				function(data){
-					if (data.status == 200)
-					{		
-						var element_id = 'id' + id;
-						element_id = element_id.replace(/\//, '_');
-						
-						show_snippet(element_id, data);
-					}
-				});
-		}
 		
 	</script>
 

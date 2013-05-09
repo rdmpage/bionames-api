@@ -88,6 +88,10 @@ RewriteRule ^publication/(.*)/names  api_publication.php?id=$1&names   [QSA,L]
 #---------------------------------------------------------------------------------------------------
 # Taxon concept (classification)
 
+# Publications for child nodes
+RewriteRule ^taxon/(.*)/publications/children   api_concept.php?id=$1&publications&children  [QSA,L]
+
+# Publications related to this concept
 RewriteRule ^taxon/(.*)/publications   api_concept.php?id=$1&publications  [QSA,L]
 
 RewriteRule ^taxon/(.*)/timeline   api_concept.php?id=$1&timeline  [QSA,L]

@@ -1,10 +1,10 @@
+/* Display a snippet of information about an object */
+
 function show_snippet (element_id, doc) {
 	var html = '';
 	
 	html += '<div class="snippet">';
 	
-	
-
 	switch (doc.type) {
 		case 'article':
 		case 'book':
@@ -139,7 +139,11 @@ function show_snippet (element_id, doc) {
 				}
 				
 				html += '</div>';
-			}
+			} else {
+				html += '<div class="title">';
+				html += doc.scientificName;
+				html += '</div>';
+			}			
 			html += '<div class="metadata"><!-- metadata -->';
 			
 			if (doc._id.match(/gbif/)) {
@@ -161,6 +165,48 @@ function show_snippet (element_id, doc) {
 			html += '</div>';
 			break;
 			
+		case 'nameCluster':
+			html += '<div class="details_wide">';
+			html += '<a href="mockup_taxon_name.php?id=' + doc._id + '">';
+			if (doc.nameComplete)
+			{
+				html += '<div class="title">';
+				html += doc.nameComplete;
+				
+				if (doc.taxonAuthor) {
+					html += ' ' + doc.taxonAuthor;
+				}
+				
+				html += '</div>';
+			}
+			html += '<div class="metadata"><!-- metadata -->';
+			
+			if (doc.names)
+			{
+				html += '<ul class="identifier">';
+				for (var i in doc.names)
+				{
+					html += '<li>' + doc.names[i].id + '</li>';
+				}
+				html += '</ul>';
+			}
+			
+			if (doc.publication)
+			{
+				for (var i in doc.publication)
+				{
+					html += '<div>';
+					html += doc.publication[i];
+					html += '</div>';
+				}
+			}
+			
+			html += '</div><!-- end metadata -->';
+			html += '</a>';
+			html += '</div>';					
+			break;
+			
+			
 		default:
 			break;
 	}
@@ -171,4 +217,19 @@ function show_snippet (element_id, doc) {
 	html += '</div>';
 	
 	$('#' + element_id).html(html);
+}
+
+
+/* Display snippet */
+function display_snippets(id) {
+	$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
+		function(data){
+			if (data.status == 200)
+			{		
+				var element_id = 'id' + id;
+				element_id = element_id.replace(/\//, '_');
+				
+				show_snippet(element_id, data);
+			}
+		});
 }

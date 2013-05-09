@@ -132,6 +132,91 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 }
 
 //--------------------------------------------------------------------------------------------------
+// Publications for child nodes
+function publications_for_children ($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	// 1. Get concept 
+	$couch_id = $id;
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{	
+		$obj->status = 200;
+		
+		$taxon_concept = json_decode($resp);
+		
+			
+		$obj->children = array();
+		
+		
+		$prefix = '';
+		switch ($taxon_concept->source)
+		{
+			case 'http://ecat-dev.gbif.org/checklist/1':
+				$prefix = 'gbif/';
+				break;
+			case 'http://www.ncbi.nlm.nih.gov/taxonomy':
+				$prefix = 'ncbi/';
+				break;
+			default:
+				break;
+		}
+		
+		// Visit children
+		if (isset($taxon_concept->children))
+		{
+			// want names associated with children
+			foreach ($taxon_concept->children as $child)
+			{
+				$publications = array();
+				
+				// want publications associated child nodes
+				$child_id = $prefix . $child->sourceIdentifier;
+				
+				$url = '_design/classification/_view/publishedInCitation?key="' . $child_id . '"';
+				
+				$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+				
+				$response_obj = json_decode($resp);
+				
+				if (isset($response_obj->error))
+				{
+				}
+				else
+				{
+					foreach ($response_obj->rows as $row)
+					{
+						// just publication ids
+						foreach ($row->value->publishedInCitation as $publishedInCitation)
+						{
+							$publications[] = $publishedInCitation;
+						}
+					}
+					
+					$obj->children[$child_id] = $publications;
+				}
+			}	
+		}		
+		
+		
+	}	
+	
+	api_output($obj, $callback);
+}
+
+//--------------------------------------------------------------------------------------------------
 // Publication dates for all taxa rooted on this node in classification
 function taxon_timeline ($id, $callback = '')
 {
@@ -370,8 +455,18 @@ function main()
 			
 			if (isset($_GET['publications']))
 			{	
-				publications_with_name($id, $fields, $callback);
-				$handled = true;
+			
+				if (isset($_GET['children']))
+				{
+					publications_for_children($id, $callback);
+					$handled = true;
+				}
+				
+				if (!$handled)
+				{
+					publications_with_name($id, $fields, $callback);
+					$handled = true;
+				}
 			}
 			
 			if (isset($_GET['timeline']))

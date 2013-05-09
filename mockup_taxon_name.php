@@ -83,8 +83,10 @@ $id = $_GET['id'];
 	border-top:1px solid rgb(228,228,228);
 	border-left:1px solid rgb(228,228,228);
  	padding:10px;
- 	width:500px;
- 	height:180px; /* hack */
+ 	width:300px;
+ 	margin:10px;
+ 	height:120px;
+ 	overflow:hidden;
  }
  
  
@@ -95,19 +97,21 @@ $id = $_GET['id'];
  
   .snippet .thumbnail_blank {
  	float: left;
- 	width:88px;
- 	height:100px;
+ 	width:60px;
+ 	height:88px;
  	border:1px solid rgb(228,228,228);
  }
  
  .snippet .thumbnail {
  	float: left;
- 	width:88px;
+ 	height:88px;
  	border:1px solid rgb(228,228,228);
  }
  
  .snippet .details {
  	margin-left:100px;
+ 	width:200px;
+ 	overflow:hidden;
  } 
  
  .snippet .title {
@@ -138,6 +142,8 @@ $id = $_GET['id'];
  	overflow:hidden;
 	text-overflow: ellipsis;
  }	
+		
+	
 	
 	</style>
 	
@@ -271,9 +277,13 @@ $id = $_GET['id'];
 					if (data.status == 200)
 					{	
 						if (data.concepts.length > 0) {
+						    var concepts = [];
 							var html = '<h3>This name has been used for these taxa</h3>';
 							for (var i in data.concepts) {
+								html += '<div id="id' + data.concepts[i].concept.replace(/\//, '_') + '"></div>';
+								concepts.push(data.concepts[i].concept);
 							
+								/*
 								var accepted = (data.concepts[i].nameComplete ==  data.concepts[i].canonicalName);
 								
 								
@@ -330,11 +340,15 @@ $id = $_GET['id'];
 								
 								html += '<div style="clear:both;" />';
 								html += '</div>';
-								
+								*/
 								
 								
 							}
 							$("#concepts").html(html);
+							
+							for (var i in concepts) {
+								display_snippets(concepts[i]);
+							}
 						}
 					}
 				});
@@ -430,7 +444,7 @@ $id = $_GET['id'];
 </div>
 
 
-<div style="top:0px;float:right;width:280px;padding:10px;">
+<div style="top:0px;float:right;width:400px;padding:10px;">
 	<div id="metadata"></div>
 	<!-- <h3>Stuff</h3>
 	

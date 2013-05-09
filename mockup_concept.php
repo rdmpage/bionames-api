@@ -123,6 +123,81 @@ $id = $_GET['id'];
 	.pub .journal {
 	  font-style: italic;
 	}
+	
+	/* snippet */
+
+ .snippet {
+ 	background-color:white;
+ 	border-bottom:1px solid rgb(192,192,192);
+	border-right:1px solid rgb(192,192,192);
+	border-top:1px solid rgb(228,228,228);
+	border-left:1px solid rgb(228,228,228);
+ 	padding:10px;
+ 	width:300px;
+ 	margin:10px;
+ 	height:120px;
+ 	overflow:hidden;
+ }
+ 
+ 
+  .snippet a {
+	text-decoration: none;
+	color:inherit;
+ } 
+ 
+  .snippet .thumbnail_blank {
+ 	float: left;
+ 	width:60px;
+ 	height:88px;
+ 	border:1px solid rgb(228,228,228);
+ }
+ 
+ .snippet .thumbnail {
+ 	float: left;
+ 	height:88px;
+ 	border:1px solid rgb(228,228,228);
+ }
+ 
+ .snippet .details {
+ 	margin-left:100px;
+ 	width:200px;
+ 	overflow:hidden;
+ } 
+ 
+ .snippet .details_wide {
+ 	overflow:hidden;
+ }  
+ 
+ .snippet .title {
+ 	white-space: nowrap;
+ 	overflow:hidden;
+	text-overflow: ellipsis;
+	padding-bottom:0.5em;
+ 	
+ }
+ 
+ .snippet .metadata {
+ 	color: rgb(128,128,128);
+ 	font-size:80%;
+ } 
+ 
+ 
+ .snippet .journal {
+	font-style:italic;
+ }
+ 
+
+.snippet .identifier {
+ 	list-style-type: none; padding: 0px; margin: 0px;
+ } 
+ 
+ .snippet .identifier li {
+ 	color:black;
+ 	white-space: nowrap;
+ 	overflow:hidden;
+	text-overflow: ellipsis;
+ }	
+			
 				
 		
 	</style>	
@@ -320,7 +395,21 @@ $id = $_GET['id'];
 
 						  if (data.identifier.ion)
 						  {
-						  	 
+						  	 var html ='';
+						  	 html += '<div>';
+						  	 html += '<b>Names</b>';
+						     for (var j in data.identifier.ion) {
+						     	var element_id = 'cluster/' + j;
+						  		html += '<div id="id' + element_id.replace(/\//, '_') + '"></div>';
+						  	 }
+						  	 html += '</div>';
+						  	 $("#namemap").html(html);
+						     for (var j in data.identifier.ion) {
+						     	var element_id = 'cluster/' + j;
+						  		display_snippets(element_id);
+						  	 }
+						  
+						  	 /*
 						  	 var publishedInCitation = [];
 						  	 var html ='';
 						  	 html += '<div style="border:1px solid black;width:400px;background-color:rgb(228,228,228);">';
@@ -365,11 +454,12 @@ $id = $_GET['id'];
 						     html += '</ul>';
 						     html += '</div>';
 						     $("#namemap").html(html);
+						     */
 						   }
 						}
 						
 						// Now flesh out publication details
-						show_name_publications(publishedInCitation);
+						//show_name_publications(publishedInCitation);
 						
 						
 						// Timeline
@@ -502,7 +592,37 @@ $id = $_GET['id'];
 				});
 		}		
 		
+		function show_child_publications(concept)
+		{
+			$("#child_publications").html("");
+			
+			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/publications/children?callback=?",
+				function(data){					
+					if (data.status == 200)
+					{			
+							var html = '<h3>Publications</h3>';
+							html += '<div style="width:200px;position:relative;">';
+							for (var i in data.children) {
+								var colour = 'rgb(228,228,228)';
+								if (data.children[i].length > 0) {
+									colour = 'green';
+								}
+								html += '<div style="float:left;width:20px;height:20px;">';
+								html += '<a href="mockup_concept.php?id=' + i + '">';
+								html += '<div style="width:16px;height:16px;background-color:' + colour + ';margin:2px;"></div>';
+								html += '</a>';
+								html += '</div>';
+							}
+							html += '<div style="clear:both;"></div>';
+							html += '</div>';
+							
+							$("#child_publications").html(html);
+					}
+					
+				});
+		}
 		
+				
 		
 	</script>
 	
@@ -533,9 +653,12 @@ $id = $_GET['id'];
 		
 		<div style="float:right;top:0px;width:400px;border-left:1px black solid;padding-left:10px;">
 		<div id="eol"></div>
+		<!-- 
 		<div id="chart" style="width:300px;height:100px;">[chart]</div>	
+		-->
 		<h3>Classification</h3>
 		<div id="classification">[classification]</div>
+		<div id="child_publications">xxx</div>
 		
 			<h3>Info</h3>
 			<!--<div id="info">[info]</div>	-->
@@ -559,11 +682,13 @@ $id = $_GET['id'];
 	<script src="js/jquery.js"></script>
 	<script src="js/display.js"></script>
 	<script src="js/openurl.js"></script>
+	<script src="js/snippet.js"></script>
 	
 	<script>
 		var concept = "<?php echo $id;?>";
 		show_classification(concept);
-		show_timeline(concept);
+		//show_timeline(concept);
+		show_child_publications(concept);
 		
 		//show_wall(concept);
 		
