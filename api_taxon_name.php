@@ -470,7 +470,7 @@ function name_to_concept($id, $callback = '')
 }
 
 //--------------------------------------------------------------------------------------------------
-// Return taxon concepts that include this name
+// Return names that resemble query string
 function name_did_you_mean($name, $callback = '')
 {
 	global $config;
@@ -518,7 +518,21 @@ function name_did_you_mean($name, $callback = '')
 			//print_r(array($name));
 			
 			
-			$obj->names = array_values(array_diff($hits, array($name)));
+			
+			
+			$candidates = array_values(array_diff($hits, array($name)));
+			
+			$distances = array();
+			foreach ($candidates as $candidate)
+			{
+				$distances[$candidate] = levenshtein($name, $candidate);
+			}			
+			$scores = array_values($distances);
+
+			array_multisort($distances, SORT_ASC, SORT_NUMERIC, $scores);
+
+			$obj->names = array_keys($distances);
+			
 		}
 	}
 	api_output($obj, $callback);
