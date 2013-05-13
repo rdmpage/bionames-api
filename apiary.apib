@@ -7,6 +7,112 @@ Welcome to the our API documentation. All comments can be written in (support [M
 ---
 
 --
+Search
+Simple search that takes a text string (e.g., taxon name) and returns objects of different types that match, or contain, that string
+--
+
+Search for Rhogeessa
+GET search/Rhogeessa
+< 200
+< Content-Type: application/json
+{
+  "status": 200,
+  "url": "_design\/search\/_view\/short?key=%22Rhogeessa%22&limit=1000",
+  "results": {
+    "facets": {
+      "article": {
+        "160e947e2f9cc037d8d3355cf3bc1083": {
+          "count": 2,
+          "term": "The baculum in the Vespertilioninae (Chiroptera: Vespertilionidae) with a systematic review, a synopsis of Pipistrellus and Eptesicus, and the descriptions of a new genus and subgenus"
+        },
+        "1f702d6ade7ef44f6d5348954c70e5b3": {
+          "count": 3,
+          "term": "LX.\u2014Description of a new Mexican bat"
+        },
+        "2f407d2e908d4ae2b045b7ea61a3bf55": {
+          "count": 2,
+          "term": "The streblid batflies of Venezuela (Diptera: Streblidae)"
+        },
+        "681ea7fa138e3fc89701699983e87caf": {
+          "count": 2,
+          "term": "Description of a new large-bodied species of Apomys Mearns, 1905 (Mammalia: Rodentia: Muridae) from Mindoro Island, Philippines"
+        },
+        "8fa514961f972e19b106538f54c4a985": {
+          "count": 2,
+          "term": "Venezuelan nycteribiid batflies (Diptera: Nycteribiidae)"
+        },
+        "9e842f089e0976d9982851948da8fe1e": {
+          "count": 3,
+          "term": "The families and genera of bats"
+        },
+        "9a98776716c5dbbe4a606ba8c979f846": {
+          "count": 1,
+          "term": "Baker 1984. A sympatric cryptic species of mammal: a new species of Rhogeessa (Chiroptera: Vespertilionidae). Systematic Zoology, 33(2) 1984: 178-183"
+        }
+      },
+      "generic": {
+        "885a1e02ad511a6f6b9feb7e6e94eff3": {
+          "count": 1,
+          "term": "The streblid batflies of Panama (Diptera: Streblidae)"
+        }
+      },
+      "nameCluster": {
+        "cluster\/427071": {
+          "count": 1,
+          "term": "Rhogeessa"
+        },
+        "cluster\/2730132": {
+          "count": 1,
+          "term": "Rhogeessa io"
+        },
+        "cluster\/1268815": {
+          "count": 1,
+          "term": "Rhogeessa mira"
+        },
+        "cluster\/18036": {
+          "count": 1,
+          "term": "Rhogeessa tumida"
+        },
+        "cluster\/700163": {
+          "count": 1,
+          "term": "Rhogeessa alleni"
+        },
+        "cluster\/4491271": {
+          "count": 1,
+          "term": "Rhogeessa hussoni"
+        },
+        "cluster\/277699": {
+          "count": 1,
+          "term": "Rhogeessa parvula"
+        },
+        "cluster\/1665550": {
+          "count": 1,
+          "term": "Rhogeessa gracilis"
+        },
+        "cluster\/940246": {
+          "count": 1,
+          "term": "Rhogeessa minutilla"
+        },
+        "cluster\/445712": {
+          "count": 1,
+          "term": "Rhogeessa genowaysi"
+        }
+      },
+      "taxonConcept": {
+        "gbif\/2432269": {
+          "count": 3,
+          "term": "Baeodon"
+        },
+        "ncbi\/153294": {
+          "count": 1,
+          "term": "Rhogeessa"
+        }
+      }
+    }
+  }
+}
+
+--
 Objects
 The following is a section of resources related to individual objects
 --
