@@ -67,6 +67,32 @@ function search($query, $callback = '')
 	echo '</pre>';
 	*/
 	
+	// Apply any prior ordering of results here...
+	
+	// sort names alphabetically
+	// sort names by how closely they resemble query
+	
+	if (isset($results->facets['nameCluster']))
+	{
+		if (count($results->facets['nameCluster']))
+		{
+			$distances = array();
+			foreach ($results->facets['nameCluster'] as $k => $v)
+			{
+				$distances[$v->term] = levenshtein($query, $v->term);
+			}	
+			$scores = array_values($distances);
+			array_multisort($results->facets['nameCluster'], SORT_ASC, SORT_NUMERIC, $scores);
+		}
+	}
+	
+	/*
+	echo '<pre>';
+	print_r($distances);
+	print_r($results->facets['nameCluster']);
+	echo '</pre>';
+	*/
+	
 	$ids = array();
 	
 	$facet_key_order = array(
@@ -127,10 +153,12 @@ function search($query, $callback = '')
 				switch ($facet)
 				{
 					case 'nameCluster':
+						echo '<div style="background-color:white;padding:2px;margin:2px;">';
 						echo '<a href="mockup_taxon_name.php?id=' . $id . '">';
 						echo $value->term;
 						echo '</a>';					
-						echo ' [' . $value->count . ']';
+						//echo ' [' . $value->count . ']';
+						echo '</div>';
 						break;
 						
 					case 'taxonConcept':
@@ -213,6 +241,7 @@ $q = trim($_GET['q']);
 	  font-size: 14px;
 	  line-height: 20px;
 	  color: #2e3033;
+	  background-color:rgb(242,242,242);
 	}
 	
 	
@@ -275,6 +304,13 @@ $q = trim($_GET['q']);
  	margin:10px;
  	height:120px;
  	overflow:hidden;
+ 	background-color:white;
+-moz-box-shadow: 0px 2px 2px #888;
+-webkit-box-shadow: 0px 2px 2px #888;
+box-shadow: 0px 2px 2px #888; 	
+-moz-border-radius: 5px;
+-webkit-border-radius: 5px;
+border-radius: 5px;
  }
  
  

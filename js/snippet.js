@@ -60,6 +60,22 @@ function show_snippet (element_id, doc) {
 					html += ' pages ' + doc.journal.pages;
 				}
 			}
+			
+			if (doc.book)
+			{
+				if (doc.type == 'chapter') {					
+					if (doc.book.title)
+					{
+						html += '<em>in</em> ' + doc.book.title + '</span>';
+					}
+					if (doc.book.pages)
+					{
+						html += ' pages ' + doc.book.pages;
+					}
+				}
+			}
+			
+			
 			if (doc.year)
 			{
 				html += ' (' + doc.year + ')';
@@ -73,10 +89,19 @@ function show_snippet (element_id, doc) {
 				{
 					switch (doc.identifier[j].type)
 					{
+						case "ark":
+							html += '<li>';
+							//html += '<a href="http://biostor.org/reference/' + doc.identifier[j].id + '" target="_new">';
+							//html += 'ark:/' + doc.identifier[j].id;
+							html += 'ARK ark:/' + doc.identifier[j].id;
+							//html += '</a>';
+							html += '</li>';
+							break;
+					
 						case "biostor":
 							html += '<li>';
 							//html += '<a href="http://biostor.org/reference/' + doc.identifier[j].id + '" target="_new">';
-							html += 'biostor.org/reference/' + doc.identifier[j].id;
+							html += 'BioStor ' + doc.identifier[j].id;
 							//html += '</a>';
 							html += '</li>';
 							break;
@@ -84,7 +109,7 @@ function show_snippet (element_id, doc) {
 						case "cinii":
 							html += '<li>';
 							//html += '<a href="http://ci.nii.ac.jp/naid/' + doc.identifier[j].id + '" target="_new">';
-							html += 'ci.nii.ac.jp/naid/' + doc.identifier[j].id;
+							html += 'CINII ' + doc.identifier[j].id;
 							//html += '</a>';
 							html += '</li>';
 							break;
@@ -92,7 +117,7 @@ function show_snippet (element_id, doc) {
 						case "doi":
 							html += '<li>';
 							//html += '<a href="http://dx.doi.org/' + doc.identifier[j].id + '" target="_new">';
-							html += 'dx.doi.org/' + doc.identifier[j].id;
+							html += 'DOI ' + doc.identifier[j].id;
 							//html += '</a>';
 							html += '</li>';
 							break;
@@ -100,7 +125,7 @@ function show_snippet (element_id, doc) {
 						case "handle":
 							html += '<li>';
 							//html += '<a href="http://hdl.handle.net/' + doc.identifier[j].id + '" target="_new">';
-							html += 'hdl.handle.net/' + doc.identifier[j].id;
+							html += 'HDL ' + doc.identifier[j].id;
 							//html += '</a>';
 							html += '</li>';
 							break;
@@ -108,16 +133,53 @@ function show_snippet (element_id, doc) {
 						case "jstor":
 							html += '<li>';
 							//html += '<a href="http://www.jstor.org/stable' + doc.identifier[j].id + '" target="_new">';
-							html += 'www.jstor.org/stable/' + doc.identifier[j].id;
+							html += 'JSTOR ' + doc.identifier[j].id;
 							//html += '</a>';
 							html += '</li>';
 							break;
+							
+						case "pmc":
+							html += '<li>';
+							//html += '<a href="http://www.jstor.org/stable' + doc.identifier[j].id + '" target="_new">';
+							html += 'PMC ' + doc.identifier[j].id;
+							//html += '</a>';
+							html += '</li>';
+							break;
+							
+						case "pmid":
+							html += '<li>';
+							//html += '<a href="http://www.jstor.org/stable' + doc.identifier[j].id + '" target="_new">';
+							html += 'PMID ' + doc.identifier[j].id;
+							//html += '</a>';
+							html += '</li>';
+							break;
+							
 							
 						default:
 							break;
 					}
 				}	
 				html += '</ul>';
+			}
+			
+			if (doc.book) {
+				if (doc.book.identifier) {
+					html += '<ul class="identifier">';
+					for (var j in doc.book.identifier) {
+						switch (doc.book.identifier[j].type)
+						{
+							case "isbn":
+								html += '<li>';
+								html += 'ISBN ' + doc.book.identifier[j].id;
+								html += '</li>';
+								break;
+							
+							default:
+								break;
+						}
+					}
+					html += '</ul>';
+				}
 			}
 		
 			

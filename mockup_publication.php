@@ -313,7 +313,7 @@ $id = $_GET['id'];
 						{
 							if (data.file.sha1)
 							{
-								docUrl = 'http://bionames.org/archive/documentcloud/' + data.file.sha1 + '.json';
+								docUrl = 'http://bionames.org/bionames-archive/documentcloud/' + data.file.sha1 + '.json';
 							}
 						}
 					
