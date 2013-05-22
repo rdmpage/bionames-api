@@ -111,26 +111,29 @@ function search($query, $callback = '')
 	{
 		if (isset($results->facets[$facet]))
 		{
-			echo '<div class="facet">';
 			
 			switch ($facet)
 			{
 				case 'nameCluster':
-					echo '<h2 class="names">Names</h2>';
+					echo '<div class="facet names">';
+					echo '<h2>Names</h2>';
 					break;
 					
 				case 'taxonConcept':
-					echo '<h2 class="taxa">Taxa</h2>';
+					echo '<div class="facet taxa">';
+					echo '<h2>Taxa</h2>';
 					break;
 					
 				case 'article':
-					echo '<h2 class="articles">Articles</h2>';
+					echo '<div class="facet articles">';
+					echo '<h2>Articles</h2>';
 					break;
 					
 				case 'book':
 				case 'chapter':
 				case 'generic':
-					echo '<h2 class="publications">Publications</h2>';
+					echo '<div class="facet publications">';
+					echo '<h2>Publications</h2>';
 					break;
 				
 				default:
@@ -154,7 +157,7 @@ function search($query, $callback = '')
 				switch ($facet)
 				{
 					case 'nameCluster':
-						echo '<div class="name-cluster">';
+						echo '<div class="name-cluster snippet-wrapper">';
 						echo '<a href="mockup_taxon_name.php?id=' . $id . '">';
 						echo $value->term;
 						echo '</a>';					
