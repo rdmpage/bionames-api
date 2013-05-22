@@ -111,24 +111,26 @@ function search($query, $callback = '')
 	{
 		if (isset($results->facets[$facet]))
 		{
+			echo '<div class="facet">';
+			
 			switch ($facet)
 			{
 				case 'nameCluster':
-					echo '<div style="background-color:green;color:white;">Names</div>';
+					echo '<h2 class="names">Names</h2>';
 					break;
 					
 				case 'taxonConcept':
-					echo '<div style="background-color:green;color:white;">Taxa</div>';
+					echo '<h2 class="taxa">Taxa</h2>';
 					break;
 					
 				case 'article':
-					echo '<div style="background-color:green;color:white;">Articles(s)</div>';
+					echo '<h2 class="articles">Articles</h2>';
 					break;
 					
 				case 'book':
 				case 'chapter':
 				case 'generic':
-					echo '<div style="background-color:green;color:white;">Publications</div>';
+					echo '<h2 class="publications">Publications</h2>';
 					break;
 				
 				default:
@@ -137,7 +139,6 @@ function search($query, $callback = '')
 			}
 		
 			
-			echo '<div >';
 			
 			$hits = $results->facets[$facet];
 			
@@ -148,12 +149,12 @@ function search($query, $callback = '')
 	//			echo '<div style="float:right;border:1px solid rgb(228,228,228);width:16px;font-size:100%;text-align:center;">»</div>';
 	
 				//echo '<div style="float:right;">';
-				echo '<div style="float:left;">';
+				// echo '<div style="float:left;">';
 			
 				switch ($facet)
 				{
 					case 'nameCluster':
-						echo '<div style="background-color:white;padding:2px;margin:2px;">';
+						echo '<div class="name-cluster">';
 						echo '<a href="mockup_taxon_name.php?id=' . $id . '">';
 						echo $value->term;
 						echo '</a>';					
@@ -164,7 +165,7 @@ function search($query, $callback = '')
 					case 'taxonConcept':
 						if (1)
 						{
-							echo '<div id="id' . str_replace("/", "_", $id) . '"></div>';
+							echo '<div id="id' . str_replace("/", "_", $id) . '" class="snippet-wrapper"></div>';
 						}
 						else
 						{
@@ -181,7 +182,7 @@ function search($query, $callback = '')
 					case 'generic':
 						if (1)
 						{
-							echo '<div id="id' . str_replace("/", "_", $id) . '"></div>';
+							echo '<div id="id' . str_replace("/", "_", $id) . '" class="snippet-wrapper"></div>';
 						}
 						else
 						{
@@ -200,7 +201,6 @@ function search($query, $callback = '')
 				
 				echo '</div>';
 			}
-			echo '<div style="clear:both;"></div>';
 		}
 		echo '</div>';
 	}
