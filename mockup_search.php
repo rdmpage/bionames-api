@@ -197,9 +197,7 @@ function search($query, $callback = '')
 					default:
 						echo '[unknown]';
 						break;
-				}
-				
-				echo '</div>';
+				}				
 			}
 		}
 		echo '</div>';
