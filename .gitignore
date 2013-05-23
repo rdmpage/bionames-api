@@ -8,3 +8,5 @@ tmp/
 db/*.db
 db/*.cdb
 db/*.txt
+
+junk/
