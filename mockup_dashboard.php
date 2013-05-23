@@ -202,7 +202,7 @@
         
 		function show_publishers()
 		{
-			$("#publishers").html("<b>Publishers (data from CrossRef)</b>");
+			$("#publishers").html("<b>Publishers</b>");
 		
 			$.getJSON("http://bionames.org/bionames-api/api_dashboard.php?publishers&callback=?",
 				function(data){
@@ -247,8 +247,9 @@
 		show_identifiers();
 		show_links();
 		show_documents();
-		show_issn();
+		
 		show_publishers();
+		//show_issn();
 	
 </script>
 

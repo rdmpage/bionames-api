@@ -93,6 +93,11 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 			
 			$url = '_design/publication/_view/tags?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
 			$include_docs = false;
+			
+			if ($config['stale'])
+			{
+				$url .= '&stale=ok';
+			}				
 	
 			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -187,6 +192,12 @@ function publications_for_children ($id, $callback = '')
 				
 				$url = '_design/classification/_view/publishedInCitation?key="' . $child_id . '"';
 				
+				if ($config['stale'])
+				{
+					$url .= '&stale=ok';
+				}	
+				
+				
 				$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 				
 				$response_obj = json_decode($resp);
@@ -229,6 +240,11 @@ function taxon_timeline ($id, $callback = '')
 	$endkey = array((Integer)$id, date("Y"));
 	
 	$url = '_design/classification/_view/gbif_year?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&group_level=2';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -418,6 +434,57 @@ function taxon_thumbnail ($id, $callback = '')
 }
 
 //--------------------------------------------------------------------------------------------------
+// Taxon thumbnails URLs (by mapping to EOL)
+function taxon_thumbnail_urls ($id, $callback = '')
+{	
+	global $config;
+	global $couch;
+	
+	$obj = new stdclass;
+	$obj->status = 404;	
+	
+	if (preg_match('/ncbi\/(?<id>\d+)$/', $id, $m))
+	{
+		// Get mapping to EOL...
+		$url = '_design/eol/_view/ncbi_thumbnail?key=' . urlencode('"' . $id . '"');
+		
+		if ($config['stale'])
+		{
+			$url .= '&stale=ok';
+		}		
+			
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+		
+		$response_obj = json_decode($resp);
+		
+		if (isset($response_obj->error))
+		{
+		}
+		else
+		{
+			$obj->status = 200;
+			$obj->eol = str_replace('eol/', '', $response_obj->rows[0]->id);
+			$obj->thumbnails = array();
+			
+			foreach ($response_obj->rows as $row)
+			{
+				$image_url = $row->value;
+				
+				// hack to get 88x88 image				
+				if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
+				{
+					$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
+				}
+			
+				$obj->thumbnails[] = $image_url;
+			}	
+		}
+	}
+
+	api_output($obj, $callback);
+}
+
+//--------------------------------------------------------------------------------------------------
 function main()
 {
 	//print_r($_GET);
@@ -477,7 +544,8 @@ function main()
 
 			if (isset($_GET['thumbnail']))
 			{	
-				taxon_thumbnail($id, $callback);
+				//taxon_thumbnail($id, $callback);
+				taxon_thumbnail_urls($id, $callback);
 				$handled = true;
 			}
 			

@@ -32,6 +32,7 @@ RewriteRule ^id/(biostor/\d+)   api_id.php?id=$1  [QSA,L]
 RewriteRule ^id/(cluster/\d+)   api_id.php?id=$1  [QSA,L]
 RewriteRule ^id/(gbif/\d+)   	api_id.php?id=$1  [QSA,L]
 RewriteRule ^id/(ncbi/\d+)   	api_id.php?id=$1  [QSA,L]
+RewriteRule ^id/(eol/\d+)   	api_id.php?id=$1  [QSA,L]
 
 RewriteRule ^id/(\w+)/count   api_id.php?namespace=$1&count  [QSA,L]
 

@@ -25,8 +25,28 @@ function simple_search($query, $callback = '')
 	$query = str_replace(",", "", $query);
 	
 	$url = "_design/search/_view/short?key=" . urlencode(json_encode($query)) . '&limit=1000';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
 		
-	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	if (0)
+	{
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	}
+	else
+	{
+		// Cloudant
+		$test_config['couchdb_options'] = array(
+			'database' => 'bionames',
+			'host' => 'rdmpage:peacrab@rdmpage.cloudant.com',
+			'port' => 5984
+			);	
+		$test_couch = new CouchSimple($test_config['couchdb_options']);
+
+		$resp = $test_couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	}
 	
 	//echo $resp;
 	

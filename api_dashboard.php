@@ -5,7 +5,6 @@ require_once (dirname(__FILE__) . '/lib.php');
 
 require_once (dirname(__FILE__) . '/api_utils.php');
 
-
 //--------------------------------------------------------------------------------------------------
 function default_display()
 {
@@ -19,7 +18,14 @@ function display_identifier_count ($callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;	
+	
 	$url = '_design/count/_view/identifier?reduce=true&group_level=1';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -48,7 +54,14 @@ function display_link_count ($callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	$url = '_design/count/_view/link?reduce=true&group_level=1';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -77,7 +90,14 @@ function display_document_count ($callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	$url = '_design/count/_view/document?reduce=true&group_level=1';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -107,7 +127,14 @@ function display_issn_count ($callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	$url = '_design/issn/_view/count?group_level=2';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -148,7 +175,14 @@ function display_publisher_count ($callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	$url = '_design/publication/_view/publisher?group_level=1';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	

@@ -7,7 +7,6 @@ require_once (dirname(__FILE__) . '/lib.php');
 
 require_once (dirname(__FILE__) . '/api_utils.php');
 
-
 //--------------------------------------------------------------------------------------------------
 function default_display()
 {
@@ -48,6 +47,7 @@ function display_oclc ($oclc, $callback = '')
 {
 	global $config;
 	global $couch;
+	
 	
 	$couch_id = 'oclc/' . $oclc;
 	
@@ -91,6 +91,7 @@ function display_articles_year_volume ($namespace, $value, $year, $volume, $call
 	global $config;
 	global $couch;
 	
+	
 	$decade = floor($year/10) * 10;
 	
 	switch ($namespace)
@@ -114,9 +115,15 @@ function display_articles_year_volume ($namespace, $value, $year, $volume, $call
 	/*
 	$startkey = array($issn, $decade, (Integer)$year, $volume);
 	$endkey = array($issn, $decade, (Integer)$year, $volume, new stdclass);
-	$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&reduce=false&include_docs=true';
+	$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&reduce=false'; // &include_docs=true';
 	*/
 	//echo $url;
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -146,7 +153,8 @@ function display_articles_year_volume ($namespace, $value, $year, $volume, $call
 			$obj->articles = array();
 			foreach ($response_obj->rows as $row)
 			{
-				$obj->articles[] = $row->doc;
+				//$obj->articles[] = $row->doc;
+				$obj->articles[] = $row->id;
 			}	
 						
 			
@@ -162,6 +170,7 @@ function display_articles ($namespace, $value, $fields=array('all'), $callback =
 {
 	global $config;
 	global $couch;
+	
 	
 	switch ($namespace)
 	{
@@ -181,6 +190,12 @@ function display_articles ($namespace, $value, $fields=array('all'), $callback =
 	{
 		$url .= '&include_docs=true';
 	}
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -247,6 +262,7 @@ function display_article_decade_volumes ($namespace, $value, $callback = '')
 	global $config;
 	global $couch;
 	
+	
 	switch ($namespace)
 	{
 		case 'oclc':
@@ -271,6 +287,12 @@ function display_article_decade_volumes ($namespace, $value, $callback = '')
 	
 	$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&group_level=4';
 	*/
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -332,7 +354,7 @@ function display_article_identifiers ($namespace, $value, $callback = '')
 	global $config;
 	global $couch;
 	
-	
+		
 	$startkey = array($value);
 	$endkey = array($value, new stdclass);
 	
@@ -353,6 +375,12 @@ function display_article_identifiers ($namespace, $value, $callback = '')
 			$url = '_design/issn/_view/identifier?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey);
 			break;			
 	}
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
 			
 	
 	//echo $url;
@@ -416,6 +444,7 @@ function display_article_count ($namespace, $callback = '')
 	global $config;
 	global $couch;
 	
+	
 	switch ($namespace)
 	{
 		case 'oclc':
@@ -426,6 +455,11 @@ function display_article_count ($namespace, $callback = '')
 		default:
 			$url = '_design/issn/_view/count?group_level=2';
 			break;
+	}	
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
 	}	
 	
 	//echo $url;
@@ -497,6 +531,7 @@ function display_article_geometry($namespace, $value, $callback = '')
 	global $config;
 	global $couch;
 	
+	
 	switch ($namespace)
 	{
 		case 'oclc':
@@ -508,6 +543,11 @@ function display_article_geometry($namespace, $value, $callback = '')
 			$url = '_design/issn/_view/points?key="' . $value . '"';
 			break;
 	}
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	//echo $url;
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);

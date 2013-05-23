@@ -25,6 +25,11 @@ function display_lastname ($lastname, $callback = '')
 	
 	$url = '_design/author/_view/lastname_firstname?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&group_level=2';
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
 	//echo $url;
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -84,6 +89,11 @@ function display_authored ($name, $fields=array('all'), $callback = '')
 		$url .= '&include_docs=true';
 	}
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
+	
 	//echo $url;
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -139,6 +149,11 @@ function taxa_published ($publication)
 
 	$url = '_design/publication/_view/names_published?key=' . urlencode('"' . $publication . '"');
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
+	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 
 	$response_obj = json_decode($resp);
@@ -164,6 +179,11 @@ function display_taxa_authored ($name, $callback = '')
 		
 	// Get list of publications	
 	$url = '_design/author/_view/name?key=' . urlencode(json_encode($name));
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -212,6 +232,10 @@ function display_authored_years ($name, $callback = '')
 	$endkey = array($name, new stdclass);
 	$url = '_design/author/_view/year?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&group_level=2';
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	//echo $url;
 	
@@ -262,6 +286,11 @@ function display_coauthors ($name, $callback = '')
 	$startkey = array($name);
 	$endkey = array($name, new stdclass);
 	$url = '_design/author/_view/coauthor?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&group_level=2';
+			
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 			
 	//echo $url;
 	

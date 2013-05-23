@@ -20,7 +20,7 @@ if (isset($_GET['journal']))
 }
 
 ?>
-
+<!DOCTYPE html>
 <html>
 <head>
 	<base href="/bionames-api/" />
@@ -29,109 +29,57 @@ if (isset($_GET['journal']))
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">	
 	
-	<style type="text/css" title="text/css">
-			
-	body {
-	  font-family: 'Open Sans', sans-serif;
-	  font-weight: 400;
-	  font-size: 14px;
-	  line-height: 20px;
-	  color: #2e3033;
-	}
-	
-	
-	.search-input {
-		font-size:24px;
-	}
-	
-	
-	.pub .thumbnail {
-	  float: left;
-	  width: 40px;
-	  height: 60px;
-	  overflow: hidden;
-	  background-color: rgba(0,0,0,0.1);
-	  border: 1px solid rgba(0,0,0,0.05);
-	  border-radius: 2px;
-	}
-	
-	.pub .thumbnail img {
-	  display: block;
-	  width: 40px;
-	  height: 60px;
-	  border-radius: 2px;
-	}
-	
-	.pub .citation {
-	  margin-left: 60px;
-	  padding-right: 10px;
-	}
-	
-	.pub .title {
-	  font-weight: 700;
-	}
-	
-	.pub .meta {
-	  font-size: 12px;
-	}
-	
-	.pub .meta,
-	.pub .meta span.j-sep{
-	  color: #737880;
-	}
-	
-	.pub .meta span {
-	  color: #45494d;
-	}
-	
-	.pub .journal {
-	  font-style: italic;
-	}
-	
-	</style>
+	<link href="snippet.css" rel="stylesheet">	
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    
+<!--<script src="js/snippet.js"></script>   -->
+<script src="js/publication.js"></script>   
+    
+			<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+			<!--[if lt IE 9]>
+			  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<![endif]-->
+    
 	
 </head>
 <body>
 
-<div style="top:0px;height:40px;">
-	<div style="float:right;">
-		<a href="mockup_index.php">Home</a>
-		&nbsp;
-		<a href="mockup_dashboard.php">Dashboard</a>
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+	 <a class="brand" href="mockup_index.php">BioNames</a>
+	 <ul class="nav">
+	  <li><form class="navbar-search pull-left" method="get" action="mockup_search.php">
+		<input type="text" id='q' name='q' data-provide="typeahead" class="search-query" placeholder="Search" autocomplete="off" value="<?php echo $q; ?>">
+		</form> 
+	  </li>
+	  <li><a href="#">More...</a></li>
+	  </ul>
 	</div>
-
-	<form method="GET" action="mockup_search.php">
-		<input class="search-input" name="q" placeholder="Search" style="width: 22em; padding-left: 2em;" type="text" value="">
-		<input type="submit" value="Search">
-	</form>
 </div>
-
-<div style="top:0px;float:right;width:280px;padding:10px;">
-	<div id="metadata">Metadata</div>
-	<div id="identifiers">Identifiers</div>
-</div>
-
-<div id="title" style="font-size:200%;line-height:150%"></div>
-
-	<div style="position:relative;width:600px;height:400px;">
-		<div id="volumes" style="position:absolute;left:0px;top:0px;width:300px;">[volumes]</div>
-		<div id="articles" style="position:absolute;left:300px;top:0px;width:auto;"></div>
+	
+<div style="margin-top:50px;" class="container-fluid">
+	<div class="row-fluid">
+  		<div class="span2">
+  			<div id="volumes" class="affix"></div>  			
+  		</div>
+  		<div class="span7">
+  			<div id="articles"></div>
+  		</div>
+  		<div class="span2">
+  			<div id="metadata"></div>
+  			<div id="identifiers"></div>
+  		</div>
 	</div>
-
-
-	<script src="js/jquery.js"></script>
-	<script src="js/display.js"></script>
-	<script src="js/openurl.js"></script>
+</div>
 
 <script type="text/javascript">
 	var issn = "<?php echo $issn;?>";
 	var oclc = "<?php echo $oclc;?>";
 	var journal = "<?php echo $journal;?>";
-
 	
 	// Details about journal
 	function display_journal_from_oclc (oclc)
@@ -171,7 +119,10 @@ if (isset($_GET['journal']))
 				
 				
 					var html = '';
-					html += '<img style="border:1px solid rgb(128,128,128);" src="http://bioguid.info/issn/image.php?issn=' + issn + '" width="128"/>';
+					
+					if (data.thumbnail) {
+						html += '<img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" width="88"/>';					
+					}
 					
 					html += '<table>';
 					html += '<tbody style="font-size:80%;">';
@@ -295,19 +246,23 @@ if (isset($_GET['journal']))
 			url += '?callback=?';
 			
 			
-//			$.getJSON("journals/issn/" + issn + "/volumes/" + volume + "/year/" + year + "?callback=?",
 			$.getJSON(url,
 				function(data){
 					if (data.status == 200)
 					{					
-						$("#articles").html('<div style="font-size:150%;padding:10px;">Volume ' + volume + " (" + year + ")</div>");
-						for (var i in data.articles)
+						var html = '';
+						var ids = [];
+						for (var id in data.articles)
 						{
-							var html = $("#articles").html();
-							
-							html += display_reference(data.articles[i]);
-							$("#articles").html(html);
+							html += '<div id="id' + data.articles[id] + '">' + data.articles[id] + '</div>';
+							ids.push(data.articles[id]);
 						}
+						// display details
+						for (var id in ids) {
+							html += '<script>display_publications("' + ids[id] + '");<\/script>';
+						}
+
+						$("#articles").html(html);
 					}
 				});
 		}
@@ -332,24 +287,34 @@ if (isset($_GET['journal']))
 				}
 				url += '?callback=?';
 				
-				
-//				$.getJSON("http://bionames.org/bionames-api/journals/issn/" + issn + "/volumes?callback=?",
 				$.getJSON(url,
 					function(data){
 						var html = '';
 						if (data.status == 200)
 						{							
-							html += '<h3>Volumes</h3>';
-							
-							html += '<ul>';
+							html += '<div class="accordion" id="accordion">';
 							
 							if (data.decades)
 							{
+								var first = true;
 								for (var decade in data.decades)
-								{
-									html += '<li>' + decade + '\'s';
-									html += '<ul>'
+								{								
+									html += '<div class="accordion-group">';
+									html += '  <div class="accordion-heading">';
+									html += '  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse' + decade + '">';
+									html += decade + '\'s';
+									html += '</a>';
+									html += '  </div>';
 									
+									if (first) {
+										html += '  <div id="collapse' + decade + '" class="accordion-body collapse in">';
+										first = false;
+									} else {
+										html += '  <div id="collapse' + decade + '" class="accordion-body collapse">';
+									}
+									html += '    <div class="accordion-inner" id="accordionInner' + decade + '">';
+
+									html += '<ul>';
 									for (var year in data.decades[decade])
 									{
 										html += '<li>' + year ;
@@ -358,19 +323,21 @@ if (isset($_GET['journal']))
 										{
 											html += '<li>';
 											html += '<span onclick="year_volume_articles(\'' + ns + '\', \'' + value + '\',\'' + data.decades[decade][year][volume].volume + '\',' + year + ')">';
-											html += ' vol. ' + data.decades[decade][year][volume].volume + ' (' +  data.decades[decade][year][volume].count + ' article(s))';
-											html += '</span>';	
+											html += ' vol. ' + data.decades[decade][year][volume].volume + '</span>';
+											html += ' <span class="badge badge-info">' +  data.decades[decade][year][volume].count + '</span>';
 											html += '</li>';	
 										}
 										html += '</ul>';
 										html += '</li>';
 									}
-									html += '</ul>'
-									html += '</li>';
+									html += '</ul>';
+									html +=  '    </div>';
+									html +=  '  </div>';
+									html +=  '</div>';
 								}
 							}
 							
-							html += '</ul>';
+							html += '</div>';
 						}
 						else
 						{
@@ -379,7 +346,7 @@ if (isset($_GET['journal']))
 						$("#volumes").html(html);
 					});
 				}
-	
+				
 		function show_article_identifiers(ns, value)
 		{
 			$("#identifiers").html("");
@@ -403,68 +370,94 @@ if (isset($_GET['journal']))
 					var html = '';
 					if (data.status == 200)
 					{			
-						html += '<h3>Identifiers</h3>';
+						html += '<div style="width:200px;position:relative;">';
+
+						html += '<h4>Identifiers</h4>';
+						html += '<small>DOI, Handle, BioStor, JSTOR, CiNii, PMID, PMC</small>';
 						html += '<div style="width:200px;position:relative;">';
 						for (var i in data.years)
 						{
 							for (j in data.years[i])
 							{
-								var colour = 'rgb(228,228,228)';
+								var ids=[];
+								var opacity = 0.1;
 								for (k in data.years[i][j])
 								{
 									if (data.years[i][j][k].indexOf('biostor') != -1)
 									{
-										colour = 'orange';
+										ids.push('BioStor');
+										opacity += 0.2;
 									}
 									if (data.years[i][j][k].indexOf('cinii') != -1)
 									{
-										colour = 'purple';
+										ids.push('CiNii');
+										opacity += 0.2;
 									}
 									if (data.years[i][j][k].indexOf('doi') != -1)
 									{
-										colour = 'green';
+										ids.push('DOI');
+										opacity += 0.2;
 									}
 									if (data.years[i][j][k].indexOf('handle') != -1)
 									{
-										colour = 'blue';
+										ids.push('Handle');
+										opacity += 0.2;
+									}
+									if (data.years[i][j][k].indexOf('jstor') != -1)
+									{
+										ids.push('JSTOR');
+										opacity += 0.2;
+									}
+									if (data.years[i][j][k].indexOf('pmc') != -1)
+									{
+										ids.push('PMC');
+										opacity += 0.2;
 									}
 									if (data.years[i][j][k].indexOf('pmid') != -1)
 									{
-										colour = 'yellow';
+										ids.push('PMID');
+										opacity += 0.2;
 									}
 									
 								}
-								html += '<div style="float:left;width:20px;height:20px;">';
-								html += '<a href="mockup_publication.php?id=' + j + '">';
-								html += '<div style="width:16px;height:16px;background-color:' + colour + ';margin:2px;"></div>';
+								ids = ids.sort();
+								html += '<div style="float:left;width:14px;height:14px;">';
+								html += '<a href="mockup_publication.php?id=' + j + '" title="' + ids.join() + '">';
+								html += '<div style="width:12px;height:12px;background-color:green;margin:1px;opacity:' + opacity + '"></div>';
 								html += '</a>';
 								html += '</div>';
 							}
 						}
+						
 						html += '<div style="clear:both;"></div>';
 						html += '</div>';
 
-						html += '<h3>Links</h3>';
+						html += '<h4>Links</h4>';
+						html += '<small>URL or PDF link</small>';
 						html += '<div style="width:200px;position:relative;">';
 						for (var i in data.years)
 						{
 							for (j in data.years[i])
 							{
-								var colour = 'rgb(228,228,228)';
+								var ids=[];
+								var opacity = 0.1;
 								for (k in data.years[i][j])
 								{
 									if (data.years[i][j][k].indexOf('LINK') != -1)
 									{
-										colour = 'orange';
+										ids.push('URL');
+										opacity += 0.2;
 									}
 									if (data.years[i][j][k].indexOf('PDF') != -1)
 									{
-										colour = 'green';
+										ids.push('PDF');
+										opacity += 0.2;
 									}
 								}
-								html += '<div style="float:left;width:20px;height:20px;">';
-								html += '<a href="mockup_publication.php?id=' + j + '">';
-								html += '<div style="width:16px;height:16px;background-color:' + colour + ';margin:2px;"></div>';
+								ids = ids.sort();
+								html += '<div style="float:left;width:14px;height:14px;">';
+								html += '<a href="mockup_publication.php?id=' + j + '" title="' + ids.join() + '">';
+								html += '<div style="width:12px;height:12px;background-color:green;margin:1px;opacity:' + opacity + '"></div>';
 								html += '</a>';
 								html += '</div>';
 							}
@@ -500,6 +493,18 @@ if (isset($_GET['journal']))
 		$('#title').html(journal);
 	}
 
+	<!-- typeahead for search box -->
+	$("#q").typeahead({
+	  source: function (query, process) {
+		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+		function (data) {
+		  //data = ['Plecopt', 'Peas'];
+		  
+		  var suggestions = data.suggestions;
+		  process(suggestions)
+		})
+	  }
+	})
 	
 </script>
 

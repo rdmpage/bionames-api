@@ -7,7 +7,6 @@ require_once (dirname(__FILE__) . '/lib.php');
 
 require_once (dirname(__FILE__) . '/api_utils.php');
 
-
 //--------------------------------------------------------------------------------------------------
 function default_display()
 {
@@ -19,6 +18,8 @@ function clusters_with_name($name, $callback = '')
 {
 	global $config;
 	global $couch;
+	
+	global $stale_ok;
 		
 	$include_docs = true;
 	
@@ -28,6 +29,11 @@ function clusters_with_name($name, $callback = '')
 	{
 		$url .= '&include_docs=true';
 	}
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	//echo $url;
 	
@@ -71,11 +77,124 @@ function clusters_with_name($name, $callback = '')
 }
 
 //--------------------------------------------------------------------------------------------------
+// Unsorted array of publications containing a name
+// Question is how scalable this is if we return documents as well as ids?
+function publications_with_name_simple($name, $fields=array('all'), $callback = '', $include_docs = false)
+{
+	global $config;
+	global $couch;
+	
+	global $stale_ok;
+	
+	// Names listed as "tags" of articles
+	
+	$startkey = array($name);
+	$endkey = array($name, new stdclass);
+	$url = '_design/publication/_view/tags?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
+			
+	if ($include_docs)
+	{
+		$url .= '&include_docs=true';
+	}	
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
+	//echo $url;
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	$response_obj = json_decode($resp);
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+			$obj->error = 'Not found';
+		}
+		else
+		{	
+			$obj->status = 200;
+			$obj->publications = array();
+			foreach ($response_obj->rows as $row)
+			{
+				if ($include_docs)
+				{
+					$obj->publications[] = $row->doc;
+				}
+				else
+				{
+					$obj->publications[] = $row->value;				
+				}
+			}
+		}
+	}
+	
+	// names published
+	$url = '_design/publication/_view/names?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
+			
+	if ($include_docs)
+	{
+		$url .= '&include_docs=true';
+	}	
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
+	//echo $url;
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	$response_obj = json_decode($resp);
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+		}
+		else
+		{	
+			unset ($obj->error);
+			$obj->status = 200;
+
+			foreach ($response_obj->rows as $row)
+			{
+				if ($include_docs)
+				{
+					$obj->publications[] = $row->doc;
+				}
+				else
+				{
+					$obj->publications[] = $row->value;				
+				}
+			}
+		}
+	}
+	
+	$obj->publications = array_unique($obj->publications);
+	
+	
+	
+	api_output($obj, $callback);
+}
+
+//--------------------------------------------------------------------------------------------------
 // Question is how scalable this is if we return documents as well as ids?
 function publications_with_name($name, $year = '', $fields=array('all'), $callback = '')
 {
 	global $config;
 	global $couch;
+	
+	global $stale_ok;
 	
 	// Names listed as "tags" of articles
 	
@@ -101,6 +220,12 @@ function publications_with_name($name, $year = '', $fields=array('all'), $callba
 	{
 		$url .= '&include_docs=true';
 	}
+	
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	//echo $url;
 	
@@ -165,6 +290,11 @@ function publications_with_name($name, $year = '', $fields=array('all'), $callba
 	
 	
 	$url = '_design/publication/_view/names?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -260,9 +390,17 @@ function name_suggest($name, $limit = 5, $callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	$url = "/_design/taxonName/_view/nameString?startkey=" . urlencode('"' . $name . '"') . "&endkey=" . urlencode('"' . $name . '\u9999"') . "&limit=$limit";
 		
 	//echo $url;
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -307,7 +445,14 @@ function name_same_epithet_author($epithet, $callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	$url = "/_design/taxonName/_view/epithet_author?key=" . urlencode('"' . $epithet . '"');
+		
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 		
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -352,8 +497,15 @@ function name_related($name, $callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	// BHL page co-occurrence
 	$url = "/_design/bhl/_view/name_synonym?key=" . urlencode(json_encode($name));
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 		
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -391,6 +543,11 @@ function name_related($name, $callback = '')
 	// Names that one or more classifications say are synonyms
 	$url = "/_design/classification/_view/synonyms?key=" . urlencode(json_encode($name));
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
 	$response_obj = json_decode($resp);
@@ -421,6 +578,16 @@ function name_related($name, $callback = '')
 		}
 	}
 	
+	// Make sure this name isn't in list of "related" names
+	if (isset($obj->related))
+	{
+		// http://stackoverflow.com/a/8135667/9684
+		$key = array_search($name,$obj->related);
+		if($key!==false){
+    		unset($obj->related[$key]);
+		}
+	}
+	
 	
 	api_output($obj, $callback);
 }
@@ -433,7 +600,14 @@ function name_to_concept($id, $callback = '')
 	global $config;
 	global $couch;
 	
+	global $stale_ok;
+	
 	$url = "/_design/classification/_view/name_to_concept?key=" . urlencode('"' . $id . '"');
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
 		
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -558,6 +732,13 @@ function main()
 		$callback = $_GET['callback'];
 	}
 	
+	$include_docs = false;
+	if (isset($_GET['include_docs']))
+	{	
+		$include_docs = true;
+	}
+	
+	
 	// Optional fields to include
 	$fields = array('all');
 	if (isset($_GET['fields']))
@@ -600,9 +781,16 @@ function main()
 					if (isset($_GET['year']))
 					{
 						$year = $_GET['year'];
+						publications_with_name($name, $year, $fields, $callback);
+						$handled = true;
 					}
-					publications_with_name($name, $year, $fields, $callback);
-					$handled = true;
+					
+					if (!$handled)
+					{
+						publications_with_name_simple($name, $fields, $callback, $include_docs);
+						$handled = true;
+					}
+					
 				}
 			}
 			

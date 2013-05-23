@@ -15,8 +15,8 @@ $id = $_GET['id'];
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
 	<!-- Google Maps -->
-    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
-	
+    <!-- <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
+	<!--
 	<script>
     	var map; // Google map
     
@@ -30,6 +30,7 @@ $id = $_GET['id'];
         map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
       }
 	</script>	
+	-->
 	
 	
 	<style type="text/css" title="text/css">
@@ -233,7 +234,7 @@ $id = $_GET['id'];
 
       function gbif_map(id)
       {
-      	
+      	/*
       	$.getJSON("get_gbif_geojson.php?id=" + id + "&callback=?",
 			function(geojson){
 
@@ -268,8 +269,33 @@ $id = $_GET['id'];
 
 			}
 		);
+		*/
       
       }        
+      
+      function show_images(concept)
+      {
+			$("#images").html("");
+			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/thumbnail?callback=?",
+				function(data){
+					if (data.status == 200) {
+						if (data.thumbnails.length != 0) {
+							var html = '';
+							html += '<div>';
+							var n = Math.min(4, data.thumbnails.length);
+							for (var i=0;i<n;i++) {
+								html += '<img style="padding:4px;" src="' + data.thumbnails[i] + '" />';
+							}
+							html += '<div>Images from <a href="http://eol.org/pages/' + data.eol + '">EOL</a></div>';
+							html += '</div>';
+						
+							$("#images").html(html);
+						}
+					}
+				});
+	 }
+					
+			
 	
 	
 		function show_classification(concept)
@@ -496,8 +522,10 @@ $id = $_GET['id'];
 					if (data.status == 200)
 					{		
 						var html = '';						
-						html = '<ul>';
 						
+						
+						/*
+						html = '<ul>';
 						if (data.years)
 						{
 							for (var year in data.years)
@@ -585,13 +613,35 @@ $id = $_GET['id'];
 
 							}
 						}
-						html += '</ul>';		
+						html += '</ul>';
+						*/
+						if (data.publications)
+						{
+							html += '<ul>';
+							var ids = [];
+							for (var i in data.publications)
+							{
+								html += '<li>';
+								html += '<div id="id' + data.publications[i] + '">' + data.publications[i] + '</div>';
+								ids.push(data.publications[i]);
+								//html += data.publications[i]._id;
+								html += '</li>';
+							}							
+							html += '</ul>';
+
+							// display details
+							for (var id in ids) {
+								html += '<script>display_publications("' + ids[id] + '");<\/script>';
+							}
+							
+						}						
 						$("#publications").html(html);
 						
 					}
 				});
 		}		
 		
+		// Coloured boxes indicating presence or absence of publication
 		function show_child_publications(concept)
 		{
 			$("#child_publications").html("");
@@ -622,13 +672,54 @@ $id = $_GET['id'];
 				});
 		}
 		
+		// 
+		function show_child_publication_thumbnails(concept)
+		{
+			$("#child_publication_thumbnails").html("");
+			
+			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/publications/children?callback=?",
+				function(data){					
+					if (data.status == 200)
+					{			
+						var ids = [];
+						
+						var count = 0;
+					
+						var html = '<h3>Publication thumbnails</h3>';
+						html += '<div style="width:200px;">';
+						for (var i in data.children) {
+							if (data.children[i].length > 0) {
+								for (var j in data.children[i]) {
+									count++;
+									var dom_id = 'thumbnail' + count;
+									html += '<div style="float:left;" id="' + dom_id + '" data-id="' + data.children[i][j] + '">' + data.children[i][j] + '</div>';
+									ids.push(dom_id);
+								}
+							} else {
+								html += '<div style="float:left;border:1px solid black;width:64px;height:80px;text-align:center;">?</div>';
+							}
+						}
+						html += '</div>';
+							
+						// display details
+						for (var id in ids) {
+							html += '<script>display_publication_thumbnails_data_id("' + ids[id] + '");<\/script>';
+						}
+						
+						$("#child_publication_thumbnails").html(html);
+					}
+					
+				});
+		}		
+		
 				
 		
 	</script>
 	
 	
 </head>
-<body onload="initialize()">
+<!-- <body onload="initialize()"> -->
+<body>
 
 <div style="top:0px;height:40px;">
 	<div style="float:right;">
@@ -652,17 +743,18 @@ $id = $_GET['id'];
 	<div style="position:relative;">
 		
 		<div style="float:right;top:0px;width:400px;border-left:1px black solid;padding-left:10px;">
-		<div id="eol"></div>
+		<div id="images"></div>
 		<!-- 
 		<div id="chart" style="width:300px;height:100px;">[chart]</div>	
 		-->
 		<h3>Classification</h3>
 		<div id="classification">[classification]</div>
 		<div id="child_publications">xxx</div>
+		<div id="child_publication_thumbnails">xxx</div>
 		
 			<h3>Info</h3>
 			<!--<div id="info">[info]</div>	-->
-			<div id="map_canvas" style="width:400px; height:200px;float:right;top:0px;"></div>  
+			<!--<div id="map_canvas" style="width:400px; height:200px;float:right;top:0px;"></div> -->
 		
 		</div>
 	
@@ -682,13 +774,17 @@ $id = $_GET['id'];
 	<script src="js/jquery.js"></script>
 	<script src="js/display.js"></script>
 	<script src="js/openurl.js"></script>
+	<script src="js/publication.js"></script>
 	<script src="js/snippet.js"></script>
 	
 	<script>
 		var concept = "<?php echo $id;?>";
+		show_images(concept);
 		show_classification(concept);
 		//show_timeline(concept);
 		show_child_publications(concept);
+		
+		show_child_publication_thumbnails(concept);
 		
 		//show_wall(concept);
 		

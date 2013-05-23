@@ -1,29 +1,82 @@
 <?php
 
-// mockup template
+// mockup of publication display
 
-// do PHP stuff here to get query parameters...
 $id = $_GET['id'];
-
 
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 	<base href="/bionames-api/" />
-	<title>Title</title>
+	<!-- <base href="/~rpage/bionames-api/" /> -->
+	<title>Publication</title>
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
+	
+	<style type="text/css" title="text/css">
+			
+	body {
+	  font-family: 'Open Sans', sans-serif;
+	  font-weight: 400;
+	  font-size: 14px;
+	  line-height: 20px;
+	  color: #2e3033;
+	}
+	
+	
+	.search-input {
+		font-size:24px;
+	}
+		
+	.pub .thumbnail {
+	  float: left;
+	  width: 40px;
+	  height: 60px;
+	  overflow: hidden;
+	  background-color: rgba(0,0,0,0.1);
+	  border: 1px solid rgba(0,0,0,0.05);
+	  border-radius: 2px;
+	}
+	
+	.pub .thumbnail img {
+	  display: block;
+	  width: 40px;
+	  height: 60px;
+	  border-radius: 2px;
+	}
+	
+	.pub .citation {
+	  margin-left: 60px;
+	  padding-right: 10px;
+	}
+	
+	.pub .title {
+	  font-weight: 700;
+	}
+	
+	.pub .meta {
+	  font-size: 12px;
+	}
+	
+	.pub .meta,
+	.pub .meta span.j-sep{
+	  color: #737880;
+	}
+	
+	.pub .meta span {
+	  color: #45494d;
+	}
+	
+	.pub .journal {
+	  font-style: italic;
+	}
+	
+	</style>
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    
-	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
 	
 	<!-- documentcloud -->
 	<!--[if (!IE)|(gte IE 8)]><!-->
@@ -36,34 +89,41 @@ $id = $_GET['id'];
 	<![endif]-->
 	
 	<script src="public/assets/viewer.js" type="text/javascript" charset="utf-8"></script>
-	<script src="public/assets/templates.js" type="text/javascript" charset="utf-8"></script>			    
-	
+	<script src="public/assets/templates.js" type="text/javascript" charset="utf-8"></script>			
+
 </head>
 <body onload="$(window).resize()">
 
-<div class="navbar navbar-fixed-top">
-	<div class="navbar-inner">
-	 <a class="brand" href="mockup_index.php">BioNames</a>
-	 <ul class="nav">
-	  <li><form class="navbar-search pull-left" method="get" action="mockup_search.php">
-		<input type="text" id='q' name='q' data-provide="typeahead" class="search-query" placeholder="Search" autocomplete="off" value="<?php echo $q; ?>">
-		</form> 
-	  </li>
-	  <li><a href="#">More...</a></li>
-	  </ul>
+<div style="top:0px;height:40px;">
+	<div style="float:right;">
+		<a href="mockup_index.php">Home</a>
+		&nbsp;
+		<a href="mockup_dashboard.php">Dashboard</a>
 	</div>
-</div>
-	
-<div style="margin-top:42px;padding:0px;" class="container-fluid">
-	<div class="row-fluid">
-		<div class="span8">
-			<div id="doc">Loading...</div>
-		</div>
-		<div class="span4" id="metadata">
-		</div>
-	</div>
+
+	<form method="GET" action="mockup_search.php">
+		<input class="search-input" name="q" placeholder="Search" style="width: 22em; padding-left: 2em;" type="text" value="">
+		<input type="submit" value="Search">
+	</form>
 </div>
 
+<div style="top:40px;height:40px;background-color:rgb(240,240,240);width:100%;">
+	<span id="title" style="font-size:150%;font-weight-bold;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;"></span>
+</div>
+
+<div style="top:0px;float:right;width:280px;padding:10px;">
+	<div id="metadata"></div>
+	<h3>❝Cite</h3>
+	<div id="cite"></div>
+	<h3>Names published</h3>
+	<div id="names"></div>
+
+	<!-- to do -->
+	<h3>Localities, specimens, cites/cited by, sequences, phylogeny, etc.</h3>
+	
+</div>
+
+<div id="doc"><span>Display object here</span></div>
 
 <script type="text/javascript">
 	var id = "<?php echo $id;?>";
@@ -84,7 +144,7 @@ $id = $_GET['id'];
 					
 					if (data.thumbnail)
 					{
-						html += '<div ><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" width="100" /></div>';
+						html += '<div ><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" height="100" /></div>';
 					}					
 					
 					if (data.title)
@@ -278,9 +338,7 @@ $id = $_GET['id'];
 						{
 							var html = '';
 							html += '<div style="text-align:center;">';
-							html += '<div class="alert">';
-							html += '<strong>Limited access!</strong> You may need a subscription to access this item.';
-							html += '</div>';
+							html += '<div>∅ Restricted access digital version available</div>';
 							html += '<img style="border:1px solid rgb(128,128,128);padding:10px;" src="' + data.thumbnail + '" width="400" />';
 							html += '</div>';
 							$('#doc').html(html);
@@ -289,9 +347,7 @@ $id = $_GET['id'];
 						{
 							var html = '';
 							html += '<div style="text-align:center;">';
-							html += '<div class="alert">';
-							html += 'Unable to display this item.';
-							html += '</div>';
+							html += '<div>Unable to display</div>';
 							html += '</div>';
 							
 							$('#doc').html(html);
@@ -334,7 +390,7 @@ $id = $_GET['id'];
 
 	// http://stackoverflow.com/questions/6762564/setting-div-width-according-to-the-screen-size-of-user
 	$(window).resize(function() { 
-		var windowWidth = 700;
+		var windowWidth = $(window).width() - 300;
 //		var windowHeight =$(window).height();
 		var windowHeight =$(window).height() - 40;
 		
@@ -342,24 +398,12 @@ $id = $_GET['id'];
 		console.log('height=' + $(window).height());
 		console.log(windowHeight);
 		
-		$('#doc').css({'height':windowHeight });
+		$('#doc').css({'width':windowWidth,'height':windowHeight });
 	});
 	
-
-	<!-- typeahead for search box -->
-	$("#q").typeahead({
-	  source: function (query, process) {
-		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
-		function (data) {
-		  //data = ['Plecopt', 'Peas'];
-		  
-		  var suggestions = data.suggestions;
-		  process(suggestions)
-		})
-	  }
-	})
-	
 </script>
+
+
 
 </body>
 </html>

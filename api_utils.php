@@ -12,6 +12,7 @@ function api_output($obj, $callback)
 	}
 	
 	header("Content-type: text/plain");
+//	header("Content-type: application/json");
 	
 	if ($callback != '')
 	{

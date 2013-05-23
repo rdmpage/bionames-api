@@ -52,6 +52,7 @@
 
 <div><a href="mockup_concept.php?id=gbif/2432854"><img src="http://bionames.org/bionames-api/taxon/eol/15607/thumbnail" />Pteropus</a></div>
 <div><a href="mockup_concept.php?id=gbif/2433223"><img src="http://bionames.org/bionames-api/taxon/eol/42168/thumbnail" />Lonchophylla</a></div>
+<div><a href="mockup_concept.php?id=ncbi/102659"><img src="http://media.eol.org/content/2010/12/10/05/04007_88_88.jpg" />Opisthoteuthis</a></div>
 
 
 
