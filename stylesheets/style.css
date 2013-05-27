@@ -1,0 +1,493 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  color: #2e3033;
+  background-color: #fff;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+body.search {
+  background-color: #f9f9f9;
+}
+
+/* for checking vertical rhythm */
+/*body{     
+    background-image: -webkit-linear-gradient(#f9f9f9 .05em, transparent .05em);
+    background-image:    -moz-linear-gradient(#f9f9f9 1px, transparent 1px);
+    background-image:     -ms-linear-gradient(#f9f9f9 1px, transparent 1px);
+    background-image:      -o-linear-gradient(#f9f9f9 1px, transparent 1px);
+    background-image:         linear-gradient(#f9f9f9 1px, transparent 1px);
+    background-size: 100% 20px;
+}*/
+
+
+/* Hacks to Bootstrap to make the columns look like we want */  
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.main-content{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.main-content .page-header {
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.sidebar.span3 {
+  margin-left: 0;
+}
+
+
+/* Page header */
+.page-header {
+  margin-top: 0;
+}
+body.author  .page-header { background-color: #4d95be; }
+body.name    .page-header { background-color: #d36e2b; }
+body.concept .page-header { background-color: #899369; }
+
+.page-header #title {
+  color: #f9f9f9; 
+  margin-top: 0;
+  padding: 10px 0 0 24px;
+  background-repeat: no-repeat;
+}
+
+body.author  .page-header #title { 
+  background-image: url(/bionames-api/images/icon-author.png); 
+  background-position: left 21px;
+}
+
+body.name  .page-header #title { 
+  background-image: url(/bionames-api/images/icon-tag-white.png); 
+  background-position: left 25px;
+  padding-left: 33px;
+}
+
+
+body.name .page-header #cluster {
+  margin-top: -10px;
+}
+
+.page-header .authority {
+  padding-left: 35px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  line-height: 20px;
+  color: #f9f9f9;
+}
+  .page-header .authority a {
+    color: inherit;
+  }
+
+.authority-name {
+  font-weight: 700;
+}
+
+
+/* Style this snippet to look like a publication */
+.page-header .snippet {
+  background-color: transparent;
+  border-bottom: 0;
+  padding: 0;
+  height: auto;
+  width: auto;
+}
+  .page-header .snippet a {
+    color: #f9f9f9;
+  }
+  
+  .page-header .snippet .thumbnail {
+    width:  40px;
+    height: 60px;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 2px;
+  }
+  
+  .page-header .snippet .details {
+    margin-left: 50px;
+    padding-right: 10px;
+  }
+
+/* Main content */
+.main-content {
+
+}
+
+
+/* Sidebar */
+.sidebar {
+  background-color: #f9f9f9;
+}
+.sidebar-section {
+  margin: 0;
+  padding: 0;
+}
+
+  .sidebar-section h3 {
+    font-weight: normal;
+    font-size: 20px;
+    line-height: 20px;
+    margin: 0;
+    padding: 10px 0 10px 10px;
+  }
+  
+
+
+  body.author  .sidebar-section h3 { color: #4d95be; }
+  body.name    .sidebar-section h3 { color: #d36e2b; }
+  body.concept .sidebar-section h3 { color: #899369; }
+  
+  body.author  .sidebar-section#taxa h3 {
+    background: url(/bionames-api/images/icon-tag-blue.png) no-repeat 5px 13px;
+    padding-left: 40px;
+  }
+  
+  body.name  .sidebar-section#concepts h3 {
+    background: url(/bionames-api/images/icon-taxon-concept-orange.png) no-repeat 5px 6px;
+    padding-left: 32px;
+  }
+  
+  body.name  .sidebar-section#related h3 {
+    background: url(/bionames-api/images/icon-tag-orange.png) no-repeat 5px 13px;
+    padding-left: 40px;
+  }
+  
+  
+
+/* Snippets */
+.snippet-wrapper {
+	height: 160px;
+  width: 320px;
+	overflow: hidden;
+  float: left;
+  border-right: 1px solid #f9f9f9;
+}
+  
+.snippet {
+  background-color: #fff;
+  padding: 20px;
+  color: #181c1f;
+	height: 120px;
+  overflow: hidden;
+  
+  /* stay on rhythm despite a bottom border */
+  padding-bottom: 19px;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.sidebar .snippet {
+  width: auto;
+  padding: 10px 10px 9px 10px;
+  
+}
+
+.snippet a {
+ 	color: inherit;
+}
+
+.snippet .thumbnail_blank {
+  float: left;
+  width:60px;
+  height:80px;
+  background-color: rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 2px;
+
+}
+
+.snippet .thumbnail {
+  float: left;
+  height: 80px;
+  padding: 0;
+  overflow: hidden;
+  background-color: rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 2px;
+}
+
+.snippet .details {
+  margin-left:100px;
+  overflow:hidden;
+} 
+
+.snippet .title {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+	white-space: nowrap;
+	overflow: hidden;
+ 	text-overflow: ellipsis;
+}
+
+.snippet .metadata {
+  font-size: 11px;
+  line-height: 20px;
+}
+
+.snippet .journal {
+font-style: italic;
+}
+
+.snippet .identifier {
+	list-style-type: none; padding: 0px; margin: 0px;
+} 
+
+.snippet .identifier li {
+	color:black;
+	white-space: nowrap;
+	overflow:hidden;
+text-overflow: ellipsis;
+}	
+
+
+/* Search Results */
+.facet {
+  overflow: hidden;
+}
+
+.facet h2 {
+  clear: both;
+  color: #f9f9f9;
+  font-size: 20px;
+  line-height: 40px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.facet.names h2 { 
+  background: #d36e2b url(/bionames-api/images/icon-tag-white.png) no-repeat 19px 11px;
+  padding-left: 53px;
+}
+.facet.concepts h2 { 
+  background: #899369 url(/bionames-api/images/icon-taxon-concept-white.png) no-repeat 17px 6px;
+  padding-left: 45px;
+}
+.facet.articles     h2,
+.facet.publications h2 {
+   background: #4d95be url(/bionames-api/images/icon-articles-white.png) no-repeat 20px 6px;
+   padding-left: 45px;
+}
+
+.name-cluster {
+  float: left;
+  margin-left: 20px;
+  padding: 10px 0;
+}
+  .name-cluster a { color: inherit; }
+
+
+
+
+/* Basic graph styling */
+svg {
+  margin: 0;
+  padding: 0;
+}
+svg .bars {
+  shape-rendering: crispEdges;
+  fill: #2E3033;
+}
+
+body.author  svg .bars { fill: #4d95be; }
+body.name    svg .bars { fill: #d36e2b; }
+body.concept svg .bars { fill: #899369; }
+
+svg .axis path,
+svg .axis line {
+    fill: none;
+    stroke: #737880;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+
+svg .axis .domain {
+  display: none;
+}
+        
+svg .axis text {
+    font-size: 12px;
+}
+
+svg .brush .extent {
+  fill: rgba(0,0,0, 0.08);
+  stroke: none;
+}
+
+svg .brush .resize path {
+  fill: #fff;
+  stroke: #737880;
+  stroke-width: 1;
+}
+
+
+
+
+
+
+
+
+table {
+  border-collapse:collapse;
+}
+table,th, td, tr {
+  margin: 0;
+  padding: 0;
+  vertical-align:bottom;
+  border: none;
+}
+
+.nameTimeline { 
+  -moz-transition:color 0.5s;
+  -webkit-transition:color 0.5s;
+  -o-transition:color 0.5s;
+  transition:color 0.5s;
+}
+.nameTimeline svg .bars { 
+  -moz-transition:fill 0.5s;
+  -webkit-transition:fill 0.5s;
+  -o-transition:fill 0.5s;
+  transition:fill 0.5s;
+}
+
+.nameTimeline svg .axis line {
+  stroke: #e5e5e5;
+}
+
+.nameTimeline label { 
+  display: inline-block;
+  margin: 0;
+}
+.nameTimeline label input { margin: 0 0.25em 0 0; }
+
+.nameTimeline.disabled { color: #ccc; }
+.nameTimeline.disabled svg .bars { fill: #ccc; }
+
+
+/* Publication Lists */
+.decadeYear {
+  background: url(/bionames-api/images/decade_dot.gif) no-repeat left center;
+  padding-left: 10px;
+  color: #bbbfc6;
+  font-weight: 700;
+/*  line-height: 30px;  
+*/}
+
+.pub {
+  overflow: hidden; /* clearfix */
+  margin-left: 3px;
+  padding: 1em;
+  background-color: #fafafa;
+  border-bottom: 1px solid #fff;
+  border-left: 2px solid #c3c7ce;
+ }
+ 
+ .pub:nth-child(2) {
+   border-top: 1px solid #f9f9f9;
+ }
+
+.pub .thumbnail {
+  float: left;
+  width:  40px;
+  height: 60px;
+  padding: 0;
+  overflow: hidden;
+  background-color: rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 2px;
+}
+
+.pub .thumbnail img {
+  display: block;
+  width:  40px;
+  height: 60px;
+  border-radius: 2px;
+}
+
+.pub .citation {
+  margin-left: 50px;
+  padding-right: 10px;
+}
+
+.pub .title {
+  font-weight: 700;
+}
+
+.pub .meta, .pub .tag {
+  font-size: 12px;
+}
+
+.pub .meta,
+.pub .meta span.j-sep{
+  color: #737880;
+}
+
+.pub .meta span {
+  color: #45494d;
+}
+
+.pub .journal {
+  font-style: italic;
+}
+
+.pub .tag {
+  display: inline-block;
+  position: relative;
+  background-color: #BBBFC6;
+  font-size: 12px;
+  line-height: 16px;
+  height: 16px;
+  margin-left: 8px;
+  padding: 0 6px 0 7px;
+  color: #fafafa;
+  
+  -moz-border-radius-bottomright:2px;
+  -webkit-border-bottom-right-radius:42x;	
+  border-bottom-right-radius:2px;
+  -moz-border-radius-topright:2px;
+  -webkit-border-top-right-radius:42x;	
+  border-top-right-radius:2px;
+  
+}
+
+.pub .tag:before {
+  position: absolute;
+  top: 0;
+  left: -8px;
+  height: 0;
+  width: 0;
+  text-indent: -9999em;
+  content: "";
+  border-color:transparent #BBBFC6 transparent transparent;
+  border-style:solid;
+  border-width:8px 8px 8px 0;
+}
+
+.pub .tag:after {
+  content:"";
+  position:absolute;
+  top:6px;
+  left:0;
+  float:left;
+  width:4px;
+  height:4px;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+  border-radius:2px;
+  background:#FAFAFA;
+
+}
+
+
+

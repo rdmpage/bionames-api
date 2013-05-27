@@ -10,144 +10,25 @@ $id = $_GET['id'];
 <head>
 	<base href="/bionames-api/" />
 	<!-- <base href="/~rpage/bionames-api/" /> -->
-	<title>Taxon name</title>
+	<title>Taxon Name</title>
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
-		
-	<style type="text/css" title="text/css">
-			
-	body {
-	  font-family: 'Open Sans', sans-serif;
-	  font-weight: 400;
-	  font-size: 14px;
-	  line-height: 20px;
-	  color: #2e3033;
-	}
 	
-	.search-input {
-		font-size:24px;
-	}
-	
-	.pub .thumbnail {
-	  float: left;
-	  width: 40px;
-	  height: 60px;
-	  overflow: hidden;
-	  /*
-	  background-color: rgba(0,0,0,0.1);
-	  border: 1px solid rgba(0,0,0,0.05);
-	  border-radius: 2px;*/
-	  
-	}
-	
-	.pub .thumbnail img {
-	  display: block;
-	  width: 40px;
-	  height: 60px;
-	  border-radius: 2px;
-	}
-	
-	.pub .citation {
-	  margin-left: 60px;
-	  padding-right: 10px;
-	}
-	
-	.pub .title {
-	  font-weight: 700;
-	}
-	
-	.pub .meta {
-	  font-size: 12px;
-	}
-	
-	.pub .meta,
-	.pub .meta span.j-sep{
-	  color: #737880;
-	}
-	
-	.pub .meta span {
-	  color: #45494d;
-	}
-	
-	.pub .journal {
-	  font-style: italic;
-	}
-	
-	/* snippet */
-
- .snippet {
- 	border-bottom:1px solid rgb(192,192,192);
-	border-right:1px solid rgb(192,192,192);
-	border-top:1px solid rgb(228,228,228);
-	border-left:1px solid rgb(228,228,228);
- 	padding:10px;
- 	width:300px;
- 	margin:10px;
- 	height:120px;
- 	overflow:hidden;
- }
- 
- 
-  .snippet a {
-	text-decoration: none;
-	color:inherit;
- } 
- 
-  .snippet .thumbnail_blank {
- 	float: left;
- 	width:60px;
- 	height:88px;
- 	border:1px solid rgb(228,228,228);
- }
- 
- .snippet .thumbnail {
- 	float: left;
- 	height:88px;
- 	border:1px solid rgb(228,228,228);
- }
- 
- .snippet .details {
- 	margin-left:100px;
- 	width:200px;
- 	overflow:hidden;
- } 
- 
- .snippet .title {
- 	white-space: nowrap;
- 	overflow:hidden;
-	text-overflow: ellipsis;
-	padding-bottom:0.5em;
- 	
- }
- 
- .snippet .metadata {
- 	color: rgb(128,128,128);
- 	font-size:80%;
- } 
- 
- .snippet .journal {
-	font-style:italic;
- }
- 
-
-.snippet .identifier {
- 	list-style-type: none; padding: 0px; margin: 0px;
- } 
- 
- .snippet .identifier li {
- 	color:black;
- 	white-space: nowrap;
- 	overflow:hidden;
-	text-overflow: ellipsis;
- }	
-		
-	
-	
-	</style>
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="stylesheets/style.css" rel="stylesheet" media="screen">
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="js/lib/d3.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/lib/crossfilter.1.2.0.js" type="text/javascript" charset="utf-8"></script>
+
+	<script src="js/openurl.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/display.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/snippet.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/filter_widgets.js" type="text/javascript" charset="utf-8"></script>
+	
+
 	
 	<script>
 		function show_cluster(id)
@@ -356,25 +237,72 @@ $id = $_GET['id'];
 		
 	
 		function show_publications(name)
-		{
-			$("#publications").html("");
-			
-			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year" + "&callback=?",
+		{		
+			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
-						for (var i in data.years)
+	                    // Type cast years into integers
+						for (var i in data.publications)
 						{
-							
-							for (j in data.years[i])
-							{
-								var html = $('#publications').html();
-								$('#publications').html(html + display_reference(data.years[i][j]) + '<br/>');
-							}
+	                        data.publications[i].year = +data.publications[i].year;
 						}
+                                            
+	                    // Crossfilter, dimensions, and groups
+	                    var publication = crossfilter(data.publications),
+	                        year = publication.dimension(function(d){ return d.year; }),
+	                        years = year.group();
+
+
+
+	                    var yearsExtent = d3.extent( years.all(), function(d){ return d.key; })
+
+	                    // Nest operator for grouping the list by decade
+	                    var nestByDecade = d3.nest()
+	                        .key(function(d){ return Math.floor(d.year/10) * 10; });
+                        
+                        
+	                        // Charts
+	                        var histograms = [
+	                            filterWidgets.histogram()
+	                                .dimension(year)
+	                                .group(years)
+	                                .round( Math.floor )
+	                                .xScale( d3.scale.linear()
+	                                    .domain([ yearsExtent[0], yearsExtent[1]+1])
+	                                    .rangeRound([0, 400])
+	                                    .nice())
+	                                .yScale( d3.scale.linear().rangeRound([0, 60]) )
+	                        ];
+
+	                        var lists = [
+	                            filterWidgets.publicationList().dimension(year).nest(nestByDecade)
+	                        ];
+                        
+                        
+	                        // Given an array of histogram definitions, bind them to
+	                        // charts in the DOM, which we assume are in the same order
+	                        var chart = d3.selectAll(".chart")
+	                            .data(histograms)
+	                            .each(function(c){ c.on("brush", renderAll).on("brushend", renderAll); })
+
+	                        var list = d3.selectAll("#pubList")
+	                            .data(lists);
+
+	                        function renderAll(){
+	                            chart.each(render);
+	                            list.each(render);
+	                        }
+
+	                        function render( method ) {
+	                            d3.select(this).call(method);
+	                        }
+
+	                        renderAll();
 					}
 				});
 		}
+
 		
 		function show_epithet(epithet)
 		{
@@ -427,48 +355,34 @@ $id = $_GET['id'];
 		
 	</script>	
 </head>
-<body>
-
-
-<div style="top:0px;height:40px;">
-	<div style="float:right;">
-		<a href="mockup_index.php">Home</a>
-		&nbsp;
-		<a href="mockup_dashboard.php">Dashboard</a>
-	</div>
-
-	<form method="GET" action="mockup_search.php">
-		<input class="search-input" name="q" placeholder="Search" style="width: 22em; padding-left: 2em;" type="text" value="">
-		<input type="submit" value="Search">
-	</form>
+<body class="name">
+    <div class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="index.html">BioNames</a>
+        </div>
+      </div>
+    </div>
+   <div class="container-fluid">
+  <div class="row-fluid">
+    <div class="main-content span9">
+        <div class="page-header">
+            <h1 id="title"></h1>
+            <div id="cluster"></div>
+        </div>
+        <div id="publication-timeline" class="publication-timeline">
+            <h3>Publications</h3>
+            <div id="pubHistogram" class="chart"></div>
+            <div id="pubList"></div>
+        </div>
+    </div>
+    <div class="sidebar span3">
+    	<div id="concepts" class="sidebar-section"></div>
+    	<div id="related" class="sidebar-section"></div>
+    	<div id="epithet" class="sidebar-section"></div>
+    </div>
+  </div>
 </div>
-
-
-<div style="top:0px;float:right;width:400px;padding:10px;">
-	<div id="metadata"></div>
-	<!-- <h3>Stuff</h3>
-	
-	<p>Names with same epithet + author, names with same epithet that co-occur, names with same genus, any name we have evidence may be related.</p>
-	-->
-	<div id="concepts"></div>	
-	<div id="related"></div>
-	<div id="epithet"></div>
-	
-</div>
-	<div id="title" style="font-size:200%;line-height:150%"></div>
-
-	<div id="cluster"></div>
-
-	<h3>Publications mentioning this name</h3>
-	<div style="border:1px solid rgb(128,128,128);height:60px;width:400px;">timeline thingy</div>
-	<div id="publications" style="width:400px;">[list]</div>
-	
-	
-
-	<script src="js/jquery.js"></script>
-	<script src="js/display.js"></script>
-	<script src="js/openurl.js"></script>
-	<script src="js/snippet.js"></script>
 
 
 <script type="text/javascript">

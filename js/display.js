@@ -8,14 +8,12 @@ function display_reference(data)
 	if (data.thumbnail)
 	{
 		has_thumbnail = true;
-		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" /></div>';
-//		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '"/></div>';
+		html += '<div class="thumbnail"><a href="mockup_publication.php?id=' + data._id + '"><img src="' + data.thumbnail + '" /></a></div>';
 	}					
 	if (data.thumbnail_url)
 	{
 		has_thumbnail = true;
-		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '" /></div>';
-//		html += '<div class="thumbnail"><img style="border:1px solid rgb(128,128,128);" src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '" width="60"/></div>';
+		html += '<div class="thumbnail"><a href="mockup_publication.php?id=' + data._id + '"><img src="' + 'http://bionames.org/bionames-api/' + data.thumbnail_url + '" /></a></div>';
 	}					
 	
 	if (!has_thumbnail)
@@ -23,7 +21,8 @@ function display_reference(data)
 		html += '<div class="thumbnail"></div>';
 	}
 	
-	
+	html += '<div class="citation">'; // RMS
+  
 	if (data.title)
 	{
 		html += '<div class="title">' 
@@ -49,9 +48,7 @@ function display_reference(data)
 			html += '; ';
 		}
 	}
-	html += '</div>';
-	
-	html += '<div>';
+  
 	if (data.journal)
 	{
 		if (data.journal.name)
@@ -110,6 +107,7 @@ function display_reference(data)
 		}	
 		html += '</ul>';
 	}
+  html += "</div>"; // RMS 
 	html += "<span class=\"Z3988\" title=\"" + referenceToOpenUrl(data) + "\"></span>";		
 	html += '</div>';
 

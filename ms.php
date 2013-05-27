@@ -11,19 +11,24 @@ if (isset($_GET['q']))
 <html>
 <head>
 	<base href="/bionames-api/" />
+	<!-- <base href="/~rpage/bionames-api/" /> -->
 	<title>Search</title>
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">	
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
+	
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="stylesheets/style.css" rel="stylesheet" media="screen">
+	
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="js/lib/d3.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/lib/crossfilter.1.2.0.js" type="text/javascript" charset="utf-8"></script>
 
-	<link href="snippet.css" rel="stylesheet">	
-
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    
-	<script src="js/snippet.js"></script>
-    
+	<script src="js/openurl.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/display.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/snippet.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/filter_widgets.js" type="text/javascript" charset="utf-8"></script>
 
 </head>
 <body>
