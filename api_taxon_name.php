@@ -180,7 +180,28 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 		}
 	}
 	
-	$obj->publications = array_unique($obj->publications);
+	// sort to ensure results are unique, and filter fields if necessary
+	if ($include_docs)
+	{
+		$keys = array();
+		$uniques = array();
+		
+		foreach ($obj->publications as $document)
+		{
+			if (!in_array($document->_id, $keys))
+			{
+				$keys[] = $document->_id;
+				$values[] = api_simplify_document($document, $fields);
+			}
+		}
+		$obj->publications = $values;
+	}
+	else
+	{
+		$obj->publications = array_unique($obj->publications);
+	}
+	
+	//print_r($obj->publications);
 	
 	
 	

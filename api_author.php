@@ -160,7 +160,7 @@ function taxa_published ($publication)
 			$names[] = $row->value;				
 		}
 	}	
-	
+		
 	return $names;
 }
 
@@ -205,10 +205,24 @@ function display_taxa_authored ($name, $callback = '')
 			
 			$publications = array();
 			
+			
 			foreach ($response_obj->rows as $row)
 			{
-				$obj->names = array_merge($obj->names, taxa_published($row->value));				
+				$obj->names = array_merge($obj->names, taxa_published($row->value));
 			}
+			
+			$keys = array();
+			foreach ($obj->names as $name)
+			{
+				$keys[] = $name->nameComplete;
+			}
+			array_multisort($obj->names, SORT_ASC, SORT_NUMERIC, $keys);
+			
+			
+			
+			// sort alphabetically
+			//sort($obj->names);
+
 		}
 	}
 	
