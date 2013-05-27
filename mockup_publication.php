@@ -17,6 +17,11 @@ $id = $_GET['id'];
 	<meta charset="utf-8" />
 	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">	
 	
+	<!-- responsive -->
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">	-->
+	
+	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
     
@@ -54,14 +59,40 @@ $id = $_GET['id'];
 	</div>
 </div>
 	
-<div style="margin-top:42px;padding:0px;" class="container-fluid">
+<div style="margin-top:41px;padding:0px;" class="container-fluid">
+
+<ul class="nav nav-tabs">
+  <li class="active" ><a href="#view-tab" data-toggle="tab">View</a></li>
+  <li><a href="#about-tab" data-toggle="tab">About</a></li>
+<!--  <li><a href="#map-tab" data-toggle="tab">Map</a></li> -->
+  <li><a href="#data-tab" data-toggle="tab">Data</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="view-tab">
+	<div id="document-viewer-span">
+		<div id="doc" >Loading...</div>
+	</div>  
+  </div>
+  
+  <div class="tab-pane" id="about-tab">
+	<div id="metadata" style="padding:20px;"></div>  
+  </div>
+  
+<!--  <div class="tab-pane" id="map-tab">...</div> -->
+  <div class="tab-pane" id="data-tab">...</div>
+</div>
+
+
+<!--
 	<div class="row-fluid">
-		<div class="span8">
-			<div id="doc">Loading...</div>
+		<div id="document-viewer-span" class="span8">
+			<div id="doc" >Loading...</div>
 		</div>
 		<div class="span4" id="metadata">
 		</div>
 	</div>
+-->
 </div>
 
 
@@ -78,27 +109,26 @@ $id = $_GET['id'];
 			function(data){
 				if (data.status == 200)
 				{
+					// Bibliographic details as a table
 					var html = '';
-					
-					html += '<div class="pub">';
-					
-					if (data.thumbnail)
-					{
-						html += '<div ><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" width="100" /></div>';
-					}					
+									
+										
+					html += '<table class="table table-bordered">';
+					html += '<thead></thead>';
+					html += '<tbody>';
 					
 					if (data.title)
 					{
-						html += '<div class="title">' + data.title + '</div>';
+						html += '<tr><td>Title</td><td>' + data.title + '</td></tr>';
 						document.title = data.title;
-						
-						$('#title').html(data.title);
 					}
-										
-					html += '<div class="meta">';
 					
+					if (data.thumbnail)
+					{
+						html += '<tr><td>Thumbnail</td><td><img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" width="100" /></td</tr>';
+					}					
 					
-					html += '<div>';
+					/*
 					if (data.author)
 					{
 						html += 'by ';
@@ -113,11 +143,14 @@ $id = $_GET['id'];
 					html += '</div>';
 					
 					html += '<div>';
+					*/
+					
+					// Journal
 					if (data.journal)
 					{
 						if (data.journal.name)
 						{
-							html += '<span class="journal">';
+							html += '<tr><td>Journal</td><td>' + data.journal.name + '</td></tr>';
 							
 							// Do we have an ISSN?
 							var issn = '';
@@ -129,11 +162,11 @@ $id = $_GET['id'];
 									switch (data.journal.identifier[j].type)
 									{
 										case 'issn':
-											issn = data.journal.identifier[j].id;
+											html += '<tr><td>ISSN</td><td><a href="mockup_journal.php?issn=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
 											break;
 
 										case 'oclc':
-											oclc = data.journal.identifier[j].id;
+											html += '<tr><td>OCLC</td><td><a href="mockup_journal.php?oclc=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
 											break;
 											
 										default:
@@ -141,76 +174,111 @@ $id = $_GET['id'];
 									}
 								}
 							}
-							
-							if (issn != '')
-							{
-								html += '<a href="mockup_journal.php?issn=' + issn + '">';
-							}
-							else
-							{
-								if (oclc != '') {
-								html += '<a href="mockup_journal.php?oclc=' + oclc + '">';
-								} else {								
-									html += '<a href="mockup_journal.php?journal=' + data.journal.name + '">';	
-								}
-							}
-							html += data.journal.name;
-							
-							html += '</a>';
-							
-							html += '</span>';
 						}
+						
 						if (data.journal.volume)
 						{
-							html += ' ' + data.journal.volume;
+							html += '<tr><td>Volume</td><td>' + data.journal.volume + '</td></tr>';
 						}
 						if (data.journal.pages)
 						{
-							html += ' pages ' + data.journal.pages;
+							html += '<tr><td>Pages</td><td>' + data.journal.pages + '</td></tr>';
 						}
 					}
-					html += '</div>';
-					
+					// Item-level identifiers
 					if (data.identifier)
 					{
-						html += '<ul>';
 						for (var j in data.identifier)
 						{
 							switch (data.identifier[j].type)
 							{
 								case "ark":
-									html += "<li><a href=\"http://gallica.bnf.fr/ark:/" + data.identifier[j].id + "\" target=\"_new\">ark:/" + data.identifier[j].id + "</a></li>";
+									html += '<tr><td>ARK</td><td><a href="http://gallica.bnf.fr/ark:/' + data.identifier[j].id + '" target="_new">ark:/' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "biostor":
-									html += "<li><a href=\"http://biostor.org/reference/" + data.identifier[j].id + "\" target=\"_new\">biostor.org/reference/" + data.identifier[j].id + "</a></li>";
+									html += '<tr><td>BioStor</td><td><a href="http://biostor.org/reference/' + data.identifier[j].id + '" target="_new">' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "cinii":
-									html += "<li><a href=\"http://ci.nii.ac.jp/naid/" + data.identifier[j].id + "\" target=\"_new\">ci.nii.ac.jp/naid/" + data.identifier[j].id + "</a></li>";
+									html += '<tr><td>CiNii</td><td><a href="http://ci.nii.ac.jp/naid/' + data.identifier[j].id + '" target="_new">' + data.identifier[j].id + '</a></td></tr>';
 									break;
 									
 								case "doi":
-									html += "<li><a href=\"http://dx.doi.org/" + data.identifier[j].id + "\" target=\"_new\">dx.doi.org/" + data.identifier[j].id + "</a></li>";
+									html += '<tr><td>DOI</td><td><a href="http://dx.doi.org/' + data.identifier[j].id + '" target="_new">' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "handle":
-									html += "<li><a href=\"http://hdl.handle.net/" + data.identifier[j].id + "\" target=\"_new\">hdl.handle.net/" + data.identifier[j].id + "</a></li>";
+									html += '<tr><td>Handle</td><td><a href="http://hdl.handle.net' + data.identifier[j].id + '" target="_new">' + data.identifier[j].id + '</a></td></tr>';
+									break;
+
+								case "isbn":
+									html += '<tr><td>ISBN</td><td>' + data.identifier[j].id + '</td></tr>';
 									break;
 
 								case "jstor":
-									html += "<li><a href=\"http://www.jstor.org/stable" + data.identifier[j].id + "\" target=\"_new\">www.jstor.org/stable/" + data.identifier[j].id + "</a></li>";
+									html += '<tr><td>JSTOR</td><td><a href="http://www.jstor.org/stable/' + data.identifier[j].id + '" target="_new">' + data.identifier[j].id + '</a></td></tr>';
+									break;
+
+								case "oclc":
+									html += '<tr><td>OCLC</td><td><a href="http://www.worldcat.org/oclc/' + data.identifier[j].id + '" target="_new">' + data.identifier[j].id + '</a></td></tr>';
+									break;
+
+								case "pmc":
+									html += '<tr><td>JSTOR</td><td><a href="http://www.ncbi.nlm.nih.gov/pmc/PMC' + data.identifier[j].id + '" target="_new">' + 'PMC' + data.identifier[j].id + '</a></td></tr>';
+									break;
+
+								case "pmid":
+									html += '<tr><td>PMID</td><td><a href="www.ncbi.nlm.nih.gov/pubmed/' + data.identifier[j].id + '" target="_new">' + data.identifier[j].id + '</a></td></tr>';
 									break;
 									
 								default:
 									break;
 							}
 						}	
-						html += '</ul>';
 					}
 					
+					// Item-level links
+					if (data.link)
+					{
+						for (var j in data.link)
+						{
+							switch (data.link[j].anchor)
+							{
+								case "PDF":
+									html += '<tr><td>PDF</td><td><a href="' + data.link[j].url + '" target="_new">' +  data.link[j].url + '</a></td></tr>';
+									break;
 
-					html += '</div>';
+								case "LINK":
+									html += '<tr><td>URL</td><td><a href="' + data.link[j].url + '" target="_new">' +  data.link[j].url + '</a></td></tr>';
+									break;
+									
+								default:
+									break;
+							}
+						}
+					}
+					
+					if (data.file)
+					{
+						html += '<tr><td>SHA1</td><td>' +  data.file.sha1 + '</td></tr>';
+					}
+					
+					// Date
+					if (data.year)
+					{
+						html += '<tr><td>Year</td><td>' +  data.year + '</td></tr>';
+					}
+					/*
+					if (data.issued)
+					{
+						html += '<tr><td>Year</td><td>' +  data.year + '</td></tr>';
+					}
+					*/
+					
+					
+					html += '</tbody>';
+					html += '</table>';
 					
 					$("#metadata").html(html);
 					
@@ -265,10 +333,8 @@ $id = $_GET['id'];
 					{
 						DV.load(docUrl, {
 							container: '#doc',
-							/*width:windowWidth,*/
-							width:700,
-							height:windowHeight - 40,
-							/* height:windowHeight, */
+							width:$('#document-viewer-span').width(),
+							height:$('#document-viewer-span').height(),
 							sidebar: false
 						});	
 					}
@@ -331,18 +397,27 @@ $id = $_GET['id'];
 		
 	display_publication(id);
 	display_publication_names(id);
+	
+	// to do: clicking on tab (e.g. "about") breaks doc viewer (it will display only a few documant pages)
+	// looks like an event gets sent to docviewer that is invalid
+	// horrible horrible hack to fix this redisplays the viewer :O 
+	$('a[data-toggle="tab"]').on('shown', function (e) {
+  
+  		var t = $(e.target).text().toLowerCase();
+  		if (t == 'view') {
+   			display_publication(id); // horrible
+  		} else {
+ 			//e.stopImmediatePropagation();
+  			//console.log('hi');
+  		}
+  		
+	})	
 
 	// http://stackoverflow.com/questions/6762564/setting-div-width-according-to-the-screen-size-of-user
 	$(window).resize(function() { 
-		var windowWidth = 700;
-//		var windowHeight =$(window).height();
-		var windowHeight =$(window).height() - 40;
-		
-		console.log('width=' + $(window).width());
-		console.log('height=' + $(window).height());
-		console.log(windowHeight);
-		
-		$('#doc').css({'height':windowHeight });
+		var windowWidth = $('#document-viewer-span').width();
+		var windowHeight =$(window).height() -  $('#document-viewer-span').offset().top;
+		$('#doc').css({'height':windowHeight, 'width':windowWidth });
 	});
 	
 

@@ -53,6 +53,10 @@
 <div><a href="mockup_concept.php?id=gbif/2432854"><img src="http://bionames.org/bionames-api/taxon/eol/15607/thumbnail" />Pteropus</a></div>
 <div><a href="mockup_concept.php?id=gbif/2433223"><img src="http://bionames.org/bionames-api/taxon/eol/42168/thumbnail" />Lonchophylla</a></div>
 <div><a href="mockup_concept.php?id=ncbi/102659"><img src="http://media.eol.org/content/2010/12/10/05/04007_88_88.jpg" />Opisthoteuthis</a></div>
+<div><a href="mockup_concept.php?id=ncbi/39093"><img src="http://media.eol.org/content/2011/10/06/10/11305_88_88.jpg" />Typhlops</a></div>
+<div><a href="mockup_concept.php?id=ncbi/169145"><img src="http://media.eol.org/content/2011/10/14/16/42548_88_88.jpg" />Ammothella</a></div>
+<div><a href="mockup_concept.php?id=ncbi/80974"><img src="http://media.eol.org/content/2008/10/08/12/14254_88_88.jpg" />Chromis</a></div>
+
 
 
 
