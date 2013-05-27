@@ -18,24 +18,12 @@ if (isset($_GET['name']))
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<?php require 'stylesheets.inc.php'; ?>
 	
-	<!-- responsive -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">	
-	
-	
-	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    
-	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-    
+	<?php require 'javascripts.inc.php'; ?>
 	
 </head>
-<body>
+<body class="author">
 
 <div class="navbar navbar-fixed-top">
 	<div class="navbar-inner">

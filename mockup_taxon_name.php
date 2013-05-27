@@ -14,9 +14,8 @@ $id = $_GET['id'];
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<?php require '_stylesheets.php'; ?>
-	<?php require '_javascripts.php'; ?>
-	
+	<?php require 'stylesheets.inc.php'; ?>
+	<?php require 'javascripts.inc.php'; ?>
 	
 	<script>
 		function show_cluster(id)
