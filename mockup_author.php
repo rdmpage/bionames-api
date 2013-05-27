@@ -30,7 +30,11 @@ if (isset($_GET['name']))
 	<div style="margin-top:50px;" class="container-fluid">
 		<div class="row-fluid">
 	  		<div class="span9">
-				<div id="publications">Publications</div>
+		        <div id="publication-timeline" class="publication-timeline">
+		            <h3>Publications</h3>
+		            <div id="pubHistogram" class="chart"></div>
+		            <div id="pubList"></div>
+		        </div>
 			</div>
 	  		<div class="span3">
 	  			<h4 id="title"></h4>
@@ -134,30 +138,68 @@ if (isset($_GET['name']))
 		{
 			$("#publications").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/authors/" + encodeURIComponent(name) + "/publications" + "?callback=?",
+				
+			$.getJSON("http://bionames.org/bionames-api/authors/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
-						var html = '';
-						html += '<ul>';
-						var ids = [];
+	                    // Type cast years into integers
 						for (var i in data.publications)
 						{
-							html += '<li>';
-							html += '<div id="id' + data.publications[i] + '">' + data.publications[i] + '</div>';
-							ids.push(data.publications[i]);
-							//html += data.publications[i]._id;
-							html += '</li>';
-						}							
-						html += '</ul>';
+	                        data.publications[i].year = +data.publications[i].year;
+						}
+                                        
+	                    // Crossfilter, dimensions, and groups
+	                    var publication = crossfilter(data.publications),
+	                        year = publication.dimension(function(d){ return d.year; }),
+	                        years = year.group();
 
-						// display details
-						for (var id in ids) {
-							html += '<script>display_publications("' + ids[id] + '");<\/script>';
-							}
-							
-						$("#publications").html(html);
-						
+
+
+	                    var yearsExtent = d3.extent( years.all(), function(d){ return d.key; })
+
+	                    // Nest operator for grouping the list by decade
+	                    var nestByDecade = d3.nest()
+	                        .key(function(d){ return Math.floor(d.year/10) * 10; });
+                    
+                    
+	                        // Charts
+	                        var histograms = [
+	                            filterWidgets.histogram()
+	                                .dimension(year)
+	                                .group(years)
+	                                .round( Math.floor )
+	                                .xScale( d3.scale.linear()
+	                                    .domain([ yearsExtent[0], yearsExtent[1]+1])
+	                                    .rangeRound([0, 400])
+	                                    .nice())
+	                                .yScale( d3.scale.linear().rangeRound([0, 60]) )
+	                        ];
+
+	                        var lists = [
+	                            filterWidgets.publicationList().dimension(year).nest(nestByDecade)
+	                        ];
+                    
+                    
+	                        // Given an array of histogram definitions, bind them to
+	                        // charts in the DOM, which we assume are in the same order
+	                        var chart = d3.selectAll(".chart")
+	                            .data(histograms)
+	                            .each(function(c){ c.on("brush", renderAll).on("brushend", renderAll); })
+
+	                        var list = d3.selectAll("#pubList")
+	                            .data(lists);
+
+	                        function renderAll(){
+	                            chart.each(render);
+	                            list.each(render);
+	                        }
+
+	                        function render( method ) {
+	                            d3.select(this).call(method);
+	                        }
+
+	                        renderAll();
 					}
 				});
 		}
