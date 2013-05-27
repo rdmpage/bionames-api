@@ -251,9 +251,9 @@ function show_publication_thumbnail (element_id, doc) {
 	
 	html += '<a href="mockup_publication.php?id=' + doc._id + '">';
 	if (doc.thumbnail) {
-		html += '<img class="media-object" style="border:1px solid #e5e5e5;" height="80" src="' + doc.thumbnail + '"/>';
+		html += '<img  width="60px;" style="background-color:white;" src="' + doc.thumbnail + '"/>';
 	} else {
-		html += '<div style="border:1px solid black;width:64px;height:80px;"></div>';
+		html += '<div style="width:60px;height:80px;background-color:rgb(240,240,240);"></div>';
 	}
 	html += '</a>';
 	

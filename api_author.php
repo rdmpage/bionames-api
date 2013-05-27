@@ -74,14 +74,11 @@ function display_lastname ($lastname, $callback = '')
 
 //--------------------------------------------------------------------------------------------------
 // Publications authored
-function display_authored ($name, $fields=array('all'), $callback = '')
+function display_authored ($name, $fields=array('all'), $callback = '', $include_docs = false)
 {
 	global $config;
 	global $couch;
 		
-		
-	$include_docs = true;
-	
 	$url = '_design/author/_view/name?key=' . urlencode(json_encode($name));
 	
 	if ($include_docs)
@@ -93,8 +90,6 @@ function display_authored ($name, $fields=array('all'), $callback = '')
 	{
 		$url .= '&stale=ok';
 	}		
-	
-	//echo $url;
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -350,6 +345,12 @@ function main()
 		$callback = $_GET['callback'];
 	}
 	
+	$include_docs = false;
+	if (isset($_GET['include_docs']))
+	{	
+		$include_docs = true;
+	}	
+	
 	// Optional fields to include
 	$fields = array('all');
 	if (isset($_GET['fields']))
@@ -405,7 +406,7 @@ function main()
 			if (!$handled)
 			{			
 				// show publications
-				display_authored($name, $fields, $callback);
+				display_authored($name, $fields, $callback,$include_docs);
 				$handled = true;
 			}
 		}

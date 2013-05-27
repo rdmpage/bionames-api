@@ -1,9 +1,8 @@
 <?php
 
-// mockup of journal display
+// mockup template
 
-$name = '';
-
+// do PHP stuff here to get query parameters...
 if (isset($_GET['name']))
 {
 	$name = $_GET['name'];
@@ -11,109 +10,68 @@ if (isset($_GET['name']))
 
 
 ?>
-
+<!DOCTYPE html>
 <html>
 <head>
 	<base href="/bionames-api/" />
-	<!-- <base href="/~rpage/bionames-api/" /> -->
-	<title>Author</title>
+	<title>Title</title>
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 	
-	<style type="text/css" title="text/css">
-			
-	body {
-	  font-family: 'Open Sans', sans-serif;
-	  font-weight: 400;
-	  font-size: 14px;
-	  line-height: 20px;
-	  color: #2e3033;
-	}
+	<!-- responsive -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">	
 	
-	.pub .thumbnail {
-	  float: left;
-	  width: 40px;
-	  height: 60px;
-	  overflow: hidden;
-	  background-color: rgba(0,0,0,0.1);
-	  border: 1px solid rgba(0,0,0,0.05);
-	  border-radius: 2px;
-	}
-	
-	.pub .thumbnail img {
-	  display: block;
-	  width: 40px;
-	  height: 60px;
-	  border-radius: 2px;
-	}
-	
-	.pub .citation {
-	  margin-left: 60px;
-	  padding-right: 10px;
-	}
-	
-	.pub .title {
-	  font-weight: 700;
-	}
-	
-	.pub .meta {
-	  font-size: 12px;
-	}
-	
-	.pub .meta,
-	.pub .meta span.j-sep{
-	  color: #737880;
-	}
-	
-	.pub .meta span {
-	  color: #45494d;
-	}
-	
-	.pub .journal {
-	  font-style: italic;
-	}
-	
-	</style>
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    
+	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    
+	
 </head>
 <body>
 
-<div style="top:0px;height:40px;">
-	<div style="float:right;">
-		<a href="mockup_index.php">Home</a>
-		&nbsp;
-		<a href="mockup_dashboard.php">Dashboard</a>
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+	 <a class="brand" href="mockup_index.php">BioNames</a>
+	 <ul class="nav">
+	  <li><form class="navbar-search pull-left" method="get" action="mockup_search.php">
+		<input type="text" id='q' name='q' data-provide="typeahead" class="search-query" placeholder="Search" autocomplete="off" value="<?php echo $q; ?>">
+		</form> 
+	  </li>
+	  <li><a href="#">More...</a></li>
+	  </ul>
 	</div>
-
-	<form method="GET" action="mockup_search.php">
-		<input class="search-input" name="q" placeholder="Search" style="width: 22em; padding-left: 2em;" type="text" value="">
-		<input type="submit" value="Search">
-	</form>
+</div>
+	
+<div style="margin-top:50px;" class="container-fluid">
+	<div class="row-fluid">
+  		<div class="span9">
+			<div id="publications">Publications</div>
+		</div>
+  		<div class="span3">
+  			<h4 id="title"></h4>
+			<div id="metadata"></div>
+			<div id="coauthors">Coauthors</div>
+			<div id="taxa">Names published</div>
+  		</div>
+	</div>
 </div>
 
-<div style="top:0px;float:right;width:280px;padding:10px;">
-	<div id="metadata">Metadata</div>
-	<div id="coauthors">Coauthors</div>
-	<div id="taxa">Names published</div>
-</div>
-
-	<div id="title" style="font-size:200%;line-height:150%"></div>
-
-	<div style="border:1px solid rgb(128,128,128);height:60px;width:400px;">timeline thingy</div>
-
-	<div id="publications">Publications</div>
-
-
-	<script src="js/jquery.js"></script>
 	<script src="js/display.js"></script>
 	<script src="js/openurl.js"></script>
+	<script src="js/publication.js"></script>
+
 
 <script type="text/javascript">
 	var name = "<?php echo $name;?>";
+	
 	
 		function show_coauthors(name)
 		{
@@ -124,7 +82,7 @@ if (isset($_GET['name']))
 					if (data.status == 200)
 					{		
 						var html = '';
-						html += '<h3>Coauthors</h3>';
+						html += '<h5>Coauthors</h5>';
 						html += '<ul>';
 						for (var i in data.coauthors)
 						{
@@ -147,7 +105,7 @@ if (isset($_GET['name']))
 					if (data.status == 200)
 					{		
 						var html = '';
-						html += '<h3>Names published</h3>';
+						html += '<h5>Names published</h5>';
 						html += '<ul>';
 						for (var i in data.names) {
 							html += '<li>';
@@ -179,7 +137,7 @@ if (isset($_GET['name']))
 						if (data.status == 200)
 						{		
 							var html = '';
-							html += '<h3>Related names</h3>';
+							html += '<h5>Related names</h5>';
 							html += '<ul>';
 							for (var i in data.firstnames)
 							{
@@ -203,11 +161,26 @@ if (isset($_GET['name']))
 				function(data){
 					if (data.status == 200)
 					{		
+						var html = '';
+						html += '<ul>';
+						var ids = [];
 						for (var i in data.publications)
 						{
-							var html = $('#publications').html();
-							$('#publications').html(html + display_reference(data.publications[i]) + '<br/>');
-						}
+							html += '<li>';
+							html += '<div id="id' + data.publications[i] + '">' + data.publications[i] + '</div>';
+							ids.push(data.publications[i]);
+							//html += data.publications[i]._id;
+							html += '</li>';
+						}							
+						html += '</ul>';
+
+						// display details
+						for (var id in ids) {
+							html += '<script>display_publications("' + ids[id] + '");<\/script>';
+							}
+							
+						$("#publications").html(html);
+						
 					}
 				});
 		}
@@ -234,18 +207,30 @@ if (isset($_GET['name']))
 		}
 		
 		$("#title").html(name);
+		
+		document.title = name;
 	
 		show_related_names(name);
 		show_coauthors(name);
 		show_taxa(name);		
 		//show_timeline(name);
 		show_publications(name);
-	
+
+<!-- typeahead for search box -->
+	$("#q").typeahead({
+	  source: function (query, process) {
+		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+		function (data) {
+		  //data = ['Plecopt', 'Peas'];
+		  
+		  var suggestions = data.suggestions;
+		  process(suggestions)
+		})
+	  }
+	})		
 
 	
 </script>
-
-
 
 </body>
 </html>

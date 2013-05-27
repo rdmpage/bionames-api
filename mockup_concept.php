@@ -684,22 +684,24 @@ $id = $_GET['id'];
 						var ids = [];
 						
 						var count = 0;
-					
+						
 						var html = '<h3>Publication thumbnails</h3>';
-						html += '<div style="width:200px;">';
+						html += '<div style="background-color:white;">';
 						for (var i in data.children) {
 							if (data.children[i].length > 0) {
 								for (var j in data.children[i]) {
 									count++;
 									var dom_id = 'thumbnail' + count;
-									html += '<div style="float:left;" id="' + dom_id + '" data-id="' + data.children[i][j] + '">' + data.children[i][j] + '</div>';
+									html += '<div style="float:left;margin:2px;width:60px;height:80px;overflow:hidden;" id="' + dom_id + '" data-id="' + data.children[i][j] + '">' + data.children[i][j] + '</div>';
 									ids.push(dom_id);
 								}
 							} else {
-								html += '<div style="float:left;border:1px solid black;width:64px;height:80px;text-align:center;">?</div>';
+								html += '<div style="float:left;margin:2px;width:60px;height:80px;text-align:center;background-color:rgb(228,228,228);">?</div>';
 							}
 						}
+						html += '<div style="clear:both;" />';
 						html += '</div>';
+						
 							
 						// display details
 						for (var id in ids) {
@@ -749,10 +751,10 @@ $id = $_GET['id'];
 		-->
 		<h3>Classification</h3>
 		<div id="classification">[classification]</div>
-		<div id="child_publications">xxx</div>
+		<!--<div id="child_publications">xxx</div>-->
 		<div id="child_publication_thumbnails">xxx</div>
 		
-			<h3>Info</h3>
+			<!--<h3>Info</h3> -->
 			<!--<div id="info">[info]</div>	-->
 			<!--<div id="map_canvas" style="width:400px; height:200px;float:right;top:0px;"></div> -->
 		
@@ -782,7 +784,7 @@ $id = $_GET['id'];
 		show_images(concept);
 		show_classification(concept);
 		//show_timeline(concept);
-		show_child_publications(concept);
+		//show_child_publications(concept);
 		
 		show_child_publication_thumbnails(concept);
 		

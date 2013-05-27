@@ -31,6 +31,10 @@ if (isset($_GET['journal']))
 	<meta charset="utf-8" />
 	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">	
 	
+	<!-- responsive -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">	
+	
 	<link href="snippet.css" rel="stylesheet">	
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -66,10 +70,11 @@ if (isset($_GET['journal']))
   		<div class="span2">
   			<div id="volumes" class="affix"></div>  			
   		</div>
-  		<div class="span7">
+  		<div class="span8">
   			<div id="articles"></div>
   		</div>
   		<div class="span2">
+  			<h4 id="title"></h4>
   			<div id="metadata"></div>
   			<div id="identifiers"></div>
   		</div>
@@ -81,7 +86,7 @@ if (isset($_GET['journal']))
 	var oclc = "<?php echo $oclc;?>";
 	var journal = "<?php echo $journal;?>";
 	
-	// Details about journal
+	// Details about journal (OCLC)
 	function display_journal_from_oclc (oclc)
 	{
 		$.getJSON("http://bionames.org/bionames-api/journals/oclc/" + oclc + "?callback=?",
@@ -89,6 +94,8 @@ if (isset($_GET['journal']))
 				if (data.status == 200)
 				{
 					$('#title').html(data.title);
+					
+					document.title = data.title;
 					
 					$('#metadata').html('');
 					
@@ -108,7 +115,7 @@ if (isset($_GET['journal']))
 			});
 	}	
 
-	// Details about journal
+	// Details about journal (ISSN)
 	function display_journal_from_issn (issn)
 	{
 		$.getJSON("http://bionames.org/bionames-api/journals/issn/" + issn + "?callback=?",
@@ -117,6 +124,7 @@ if (isset($_GET['journal']))
 				{
 					$('#title').html(data.title);
 				
+					document.title = data.title;
 				
 					var html = '';
 					
@@ -222,6 +230,10 @@ if (isset($_GET['journal']))
 						html += '</div>';							
 					}					
 					*/
+					
+					html += '<small>Data from WorldCat</small>';
+					
+					
 					$('#metadata').html(html);
 				}
 			});
@@ -372,7 +384,7 @@ if (isset($_GET['journal']))
 					{			
 						html += '<div style="width:200px;position:relative;">';
 
-						html += '<h4>Identifiers</h4>';
+						html += '<h5>Identifier coverage</h5>';
 						html += '<small>DOI, Handle, BioStor, JSTOR, CiNii, PMID, PMC</small>';
 						html += '<div style="width:200px;position:relative;">';
 						for (var i in data.years)
@@ -432,7 +444,7 @@ if (isset($_GET['journal']))
 						html += '<div style="clear:both;"></div>';
 						html += '</div>';
 
-						html += '<h4>Links</h4>';
+						html += '<h5>Links</h5>';
 						html += '<small>URL or PDF link</small>';
 						html += '<div style="width:200px;position:relative;">';
 						for (var i in data.years)
