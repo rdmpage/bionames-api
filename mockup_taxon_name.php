@@ -254,7 +254,7 @@ $id = $_GET['id'];
 	                            filterWidgets.histogram()
 	                                .dimension(year)
 	                                .group(years)
-	                                .round( Math.floor )
+	                                .round( Math.round )
 	                                .xScale( d3.scale.linear()
 	                                    .domain([ yearsExtent[0], yearsExtent[1]+1])
 	                                    .rangeRound([0, 400])

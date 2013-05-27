@@ -27,28 +27,25 @@ if (isset($_GET['name']))
 
 	<?php require 'navbar.inc.php'; ?>
 	
-	<div style="margin-top:50px;" class="container-fluid">
+	<div class="container-fluid">
 		<div class="row-fluid">
-	  		<div class="span9">
+	  		<div class="main-content span9">
+		        <div class="page-header">
+		            <h1 id="title"></h1>
+		        </div>
 		        <div id="publication-timeline" class="publication-timeline">
 		            <h3>Publications</h3>
 		            <div id="pubHistogram" class="chart"></div>
 		            <div id="pubList"></div>
 		        </div>
 			</div>
-	  		<div class="span3">
-	  			<h4 id="title"></h4>
-				<div id="metadata"></div>
-				<div id="coauthors">Coauthors</div>
-				<div id="taxa">Names published</div>
+	  		<div class="sidebar span3">
+				<div id="metadata" class="sidebar-section"></div>
+				<div id="coauthors" class="sidebar-section"></div>
+				<div id="taxa" class="sidebar-section"></div>
 	  		</div>
 		</div>
 	</div>
-
-	<script src="js/display.js"></script>
-	<script src="js/openurl.js"></script>
-	<script src="js/publication.js"></script>
-
 
 <script type="text/javascript">
 	var name = "<?php echo $name;?>";
@@ -63,13 +60,11 @@ if (isset($_GET['name']))
 					if (data.status == 200)
 					{		
 						var html = '';
-						html += '<h5>Coauthors</h5>';
+						html += '<h3>Coauthors</h3>';
 						html += '<ul>';
 						for (var i in data.coauthors)
 						{
-							html += '<a href="mockup_author.php?name=' + data.coauthors[i] + '">';
-							html += '<li>' + data.coauthors[i] + '</li>';
-							html += '</a>';
+							html += '<li><a href="mockup_author.php?name=' + data.coauthors[i] + '">' + data.coauthors[i] + '</a></li>';
 						}
 						html += '</ul>';
 						$("#coauthors").html(html);
@@ -86,7 +81,7 @@ if (isset($_GET['name']))
 					if (data.status == 200)
 					{		
 						var html = '';
-						html += '<h5>Names published</h5>';
+						html += '<h3>Names published</h3>';
 						html += '<ul>';
 						for (var i in data.names) {
 							html += '<li>';
@@ -118,7 +113,7 @@ if (isset($_GET['name']))
 						if (data.status == 200)
 						{		
 							var html = '';
-							html += '<h5>Related names</h5>';
+							html += '<h3>Related names</h3>';
 							html += '<ul>';
 							for (var i in data.firstnames)
 							{
@@ -168,7 +163,7 @@ if (isset($_GET['name']))
 	                            filterWidgets.histogram()
 	                                .dimension(year)
 	                                .group(years)
-	                                .round( Math.floor )
+	                                .round( Math.round )
 	                                .xScale( d3.scale.linear()
 	                                    .domain([ yearsExtent[0], yearsExtent[1]+1])
 	                                    .rangeRound([0, 400])
@@ -250,6 +245,8 @@ if (isset($_GET['name']))
 
 	
 </script>
+
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 
 </body>
 </html>

@@ -48,6 +48,8 @@ body.search {
 /* Page header */
 .page-header {
   margin-top: 0;
+  border: 0;
+  padding-bottom: 10px;
 }
 body.author  .page-header { background-color: #4d95be; }
 body.name    .page-header { background-color: #d36e2b; }
@@ -55,13 +57,13 @@ body.concept .page-header { background-color: #899369; }
 
 .page-header #title {
   color: #f9f9f9; 
-  margin-top: 0;
+  margin: 0;
   padding: 10px 0 0 24px;
   background-repeat: no-repeat;
 }
 
 body.author  .page-header #title { 
-  background-image: url(/bionames-api/images/icon-author.png); 
+  background-image: url(/bionames-api/images/icon-author-white.png); 
   background-position: left 21px;
 }
 
@@ -142,6 +144,23 @@ body.name .page-header #cluster {
     padding: 10px 0 10px 10px;
   }
   
+  
+  .sidebar-section ul {
+    list-style: none;
+    margin: 0;
+  }
+  
+  .sidebar-section li {
+    background-color: #fff;
+    padding-left: 10px;
+    border-right: 1px solid #f9f9f9;
+    border-left:  1px solid #f9f9f9;
+    line-height: 20px;
+        
+    -webkit-box-shadow: inset 0px 1px 0px 0px #fcfcfc;
+    box-shadow: inset 0px 1px 0px 0px #fcfcfc;
+    
+  }
 
 
   body.author  .sidebar-section h3 { color: #4d95be; }
@@ -151,6 +170,10 @@ body.name .page-header #cluster {
   body.author  .sidebar-section#taxa h3 {
     background: url(/bionames-api/images/icon-tag-blue.png) no-repeat 5px 13px;
     padding-left: 40px;
+  }
+  body.author  .sidebar-section#coauthors h3 {
+    background: url(/bionames-api/images/icon-author-blue.png) no-repeat 5px 9px;
+    padding-left: 32px;
   }
   
   body.name  .sidebar-section#concepts h3 {
@@ -163,6 +186,8 @@ body.name .page-header #cluster {
     padding-left: 40px;
   }
   
+  
+
   
 
 /* Snippets */

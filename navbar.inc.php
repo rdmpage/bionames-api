@@ -1,4 +1,4 @@
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-fixed-top navbar-inverse">
 	<div class="navbar-inner">
 	 <a class="brand" href="mockup_index.php">BioNames</a>
 	 <ul class="nav">
