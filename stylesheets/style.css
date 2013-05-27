@@ -80,7 +80,7 @@ body.name .page-header #cluster {
 
 .page-header .authority {
   padding-left: 35px;
-  margin-bottom: 10px;
+  margin: 10px 0;
   font-size: 11px;
   line-height: 20px;
   color: #f9f9f9;
