@@ -14,21 +14,9 @@ $id = $_GET['id'];
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'> 
+	<?php require '_stylesheets.php'; ?>
+	<?php require '_javascripts.php'; ?>
 	
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<link href="stylesheets/style.css" rel="stylesheet" media="screen">
-	
-	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-	<script src="js/lib/d3.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/lib/crossfilter.1.2.0.js" type="text/javascript" charset="utf-8"></script>
-
-	<script src="js/openurl.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/display.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/snippet.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/filter_widgets.js" type="text/javascript" charset="utf-8"></script>
-	
-
 	
 	<script>
 		function show_cluster(id)
