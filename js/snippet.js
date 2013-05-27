@@ -38,9 +38,9 @@ function show_snippet (element_id, doc) {
 					html += '; ';
 				}
 			}
-			html += '</div>';
-			
-			html += '<div>';
+      // html += '</div>';
+      // 
+      // html += '<div>';
 			if (doc.journal)
 			{
 				if (doc.journal.name)
@@ -206,23 +206,22 @@ function show_snippet (element_id, doc) {
 				html += doc.scientificName;
 				html += '</div>';
 			}			
-			html += '<div class="metadata"><!-- metadata -->';
+			html += '<!-- metadata -->';
 			
 			if (doc._id.match(/gbif/)) {
-					html += '<div>' + 'According to GBIF';
-					html += ' ' + doc._id.replace(/gbif\//, '');
-					html += '<div style="float:right;"><img src="images/logo_leaf.gif" width="48"/></div>';
+          html += '<div class="metadata gbif">';
+					html += 'According to GBIF ' + doc._id.replace(/gbif\//, '');
 					html += '</div>';
+          html += '<div class="logo"><img src="images/logo-ncbi.png"/></div>';
 			}									
 			if (doc._id.match(/ncbi/)) {
-					html += '<div>' + 'According to NCBI';
-					html += ' ' + doc._id.replace(/ncbi\//, '');
-					html += '<div style="float:right;"><img src="images/ncbi-twitter.jpg" width="48"/></div>';
+					html += '<div class="metadata ncbi">';
+          html += 'According to NCBI ' + doc._id.replace(/ncbi\//, '');
 					html += '</div>';
+          html += '<div class="logo"><img src="images/logo-ncbi.png"/></div>';
 			}									
 			
 			
-			html += '</div><!-- end metadata -->';
 			html += '</a>';
 			html += '</div>';
 			break;
