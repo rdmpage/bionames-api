@@ -343,33 +343,28 @@ $id = $_GET['id'];
 	</script>	
 </head>
 <body class="name">
-    <div class="navbar navbar-fixed-top navbar-inverse">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="brand" href="index.html">BioNames</a>
-        </div>
-      </div>
-    </div>
-   <div class="container-fluid">
-  <div class="row-fluid">
-    <div class="main-content span9">
-        <div class="page-header">
-            <h1 id="title"></h1>
-            <div id="cluster"></div>
-        </div>
-        <div id="publication-timeline" class="publication-timeline">
-            <h3>Publications</h3>
-            <div id="pubHistogram" class="chart"></div>
-            <div id="pubList"></div>
-        </div>
-    </div>
-    <div class="sidebar span3">
-    	<div id="concepts" class="sidebar-section"></div>
-    	<div id="related" class="sidebar-section"></div>
-    	<div id="epithet" class="sidebar-section"></div>
-    </div>
-  </div>
-</div>
+	<?php require 'navbar.inc.php'; ?>
+
+	<div class="container-fluid">
+	  <div class="row-fluid">
+	    <div class="main-content span9">
+	        <div class="page-header">
+	            <h1 id="title"></h1>
+	            <div id="cluster"></div>
+	        </div>
+	        <div id="publication-timeline" class="publication-timeline">
+	            <h3>Publications</h3>
+	            <div id="pubHistogram" class="chart"></div>
+	            <div id="pubList"></div>
+	        </div>
+	    </div>
+	    <div class="sidebar span3">
+	    	<div id="concepts" class="sidebar-section"></div>
+	    	<div id="related" class="sidebar-section"></div>
+	    	<div id="epithet" class="sidebar-section"></div>
+	    </div>
+	  </div>
+	</div>
 
 
 <script type="text/javascript">
