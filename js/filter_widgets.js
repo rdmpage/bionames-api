@@ -111,6 +111,13 @@ var filterWidgets = {
             var w = xScale.range()[1];
             var h = d3.max( yScale.range() );
             
+            if( xScale.domain()[1] - xScale.domain()[0] < 5 ) {
+              xScale.domain( [
+                xScale.domain()[0] - 5,
+                xScale.domain()[1] + 5
+              ] );
+            }
+            
             // Calculate the bar width. We use the group here since it represents our bucket size
             var barWidth = xScale( xScale.domain()[0] + bucketSize ) - xScale( xScale.domain()[0] ) - barMargin;
             
