@@ -92,10 +92,13 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 	$endkey = array($name, new stdclass);
 	$url = '_design/publication/_view/tags?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
 			
+	
+	/*
 	if ($include_docs)
 	{
 		$url .= '&include_docs=true';
-	}	
+	}
+	*/
 	
 	if ($config['stale'])
 	{
@@ -123,25 +126,20 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 			$obj->publications = array();
 			foreach ($response_obj->rows as $row)
 			{
-				if ($include_docs)
-				{
-					$obj->publications[] = $row->doc;
-				}
-				else
-				{
-					$obj->publications[] = $row->value;				
-				}
+				$obj->publications[] = $row->value;				
 			}
 		}
 	}
 	
 	// names published
 	$url = '_design/publication/_view/names?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
-			
+		
+	/*
 	if ($include_docs)
 	{
 		$url .= '&include_docs=true';
-	}	
+	}
+	*/
 	
 	if ($config['stale'])
 	{
@@ -168,37 +166,22 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 
 			foreach ($response_obj->rows as $row)
 			{
-				if ($include_docs)
-				{
-					$obj->publications[] = $row->doc;
-				}
-				else
-				{
-					$obj->publications[] = $row->value;				
-				}
+				$obj->publications[] = $row->value;				
 			}
 		}
 	}
 	
-	// sort to ensure results are unique, and filter fields if necessary
+	$obj->publications = array_unique($obj->publications);
+	
+	// Fill out if wanted
 	if ($include_docs)
 	{
-		$keys = array();
-		$uniques = array();
-		
-		foreach ($obj->publications as $document)
+		$documents = array();
+		foreach ($obj->publications as $id)
 		{
-			if (!in_array($document->_id, $keys))
-			{
-				$keys[] = $document->_id;
-				$values[] = api_simplify_document($document, $fields);
-			}
+			$documents[] = api_get_document_simplified($id, $fields);
 		}
-		$obj->publications = $values;
-	}
-	else
-	{
-		$obj->publications = array_unique($obj->publications);
+		$obj->publications = $documents;
 	}
 	
 	//print_r($obj->publications);
