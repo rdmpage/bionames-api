@@ -101,9 +101,10 @@ body.name .page-header #cluster {
   padding: 0;
   height: auto;
   width: auto;
+  color: #f9f9f9;
 }
   .page-header .snippet a {
-    color: #f9f9f9;
+    color: inherit;
   }
   
   .page-header .snippet .thumbnail {
@@ -157,8 +158,8 @@ body.name .page-header #cluster {
     border-left:  1px solid #f9f9f9;
     line-height: 20px;
         
-    -webkit-box-shadow: inset 0px 1px 0px 0px #fcfcfc;
-    box-shadow: inset 0px 1px 0px 0px #fcfcfc;
+    -webkit-box-shadow: inset 0px -1px 0px 0px #fcfcfc;
+    box-shadow: inset 0px -1px 0px 0px #fcfcfc;
     
   }
 
@@ -205,6 +206,7 @@ body.name .page-header #cluster {
   color: #181c1f;
 	height: 120px;
   overflow: hidden;
+  position: relative;
   
   /* stay on rhythm despite a bottom border */
   padding-bottom: 19px;
@@ -260,6 +262,12 @@ body.name .page-header #cluster {
   line-height: 20px;
 }
 
+.snippet .logo {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  text-align: right;
+}
 .snippet .journal {
 font-style: italic;
 }
@@ -269,7 +277,6 @@ font-style: italic;
 } 
 
 .snippet .identifier li {
-	color:black;
 	white-space: nowrap;
 	overflow:hidden;
 text-overflow: ellipsis;

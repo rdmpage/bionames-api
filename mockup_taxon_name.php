@@ -49,7 +49,11 @@ $id = $_GET['id'];
           					author = author.replace(/\(/, '');
           					author = author.replace(/\)/, '');  	
 							
-							html += '<span style="color:rgb(128,128,128);">This name was published by </span><b>' + author + '</b>' + ' ' + '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">more by this authority...</a>';
+							html += '<div class="authority">';
+							html += 'This name was published by ';
+							html += '<span class="authority-name">' + author + '</span>. ';
+							html += '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">More by this authority...</a>';
+							html += '</div>';
 						}
 						$("#cluster").html(html);
 						
@@ -325,13 +329,13 @@ $id = $_GET['id'];
 					{	
 						if (data.related.length > 0) {					
 							var html = '<h3>Related names</h3>';
-							html += '<div>';
+							html += '<ul>';
 							for (var i in data.related)
 							{
 								var s = data.related[i];
-								html += '<a href="mockup_search.php?q=' + encodeURIComponent(s) + '">' + s + '</a>' + '<br />';
+								html += '<li><a href="mockup_search.php?q=' + encodeURIComponent(s) + '">' + s + '</a></li>';
 							}
-							html += '</div>';
+							html += '</ul>';
 							var current_html = $("#related").html();
 							$("#related").html(current_html + html);
 						}
@@ -370,6 +374,9 @@ $id = $_GET['id'];
 <script type="text/javascript">
 		var id = "<?php echo $id;?>";
 		show_cluster(id);
-</script>		
+</script>
+
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+
 </body>
 </html>
