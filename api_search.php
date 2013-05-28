@@ -31,7 +31,7 @@ function simple_search($query, $callback = '')
 		$url .= '&stale=ok';
 	}		
 		
-	if (0)
+	if (1)
 	{
 		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	}

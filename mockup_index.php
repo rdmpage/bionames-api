@@ -58,6 +58,9 @@
 <div><a href="mockup_concept.php?id=ncbi/80974"><img src="http://media.eol.org/content/2008/10/08/12/14254_88_88.jpg" />Chromis</a></div>
 
 
+<h3>People</h3>
+<p><a href="http://bionames.org/bionames-api/mockup_author.php?name=C%20Van%20Achterberg">C Van Achterberg</a></p>
+
 
 
 	<script src="js/jquery.js"></script>
