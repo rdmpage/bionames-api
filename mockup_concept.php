@@ -57,7 +57,12 @@ if (isset($_GET['id']))
 				<h1 id="title"></h1>
 			</div>
 			<div id="metadata" class="sidebar-metadata">
-				<div id="stats" class="stats"></div>
+				<div id="stats" class="stats">
+					<div class="metadatum">
+						<div class="metadatum-title source">Source</div>
+						<div class="metadatum-value"><img src="" id="logo" /></div>
+					</div>
+				</div>
 			</div>
 			<div id="images" class="sidebar-section"></div>
 			<div id="classification" class="sidebar-section"></div>
@@ -135,11 +140,11 @@ if (isset($_GET['id']))
 						switch (sourcePrefix[data.source])
 						{
 							case 'gbif':
-								$('#logo').attr('src', 'images/logo_leaf.gif');
+								$('#logo').attr('src', 'images/logo-gbif-stats.png');
 								break;
 								
 							case 'ncbi':
-								$('#logo').attr('src','images/ncbi-twitter.jpg');
+								$('#logo').attr('src','images/logo-ncbi-stats.png');
 								break;
 								
 							default:
