@@ -366,7 +366,7 @@ $id = $_GET['id'];
 
 	<div class="container-fluid">
 	  <div class="row-fluid">
-	    <div class="main-content span9">
+	    <div class="main-content span8">
 	        <!-- <div class="page-header">
 	            <h1 id="title"></h1>
 	            <div id="cluster"></div>
@@ -377,7 +377,7 @@ $id = $_GET['id'];
 	            <div id="pubList"></div>
 	        </div>
 	    </div>
-	    <div class="sidebar span3">
+	    <div class="sidebar span4">
 			<div class="sidebar-header">
 				<h1 id="title"></h1>
 			</div>

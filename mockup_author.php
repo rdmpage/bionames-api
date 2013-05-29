@@ -29,14 +29,14 @@ if (isset($_GET['name']))
 	
 	<div class="container-fluid">
 		<div class="row-fluid">
-	  		<div class="main-content span9">
+	  		<div class="main-content span8">
 		        <div id="publication-timeline" class="publication-timeline">
 		            <h3>Publications</h3>
 		            <div id="pubHistogram" class="chart"></div>
 		            <div id="pubList"></div>
 		        </div>
 			</div>
-	  		<div class="sidebar span3">
+	  		<div class="sidebar span4">
 				<div class="sidebar-header">
 					<h1 id="title"></h1>
 				</div>

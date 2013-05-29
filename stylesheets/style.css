@@ -208,8 +208,11 @@ body.concept .sidebar-header { border-color: #899369; }
     
   }
   
+  /* this keeps stats from "word wrapping" if column becomes too narrow */
   .sidebar-metadata .stats {
     overflow:hidden;
+    height: 60px;
+    
   }
   
   .sidebar-metadata .metadatum {
