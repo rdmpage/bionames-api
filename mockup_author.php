@@ -56,9 +56,7 @@ if (isset($_GET['name']))
 	var $metadata_stats = $('#stats');
 	
 	function add_metadata_stat(title,value) {
-		var title_class = title.toLowerCase().replace(/\W/, '-');
-		$('<div class="metadatum"><div class="metadatum-title '+title_class+'">'+title+'</div><div class="metadatum-value">' + value +'</div></div>').appendTo($metadata_stats);
-		
+		$(display_stat(title,value)).appendTo($metadata_stats);
 	}
 	
 

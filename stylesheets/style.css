@@ -263,6 +263,16 @@ body.concept .sidebar-header { border-color: #899369; }
   .sidebar #cluster .snippet .details {
     margin-left: 60px;
   }
+  
+  .sidebar .image-gallery {
+    max-height: 200px;
+    overflow: hidden;
+  }
+  .sidebar .image-gallery img{
+    margin: 10px 5px;
+    height: 80px;
+    width: 80px;
+  }
 
 
   
@@ -287,6 +297,45 @@ body.concept .sidebar-header { border-color: #899369; }
   
   
 
+/* Simple tree */
+.classification
+{
+	list-style-type:none;
+	margin-left:6px;
+	padding:0px;
+}
+
+.classification li {
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+          box-shadow: none;
+
+}
+
+.root 
+{
+  margin-left: 0px;
+  padding: 0px 0px 0px 10px;
+  background: url("/bionames-api/images/root.png") no-repeat 0 0;
+  line-height:16x;
+}	
+
+.child 
+{
+  margin-left: 0px;
+  padding: 0px 0px 0px 10px;
+  background: url("/bionames-api/images/child.png") no-repeat 0 0;
+  line-height:16x;
+}	
+
+.lastchild 
+{
+  margin-left: 0px;
+  padding: 0px 0px 0px 10px;
+  background: url("/bionames-api/images/lastchild.png") no-repeat 0 0;
+  line-height:16x;
+}	
+  
   
 
 /* Snippets */

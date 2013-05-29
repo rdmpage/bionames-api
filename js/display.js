@@ -112,4 +112,16 @@ function display_reference(data)
 	html += '</div>';
 
 	return html;
-}			
+}
+
+function display_stat(title, value) {
+  var html = '';
+  var title_class = title.toLowerCase().replace(/\W/, '-');
+  
+  html += '<div class="metadatum">' +
+            '<div class="metadatum-title '+title_class+'">'+title+'</div>' +
+            '<div class="metadatum-value">' + value +'</div>' +
+          '</div>';
+          
+  return html;
+}

@@ -17,79 +17,18 @@ if (isset($_GET['id']))
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<?php require 'stylesheets.inc.php'; ?>
 	
-	<!-- responsive -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">	
-	
-	<style type="text/css" title="text/css">
-		/* Simple tree */
-		.classification
-		{
-			list-style-type:none;
-			margin-left:6px;
-			padding:0px;
-		}
-		
-		.root 
-		{
-		  margin-left: 0px;
-		  padding: 0px 0px 0px 10px;
-		  background: url("images/root.png") no-repeat 0 0;
-		  line-height:16x;
-		}	
-		
-		.child 
-		{
-		  margin-left: 0px;
-		  padding: 0px 0px 0px 10px;
-		  background: url("images/child.png") no-repeat 0 0;
-		  line-height:16x;
-		}	
-		
-		.lastchild 
-		{
-		  margin-left: 0px;
-		  padding: 0px 0px 0px 10px;
-		  background: url("images/lastchild.png") no-repeat 0 0;
-		  line-height:16x;
-		}	
-	
-	</style>
-	
-	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    
-	<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-	<!--[if lt IE 9]>
-	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-    
+	<?php require 'javascripts.inc.php'; ?>
 	
 </head>
-<body>
+<body class="concept">
 
-<div class="navbar navbar-fixed-top">
-	<div class="navbar-inner">
-	 <a class="brand" href="mockup_index.php">BioNames</a>
-	 <ul class="nav">
-	  <li><form class="navbar-search pull-left" method="get" action="mockup_search.php">
-		<input type="text" id='q' name='q' data-provide="typeahead" class="search-query" placeholder="Search" autocomplete="off" value="<?php echo $q; ?>">
-		</form> 
-	  </li>
-	  <li><a href="#">More...</a></li>
-	  </ul>
-	</div>
-</div>
+	<?php require 'navbar.inc.php'; ?>
 	
-<div style="margin-top:50px;" class="container-fluid">
+<div class="container-fluid">
 	<div class="row-fluid">
-  		<div class="span7">
-  			<h1 id="title"></h1>
-			<!--<div id="details">Publications</div>-->
-			
-			
+  		<div class="span8">
 			<ul class="nav nav-tabs">
 			  <li class="active" ><a href="#name-tab" data-toggle="tab">Name</a></li>
 			  <li><a href="#biblio-tab" data-toggle="tab">Bibliography</a></li>
@@ -112,14 +51,16 @@ if (isset($_GET['id']))
 			
 			
 		</div>
-  		<div class="span5">
-  			<div id="images"></div>
-  			<div id="classification"></div>
-  			<!--
-  			<h4 id="title"></h4>
-			<div id="metadata"></div>
-			<div id="coauthors">Coauthors</div>
-			<div id="taxa">Names published</div> -->
+		
+  		<div class="sidebar span4">
+			<div class="sidebar-header">
+				<h1 id="title"></h1>
+			</div>
+			<div id="metadata" class="sidebar-metadata">
+				<div id="stats" class="stats"></div>
+			</div>
+			<div id="images" class="sidebar-section"></div>
+			<div id="classification" class="sidebar-section"></div>
   		</div>
 	</div>
 </div>
@@ -132,12 +73,18 @@ if (isset($_GET['id']))
 		var concept = "<?php echo $id;?>";
 		show_images(concept);
 		show_classification(concept);
+		show_publications(concept);
 		//show_timeline(concept);
 		//show_child_publications(concept);
 		
 		//show_child_publication_thumbnails(concept);
 		
 		//show_wall(concept);
+		
+		function add_metadata_stat(title,value) {
+			$(display_stat(title,value)).appendTo($('#stats'));		
+		}
+	
 		
       function show_images(concept)
       {
@@ -147,13 +94,15 @@ if (isset($_GET['id']))
 					if (data.status == 200) {
 						if (data.thumbnails.length != 0) {
 							var html = '';
-							html += '<div>';
-							var n = Math.min(4, data.thumbnails.length);
+							html += '<h3>Images</h3>';
+							html += '<div class="image-gallery">';
+							var n = Math.min(8, data.thumbnails.length);
 							for (var i=0;i<n;i++) {
-								html += '<img style="padding:2px;" src="' + data.thumbnails[i] + '" />';
+								html += '<img src="' + data.thumbnails[i] + '" />';
 							}
-							html += '<div>Images from <a href="http://eol.org/pages/' + data.eol + '">EOL</a></div>';
 							html += '</div>';
+							html += '<div>Images from <a href="http://eol.org/pages/' + data.eol + '">EOL</a></div>';
+							
 						
 							$("#images").html(html);
 						}
@@ -170,10 +119,13 @@ if (isset($_GET['id']))
 				function(data){
 					if (data.status == 200)
 					{		
+						
 						var html = '';
 						
 						$("#title").html(data.scientificName);
 						document.title = data.scientificName;
+						
+						add_metadata_stat("Rank", data.taxonRank);
 						
 						var sourcePrefix = [];
 						sourcePrefix['http://ecat-dev.gbif.org/checklist/1'] = 'gbif';
@@ -196,7 +148,9 @@ if (isset($_GET['id']))
 								
 						
 						
-						// Classification (nodes immediately above and below)	
+						// Classification (nodes immediately above and below)
+						html += '<h3>Classification</h3>';
+							
 						html += '<ul class="classification">';
 						
 						// Parent taxon
@@ -217,6 +171,8 @@ if (isset($_GET['id']))
 						// Child taxa
 						if (data.children)
 						{
+							
+							add_metadata_stat("children", data.children.length);
 							html += '<ul class="classification">';
 							var num_children = data.children.length;
 							for (j = 0; j < num_children; j++)
@@ -276,13 +232,15 @@ if (isset($_GET['id']))
 						// Taxon names
 						if (data.identifier)
 						{
-
+							var num_names = 0;
+							
 						  if (data.identifier.ion)
 						  {
 						  	 var html ='';
 						  	 html += '<div>';
 						  	 html += '<b>Names</b>';
 						     for (var j in data.identifier.ion) {
+								 num_names++;
 						     	var element_id = 'cluster/' + j;
 						  		html += '<div id="id' + element_id.replace(/\//, '_') + '"></div>';
 						  	 }
@@ -292,7 +250,9 @@ if (isset($_GET['id']))
 						     	var element_id = 'cluster/' + j;
 						  		display_snippets(element_id);
 						  	 }
+							 
 						  
+							 if(num_names > 0) add_metadata_stat("Names", num_names);
 						  	 /*
 						  	 var publishedInCitation = [];
 						  	 var html ='';
@@ -356,6 +316,16 @@ if (isset($_GET['id']))
 				});
 		} 
 		
+		
+		function show_publications(concept) {
+			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs&callback=?", function(data){
+				
+				
+				add_metadata_stat("Publications", data.publications.length);
+				
+			});
+			
+		}
 
 <!-- typeahead for search box -->
 	$("#q").typeahead({
