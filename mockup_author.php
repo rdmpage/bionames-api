@@ -30,9 +30,6 @@ if (isset($_GET['name']))
 	<div class="container-fluid">
 		<div class="row-fluid">
 	  		<div class="main-content span9">
-		        <div class="page-header">
-		            <h1 id="title"></h1>
-		        </div>
 		        <div id="publication-timeline" class="publication-timeline">
 		            <h3>Publications</h3>
 		            <div id="pubHistogram" class="chart"></div>
@@ -40,7 +37,12 @@ if (isset($_GET['name']))
 		        </div>
 			</div>
 	  		<div class="sidebar span3">
-				<div id="metadata" class="sidebar-section"></div>
+				<div class="sidebar-header">
+					<h1 id="title"></h1>
+				</div>
+				<div id="metadata" class="sidebar-metadata">
+					<div id="stats" class="stats"></div>
+				</div>
 				<div id="coauthors" class="sidebar-section"></div>
 				<div id="taxa" class="sidebar-section"></div>
 	  		</div>
@@ -51,6 +53,15 @@ if (isset($_GET['name']))
 	var name = "<?php echo $name;?>";
 	
 	
+	var $metadata_stats = $('#stats');
+	
+	function add_metadata_stat(title,value) {
+		var title_class = title.toLowerCase().replace(/\W/, '-');
+		$('<div class="metadatum"><div class="metadatum-title '+title_class+'">'+title+'</div><div class="metadatum-value">' + value +'</div></div>').appendTo($metadata_stats);
+		
+	}
+	
+
 		function show_coauthors(name)
 		{
 			$("#coauthors").html("");
@@ -68,6 +79,7 @@ if (isset($_GET['name']))
 						}
 						html += '</ul>';
 						$("#coauthors").html(html);
+						add_metadata_stat("Coauthors", data.coauthors.length);
 					}
 				});
 		}
@@ -94,6 +106,8 @@ if (isset($_GET['name']))
 						}
 						html += '</ul>';
 						$("#taxa").html(html);
+						add_metadata_stat("Names Published", data.names.length);
+						
 					}
 				});
 		}
@@ -245,5 +259,8 @@ if (isset($_GET['name']))
 
 	
 </script>
+
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+
 </body>
 </html>

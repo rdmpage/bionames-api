@@ -1,8 +1,10 @@
 body {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 400;
-  color: #2e3033;
-  background-color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  color: #2a2b2e;
+  background-color: #f2f2f2;
   padding-top: 40px;
   padding-bottom: 40px;
 }
@@ -21,35 +23,21 @@ body.search {
     background-size: 100% 20px;
 }*/
 
+/* navbar */
+.navbar-fixed-top .navbar-inner {
+  background-image: none;
+  background-color: #fff;
+  border-bottom: 1px solid #cdcdcd;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 
-/* Hacks to Bootstrap to make the columns look like we want */  
-.container-fluid {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.main-content{
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.main-content .page-header {
-  margin-left: -20px;
-  margin-right: -20px;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.sidebar.span3 {
-  margin-left: 0;
 }
 
 
 /* Page header */
 .page-header {
-  margin-top: 0;
-  border: 0;
-  padding-bottom: 10px;
+
 }
 body.author  .page-header { background-color: #4d95be; }
 body.name    .page-header { background-color: #d36e2b; }
@@ -62,36 +50,6 @@ body.concept .page-header { background-color: #899369; }
   background-repeat: no-repeat;
 }
 
-body.author  .page-header #title { 
-  background-image: url(/bionames-api/images/icon-author-white.png); 
-  background-position: left 21px;
-}
-
-body.name  .page-header #title { 
-  background-image: url(/bionames-api/images/icon-tag-white.png); 
-  background-position: left 25px;
-  padding-left: 33px;
-}
-
-
-body.name .page-header #cluster {
-  margin-top: -10px;
-}
-
-.page-header .authority {
-  padding-left: 35px;
-  margin: 10px 0;
-  font-size: 11px;
-  line-height: 20px;
-  color: #f9f9f9;
-}
-  .page-header .authority a {
-    color: inherit;
-  }
-
-.authority-name {
-  font-weight: 700;
-}
 
 
 /* Style this snippet to look like a publication */
@@ -122,6 +80,7 @@ body.name .page-header #cluster {
     padding-right: 10px;
   }
 
+
 /* Main content */
 .main-content {
 
@@ -130,20 +89,88 @@ body.name .page-header #cluster {
 
 /* Sidebar */
 .sidebar {
-  background-color: #f9f9f9;
+  margin-top: 20px;
+  background-color: #fafafa;
+  color: #343238;
+
+  -webkit-border-top-right-radius: 4px;
+     -moz-border-top-right-radius: 4px;
+          border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+     -moz-border-top-left-radius: 4px;
+          border-top-left-radius: 4px;
+
+  
 }
+
+.sidebar-header{
+  padding: 40px 10px;
+  background-color: #2b2b2e;
+  text-align: center;
+  color: #fff;
+  
+  padding-bottom: 35px;
+  border-bottom: 5px solid #000;
+  
+  background-image: -ms-radial-gradient(center, circle farthest-corner, #404045 0%, #2B2B2E 100%);
+  background-image: -moz-radial-gradient(center, circle farthest-corner, #404045 0%, #2B2B2E 100%);
+  background-image: -o-radial-gradient(center, circle farthest-corner, #404045 0%, #2B2B2E 100%);
+  background-image: -webkit-gradient(radial, center center, 0, center center, 496, color-stop(0, #404045), color-stop(1, #2B2B2E));
+  background-image: -webkit-radial-gradient(center, circle farthest-corner, #404045 0%, #2B2B2E 100%);
+  background-image: radial-gradient(circle farthest-corner at center, #404045 0%, #2B2B2E 100%);
+  
+  -webkit-border-top-right-radius: 4px;
+     -moz-border-top-right-radius: 4px;
+          border-top-right-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+     -moz-border-top-left-radius: 4px;
+          border-top-left-radius: 4px;
+}
+
+body.author  .sidebar-header { border-color: #4d95be; }
+body.name    .sidebar-header { border-color: #d36e2b; }
+body.concept .sidebar-header { border-color: #899369; }
+
+
+  .sidebar-header #title {
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: 400;
+    text-shadow: 0px -1px 1px rgba(0, 0, 0, 0.5);
+    
+    display: inline;
+    background-repeat: no-repeat;
+  }
+  
+  body.author .sidebar-header #title {
+    background-image: url(/bionames-api/images/icon-author.png); 
+    background-position: left 1px;
+    padding-left: 22px;
+  }
+  
+  body.name  .sidebar-header #title { 
+    background-image: url(/bionames-api/images/icon-tag-white.png); 
+    background-position: left 1px;
+    padding-left: 34px;
+  }
+
 .sidebar-section {
   margin: 0;
   padding: 0;
+  background-color: #fff;
 }
 
   .sidebar-section h3 {
     font-weight: normal;
-    font-size: 20px;
-    line-height: 20px;
+    font-size: 18px;
+    line-height: 18px;
     margin: 0;
     padding: 10px 0 10px 10px;
-  }
+    background-color: #fafafa;
+    border-bottom: 1px solid #f2f2f2;
+    border-top: 1px solid #f2f2f2;
+    
+ }
   
   
   .sidebar-section ul {
@@ -152,23 +179,91 @@ body.name .page-header #cluster {
   }
   
   .sidebar-section li {
-    background-color: #fff;
-    padding-left: 10px;
-    border-right: 1px solid #f9f9f9;
-    border-left:  1px solid #f9f9f9;
+    margin: 0 10px;
     line-height: 20px;
         
-    -webkit-box-shadow: inset 0px -1px 0px 0px #fcfcfc;
-    box-shadow: inset 0px -1px 0px 0px #fcfcfc;
+    -webkit-box-shadow: inset 0px -1px 0px 0px #f6f6f6;
+    box-shadow: inset 0px -1px 0px 0px #f6f6f6;
     
   }
 
+  .sidebar-section li:last-child {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
 
-  body.author  .sidebar-section h3 { color: #4d95be; }
-  body.name    .sidebar-section h3 { color: #d36e2b; }
-  body.concept .sidebar-section h3 { color: #899369; }
+  .sidebar-metadata {
+    background-color: #fff;
+    
+    -webkit-box-shadow: 0px 1px 0px #f2f2f2;
+    -moz-box-shadow:    0px 1px 0px #f2f2f2;
+    box-shadow:         0px 1px 0px #f2f2f2;
+        
+    -webkit-border-bottom-right-radius: 4px;
+       -moz-border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+       -moz-border-bottom-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+    
+  }
   
-  body.author  .sidebar-section#taxa h3 {
+  .sidebar-metadata .stats {
+    overflow:hidden;
+  }
+  
+  .sidebar-metadata .metadatum {
+    float: left;
+    margin: 10px 0;
+    padding: 0 10px;
+    text-align: center;
+    border-right: 1px solid #f2f2f2;
+  }
+  
+  .sidebar-metadata .metadatum:last-child { border-right: none; }
+  
+  .metadatum-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #d2d3d7;
+  }
+  
+  .metadatum-value {
+    font-size: 20px;
+  }
+
+
+  .sidebar #cluster .authority {
+    border-top: 1px solid #f2f2f2;
+    padding: 10px 0 0 10px
+  }
+  
+  .authority {
+    font-size: 10px;
+    line-height: 20px;
+    color: #d2d3d7;
+    text-transform: uppercase;
+  }
+
+  .authority-name {
+    color: #2a2b2e;
+  }
+
+  
+  
+  .sidebar #cluster .snippet {
+    height: auto;
+    background-color: transparent;
+    border-bottom: none;
+  }
+  
+  .sidebar #cluster .snippet .details {
+    margin-left: 60px;
+  }
+
+
+  
+/*  body.author  .sidebar-section#taxa h3 {
     background: url(/bionames-api/images/icon-tag-blue.png) no-repeat 5px 13px;
     padding-left: 40px;
   }
@@ -185,7 +280,7 @@ body.name .page-header #cluster {
   body.name  .sidebar-section#related h3 {
     background: url(/bionames-api/images/icon-tag-orange.png) no-repeat 5px 13px;
     padding-left: 40px;
-  }
+  }*/
   
   
 
@@ -258,7 +353,7 @@ body.name .page-header #cluster {
 }
 
 .snippet .metadata {
-  font-size: 11px;
+  font-size: 10px;
   line-height: 20px;
 }
 
@@ -523,3 +618,11 @@ table,th, td, tr {
 
 
 
+/* Tablet
+------------------------- */
+@media (max-width: 979px) {
+  /* Remove any padding from the body */
+  body {
+    padding-top: 0;
+  }
+}

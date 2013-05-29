@@ -18,6 +18,14 @@ $id = $_GET['id'];
 	<?php require 'javascripts.inc.php'; ?>
 	
 	<script>
+	
+		function add_metadata_stat(title,value) {
+			var title_class = title.toLowerCase().replace(/\W/, '-');
+			$('<div class="metadatum"><div class="metadatum-title '+title_class+'">'+title+'</div><div class="metadatum-value">' + value +'</div></div>').appendTo($('#stats'));
+		
+		}
+	
+	
 		function show_cluster(id)
 		{
 			$("#cluster").html("");
@@ -50,9 +58,8 @@ $id = $_GET['id'];
           					author = author.replace(/\)/, '');  	
 							
 							html += '<div class="authority">';
-							html += 'This name was published by ';
-							html += '<span class="authority-name">' + author + '</span>. ';
-							html += '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">More by this authority...</a>';
+							html += 'Published by ';
+							html += '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">'+author+'</a>.';
 							html += '</div>';
 						}
 						$("#cluster").html(html);
@@ -148,6 +155,9 @@ $id = $_GET['id'];
 				function(data){
 					if (data.status == 200)
 					{	
+						
+						add_metadata_stat("Concepts", data.concepts.length);
+						
 						if (data.concepts.length > 0) {
 						    var concepts = [];
 							var html = '<h3>This name has been used for these taxa</h3>';
@@ -233,6 +243,9 @@ $id = $_GET['id'];
 				function(data){
 					if (data.status == 200)
 					{		
+						
+						add_metadata_stat("Publications", data.publications.length);
+						
 	                    // Type cast years into integers
 						for (var i in data.publications)
 						{
@@ -327,6 +340,8 @@ $id = $_GET['id'];
 				function(data){
 					if (data.status == 200)
 					{	
+						add_metadata_stat("Related Names", data.related.length);
+						
 						if (data.related.length > 0) {					
 							var html = '<h3>Related names</h3>';
 							html += '<ul>';
@@ -352,10 +367,10 @@ $id = $_GET['id'];
 	<div class="container-fluid">
 	  <div class="row-fluid">
 	    <div class="main-content span9">
-	        <div class="page-header">
+	        <!-- <div class="page-header">
 	            <h1 id="title"></h1>
 	            <div id="cluster"></div>
-	        </div>
+	        </div> -->
 	        <div id="publication-timeline" class="publication-timeline">
 	            <h3>Publications</h3>
 	            <div id="pubHistogram" class="chart"></div>
@@ -363,6 +378,13 @@ $id = $_GET['id'];
 	        </div>
 	    </div>
 	    <div class="sidebar span3">
+			<div class="sidebar-header">
+				<h1 id="title"></h1>
+			</div>
+			<div id="metadata" class="sidebar-metadata">
+				<div id="stats" class="stats"></div>
+				<div id="cluster"></div>
+			</div>
 	    	<div id="concepts" class="sidebar-section"></div>
 	    	<div id="related" class="sidebar-section"></div>
 	    	<div id="epithet" class="sidebar-section"></div>
