@@ -65,24 +65,22 @@ $id = $_GET['id'];
 			<div class="main-content span8">
 			
 				<ul class="nav nav-tabs">
-				  <li class="active" ><a href="#view-tab" data-toggle="tab">View</a></li>
+				  <li class="active"><a href="#view-tab" data-toggle="tab">View</a></li>
 				  <li><a href="#about-tab" data-toggle="tab">About</a></li>
-				<!--  <li><a href="#map-tab" data-toggle="tab">Map</a></li> -->
 				  <li><a href="#data-tab" data-toggle="tab">Data</a></li>
 				</ul>
 			
-				<div class="tab-content">
+				<div class="tab-content">				  
 				  <div class="tab-pane active" id="view-tab">
 					<div id="document-viewer-span">
-						<div id="doc" >Loading...</div>
+						<div id="doc">Loading...</div>
 					</div>  
 				  </div>
-				  
+
 				  <div class="tab-pane" id="about-tab">
 					<div id="metadata" style="padding:20px;"></div>  
 				  </div>
 				  
-				<!--  <div class="tab-pane" id="map-tab">...</div> -->
 				  <div class="tab-pane" id="data-tab">
 					<div id="names"></div>
 				  </div>
@@ -95,6 +93,7 @@ $id = $_GET['id'];
 				</div>
 				<div id="metadata" class="sidebar-metadata">
 					<div id="stats" class="stats"></div>
+					<div id="authors" class="sidebar-section"></div>					
 				</div>
 			</div>
 		</div>
@@ -119,14 +118,12 @@ $id = $_GET['id'];
 					
 					// Bibliographic details as a table
 					var html = '';
-									
-					//html += '<button onclick="show_formatted_citation(\'bibtex\');"></button>';
-									
 										
 					html += '<table class="table">';
 					html += '<thead></thead>';
 					html += '<tbody>';
 					
+					// Title of article, don't include in table as it appears in side panel
 					if (data.title)
 					{
 						//html += '<tr><td class="muted">Title</td><td>' + data.title + '</td></tr>';
@@ -141,6 +138,20 @@ $id = $_GET['id'];
 										
 					if (data.author)
 					{
+						var sidepanel_html = '<h3>Authors</h3>';
+						sidepanel_html += '<ul>';
+						for (var j in data.author)
+						{
+							sidepanel_html += '<li>';
+							sidepanel_html += '<a href="mockup_author.php?name=' + data.author[j].name + '"><i class="icon-user"></i>';
+							sidepanel_html += data.author[j].name + ' ';
+							sidepanel_html += '</a>';
+							sidepanel_html += '</li>';
+						}
+						sidepanel_html += '</ul>';
+						$("#authors").html(sidepanel_html);
+						
+						// table row
 						html += '<tr><td class="muted">Author(s)</td><td>';
 						for (var j in data.author)
 						{
@@ -385,6 +396,7 @@ $id = $_GET['id'];
 							html += '<img style="border:1px solid rgb(128,128,128);padding:10px;background-color:white;" src="' + data.thumbnail + '" width="400" />';
 							html += '</div>';
 							$('#doc').html(html);
+							
 						}
 						else
 						{
@@ -397,6 +409,7 @@ $id = $_GET['id'];
 							
 							$('#doc').html(html);
 						}
+						//$(window).resize(); // force drawing to be centred
 					}
 				}
 			});
@@ -498,7 +511,8 @@ $id = $_GET['id'];
 
 	// http://stackoverflow.com/questions/6762564/setting-div-width-according-to-the-screen-size-of-user
 	$(window).resize(function() { 
-		var windowWidth = $('#document-viewer-span').width();
+//		var windowWidth = $('#document-viewer-span').width();
+		var windowWidth = $('#view-tab').width();
 		var windowHeight =$(window).height() -  $('#document-viewer-span').offset().top;
 		$('#doc').css({'height':windowHeight, 'width':windowWidth });
 	});	
