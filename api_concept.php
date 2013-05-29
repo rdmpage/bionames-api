@@ -86,8 +86,7 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 		
 		// now search for these names
 		foreach ($obj->names as $name)
-		{
-		
+		{		
 			$startkey = array($name);
 			$endkey = array($name, new stdclass);
 			
@@ -115,6 +114,35 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 			}
 		}
 		
+		// Get names that produced each hit so we can use as tags
+		$tags = array();
+		$ids = array();
+		foreach ($obj->hits as $k => $v)
+		{
+			foreach ($v as $publication_id)
+			{
+				$ids[] = $publication_id;
+				if (!isset($tags[$publication_id]))
+				{
+					$tags[$publication_id] = array();
+				}
+				$tags[$publication_id][] = $k;
+			}		
+		}
+		
+		$ids = array_unique($ids);
+		
+		$obj->publications = array();
+		foreach ($ids as $id)
+		{
+			$doc = api_get_document_simplified($id, $fields);
+			$doc->tags = $tags[$id];
+			
+			$obj->publications[] = $doc;
+			
+		}
+				
+		/*
 		// Post process
 		foreach ($obj->hits as $k => $v)
 		{
@@ -125,9 +153,9 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 					$obj->publications[$publication_id] = api_get_document_simplified($publication_id, array('title', 'author', 'year', 'journal', 'thumbnail'));
 				}
 				$obj->publications[$publication_id]->tags[] = $k;
-			}
-		
+			}		
 		}
+		*/
 		
 		unset($obj->hits);
 		
