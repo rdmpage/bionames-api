@@ -331,7 +331,7 @@ body.concept .sidebar-header { border-color: #899369; }
 
 /* Snippets */
 .snippet-wrapper {
-	height: 160px;
+	height: 100px;
   width: 320px;
 	overflow: hidden;
   float: left;
@@ -342,7 +342,7 @@ body.concept .sidebar-header { border-color: #899369; }
   background-color: #fff;
   padding: 20px;
   color: #181c1f;
-	height: 120px;
+	height: 80px;
   overflow: hidden;
   position: relative;
   
@@ -381,8 +381,19 @@ body.concept .sidebar-header { border-color: #899369; }
   border-radius: 2px;
 }
 
+.snippet .thumbnail.concept-thumb {
+  width: 80px;
+}
+
+.snippet .thumbnail.concept-thumb img {
+  display: block;
+  width:  80px;
+  height: 80px;
+  border-radius: 2px;
+}
+
 .snippet .details {
-  margin-left:100px;
+  margin-left:90px;
   overflow:hidden;
 } 
 

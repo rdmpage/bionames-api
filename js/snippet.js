@@ -189,8 +189,22 @@ function show_snippet (element_id, doc) {
 			break;
 			
 		case 'taxonConcept':
+      var link = "mockup_concept.php?id=" + doc._id;
+      
+      html += ('<div id="thumb-' + element_id + '" class="thumbnail concept-thumb"></div>');
+
+    	$.getJSON("http://bionames.org/bionames-api/taxon/" + doc._id + "/thumbnail?callback=?", function(data){
+  			if (data.status == 200)
+  			{	
+          if(data.thumbnails && data.thumbnails.length > 0) {
+            $('<a href="'+link+'"><img src="'+ data.thumbnails[0] +'"/></a>').appendTo($('#thumb-' + element_id));
+          }
+        }
+    	});
+      
+      
 			html += '<div class="details">';
-			html += '<a href="mockup_concept.php?id=' + doc._id + '">';
+			html += '<a href="' + link + '">';
 			if (doc.canonicalName)
 			{
 				html += '<div class="title">';
