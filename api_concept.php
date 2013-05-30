@@ -86,8 +86,7 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 		
 		// now search for these names
 		foreach ($obj->names as $name)
-		{
-		
+		{		
 			$startkey = array($name);
 			$endkey = array($name, new stdclass);
 			
@@ -115,6 +114,35 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 			}
 		}
 		
+		// Get names that produced each hit so we can use as tags
+		$tags = array();
+		$ids = array();
+		foreach ($obj->hits as $k => $v)
+		{
+			foreach ($v as $publication_id)
+			{
+				$ids[] = $publication_id;
+				if (!isset($tags[$publication_id]))
+				{
+					$tags[$publication_id] = array();
+				}
+				$tags[$publication_id][] = $k;
+			}		
+		}
+		
+		$ids = array_unique($ids);
+		
+		$obj->publications = array();
+		foreach ($ids as $id)
+		{
+			$doc = api_get_document_simplified($id, $fields);
+			$doc->tags = $tags[$id];
+			
+			$obj->publications[] = $doc;
+			
+		}
+				
+		/*
 		// Post process
 		foreach ($obj->hits as $k => $v)
 		{
@@ -125,9 +153,9 @@ function publications_with_name($id, $fields=array('all'), $callback = '')
 					$obj->publications[$publication_id] = api_get_document_simplified($publication_id, array('title', 'author', 'year', 'journal', 'thumbnail'));
 				}
 				$obj->publications[$publication_id]->tags[] = $k;
-			}
-		
+			}		
 		}
+		*/
 		
 		unset($obj->hits);
 		
@@ -442,7 +470,71 @@ function taxon_thumbnail_urls ($id, $callback = '')
 	
 	$obj = new stdclass;
 	$obj->status = 404;	
+
+	// GBIF uses my mapping, so simply retrieve from GBIF object
+	if (preg_match('/gbif\/(?<id>\d+)$/', $id, $m))
+	{
+		// Get mapping to EOL...
+		// grab JSON from CouchDB
+		$couch_id = $id;
+			
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+		
+		$response_obj = json_decode($resp);
+		
+		if (isset($response_obj->error))
+		{
+		}
+		else
+		{
+			if (isset($response_obj->identifier))
+			{
+				if (isset($response_obj->identifier->eol))
+				{
+					$obj->status = 200;
+					$obj->eol = $response_obj->identifier->eol[0];
+					$obj->thumbnails = array();
+					
+					$couch_id = 'eol/' . $obj->eol;
+					
+					// now get details from local EOL data
+					$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+					
+					$response_obj = json_decode($resp);
+					
+					if (isset($response_obj->error))
+					{
+					}
+					else
+					{
+						if (isset($response_obj->dataObjects))
+						{
+							foreach ($response_obj->dataObjects as $dataObject)
+							{
+								switch($dataObject->dataType)
+								{
+									case 'http://purl.org/dc/dcmitype/StillImage':
+										$image_url = $dataObject->eolThumbnailURL;
+										if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
+										{
+											$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
+										}
+										$obj->thumbnails[] = $image_url;
+										break;
+										
+									default:
+										break;
+								}
+							}
+						}
+					}
+					
+				}
+			}
+		}
+	}
 	
+	// NCBI uses index based on EOL data
 	if (preg_match('/ncbi\/(?<id>\d+)$/', $id, $m))
 	{
 		// Get mapping to EOL...
@@ -464,6 +556,7 @@ function taxon_thumbnail_urls ($id, $callback = '')
 		{
 			$obj->status = 200;
 			$obj->eol = str_replace('eol/', '', $response_obj->rows[0]->id);
+
 			$obj->thumbnails = array();
 			
 			foreach ($response_obj->rows as $row)
@@ -512,6 +605,8 @@ function main()
 		$fields = explode(",", $field_string);
 	}
 	
+	//print_r($_GET);
+	
 			
 	if (!$handled)
 	{
@@ -519,6 +614,8 @@ function main()
 		if (isset($_GET['id']))
 		{	
 			$id = $_GET['id'];
+			
+			//echo __LINE__;
 			
 			if (isset($_GET['publications']))
 			{	
@@ -544,6 +641,7 @@ function main()
 
 			if (isset($_GET['thumbnail']))
 			{	
+				//echo __LINE__;
 				//taxon_thumbnail($id, $callback);
 				taxon_thumbnail_urls($id, $callback);
 				$handled = true;
