@@ -40,7 +40,7 @@ if (isset($_GET['id']))
 				Scientific name(s)
 			  </div>
 			  
-			  <div class="tab-pane" id="biblio-tab">
+			  <div class="tab-pane no-pad" id="biblio-tab">
 				<div id="publication-timeline" class="publication-timeline">
 					<div class="pub-timeline">
 					    <table id="synonymTimeline">
@@ -69,7 +69,7 @@ if (isset($_GET['id']))
 				<div id="stats" class="stats">
 					<div class="metadatum">
 						<div class="metadatum-title source">Source</div>
-						<div class="metadatum-value"><img src="" id="logo" /></div>
+						<div class="metadatum-value"><img src="" id="logo" style="display:none"/></div>
 					</div>
 				</div>
 			</div>
@@ -149,11 +149,11 @@ if (isset($_GET['id']))
 						switch (sourcePrefix[data.source])
 						{
 							case 'gbif':
-								$('#logo').attr('src', 'images/logo-gbif-stats.png');
+								$('#logo').attr('src', 'images/logo-gbif-stats.png').show();
 								break;
 								
 							case 'ncbi':
-								$('#logo').attr('src','images/logo-ncbi-stats.png');
+								$('#logo').attr('src','images/logo-ncbi-stats.png').show();
 								break;
 								
 							default:

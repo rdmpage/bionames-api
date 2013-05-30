@@ -68,9 +68,13 @@ body {
   background-color: #fff;
 }
 
-.tab-content {
-/*  padding: 20px 10px;*/
+.tab-pane {
+  padding: 20px 10px;
   background-color: #fafafa;
+}
+
+.tab-pane.no-pad {
+  padding: 0;
 }
 
 
@@ -612,12 +616,12 @@ table,th, td, tr {
 .pub .tag {
   display: inline-block;
   position: relative;
-  background-color: #BBBFC6;
+  background-color: #b7b7bd;
   line-height: 16px;
   height: 16px;
   margin-left: 8px;
   padding: 0 6px 0 7px;
-  color: #fafafa;
+  color: #fff;
   
   -moz-border-radius-bottomright:2px;
   -webkit-border-bottom-right-radius:42x;	
@@ -636,7 +640,7 @@ table,th, td, tr {
   width: 0;
   text-indent: -9999em;
   content: "";
-  border-color:transparent #BBBFC6 transparent transparent;
+  border-color:transparent #b7b7bd transparent transparent;
   border-style:solid;
   border-width:8px 8px 8px 0;
 }
