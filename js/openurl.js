@@ -1,3 +1,4 @@
+var c = 0;
 function referenceToOpenUrl(reference)
 {
 	var openurl_keys=[];
@@ -90,7 +91,7 @@ function referenceToOpenUrl(reference)
 						case 'identifier':
 							for (j in reference.journal.identifier)
 							{
-								if (reference.journal.identifier[j].type == 'issn')
+								if (reference.journal.identifier[j] && reference.journal.identifier[j].type == 'issn')
 								{
 									parameters.push(openurl_keys['issn'] + '=' + reference.journal.identifier[j].id);
 								}
