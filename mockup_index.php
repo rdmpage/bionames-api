@@ -62,6 +62,9 @@
 <p><a href="http://bionames.org/bionames-api/mockup_author.php?name=C%20Van%20Achterberg">C Van Achterberg</a></p>
 
 
+<h3>Map for paper</h3>
+<a href="http://bionames.org/bionames-api/mockup_publication.php?id=ab2e0def5e24b38064ae74d4230b2e67">Bats (Mammalia: Chiroptera) from Indo-Australia</a>
+
 
 	<script src="js/jquery.js"></script>
 	<script src="js/display.js"></script>

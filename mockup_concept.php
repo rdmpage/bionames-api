@@ -37,7 +37,6 @@ if (isset($_GET['id']))
 			
 			<div class="tab-content">
 			  <div class="tab-pane active" id="name-tab">
-				Scientific name(s)
 			  </div>
 			  
 			  <div class="tab-pane no-pad" id="biblio-tab">
@@ -212,26 +211,26 @@ if (isset($_GET['id']))
 						// Classification
 						$("#classification").html(html);
 						
-						// Classification-specific info
+						// Classification-specific info (e.g., maps, phylogeny
 						/*
 						html = '<img src="http://data.gbif.org/species/' + data.sourceIdentifier + '/overviewMap.png" width="360"/>';
 						$("#info").html(html);
 						*/
-						
+						/*
 						switch (sourcePrefix[data.source])
 						{
 							case 'gbif':
-								gbif_map(data.sourceIdentifier);
+								//gbif_map(data.sourceIdentifier);
 								break;
 								
 							case 'ncbi':
-								$('#map_canvas').hide();
+								//$('#map_canvas').hide();
 								break;
 								
 							default:
 								break;
 						}
-						
+						*/
 						
 						// Accepted name
 
@@ -248,74 +247,39 @@ if (isset($_GET['id']))
 						{
 							var num_names = 0;
 							
-						  if (data.identifier.ion)
-						  {
-						  	 var html ='';
-						  	 html += '<div>';
-						  	 html += '<h4>Names</h4>';
-						     for (var j in data.identifier.ion) {
-								 num_names++;
-						     	var element_id = 'cluster/' + j;
-						  		html += '<div id="id' + element_id.replace(/\//, '_') + '"></div>';
-						  	 }
-						  	 html += '</div>';
-						  	 $("#namemap").html(html);
-						     for (var j in data.identifier.ion) {
-						     	var element_id = 'cluster/' + j;
-						  		display_snippets(element_id);
-						  	 }
+							  if (data.identifier.ion)
+							  {
+								var publications = [];
+								
+								var html = '';
+								 for (var j in data.identifier.ion) {
+									num_names++;
+									
+									html += '<h4>';
+									html += data.identifier.ion[j].nameComplete;
+									html += '</h4>';
+									
+									// publication
+									if (data.identifier.ion[j].publishedInCitation) {									
+										html += '<div id="id' + data.identifier.ion[j].publishedInCitation[0] + '">' + data.identifier.ion[j].publishedInCitation[0] + '</div>';
+										publications.push(data.identifier.ion[j].publishedInCitation[0]);
+									} else {
+										if (data.identifier.ion[j].publication) {
+											html += '<div>' + data.identifier.ion[j].publication[0] + '</div>';
+										}
+									}
+								 }
 							 
 						  
 							 if(num_names > 0) add_metadata_stat("Names", num_names);
 							 
-							 $("#name-tab").html(html);
+						// Publications
+						for (var pubs in publications) {
+							html += '<script>display_publications_ryan("' + publications[pubs] + '");<\/script>';
+						}
 							 
-						  	 /*
-						  	 var publishedInCitation = [];
-						  	 var html ='';
-						  	 html += '<div style="border:1px solid black;width:400px;background-color:rgb(228,228,228);">';
-						  	 html += '<b>Names</b>';
-						  	 html += '<ul>';
-						     for (var j in data.identifier.ion)
-						     {
-						     	html += '<li>';
-						     	html += '<span style="padding:2px;background-color:orange;-webkit-border-radius:4px;">';
-						     	html += '<a href="mockup_taxon_name.php?id=cluster/' + j + '">';
-						     	html += data.identifier.ion[j].nameComplete;
-						     	html += '</a>';
-						   	    html += '</span>';
-						   	    
-						   	    // identifier
-						   	    
-						   	    html += '<ul>';
-						   	    html += '<li>';
-						   	    html += 'urn:lsid:organismnames.com:name:' + j;
-						   	    html += '</li>';
-						   	    html += '</ul>';
-						   	    
-						   	    
-						   	    // publication
-						   	    html += '<ul>';
-						     	if (data.identifier.ion[j].publication)
-						     	{
-						     		html += '<li>';
-									html += '<div ';
-									if (data.identifier.ion[j].publishedInCitation) {
-										publishedInCitation.push(data.identifier.ion[j].publishedInCitation);
-										html += ' id="publication' + data.identifier.ion[j].publishedInCitation + '"';
-									}								
-									html += '>';
-									html += data.identifier.ion[j].publication;
-									html += '</div>';
-									html += '</li>';
-								}
-								html += '</ul>';
-								html += '</li>';
-						     }
-						     html += '</ul>';
-						     html += '</div>';
-						     $("#namemap").html(html);
-						     */
+							 
+							 $("#name-tab").html(html);
 						   }
 						}
 						
@@ -325,8 +289,8 @@ if (isset($_GET['id']))
 						
 						// Timeline
 						
-						// Publications
-						//show_publications(data.canonicalName);						
+						
+						//display_publications(publications);						
 						
 						
 					}

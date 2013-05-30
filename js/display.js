@@ -1,3 +1,17 @@
+function display_publications_ryan(id) {
+	$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
+		function(data){
+			if (data.status == 200)
+			{		
+				var element_id = 'id' + id;
+				element_id = element_id.replace(/\//, '_');
+				
+				$('#' + element_id).html(display_reference(data));
+			}
+		});
+}
+
+
 function display_reference(data)
 {
 	var html = "";

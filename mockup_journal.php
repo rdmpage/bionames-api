@@ -62,10 +62,21 @@ if (isset($_GET['journal']))
 					<h1 id="title"></h1>
 				</div>
 				<div id="metadata" class="sidebar-metadata">
-					<div id="stats" class="stats"></div>
+					<!-- <div id="stats" class="stats"></div> -->
+					
+					<div class="media">
+						<div class="pull-right">
+     						<img id="thumbnail" class="media-object" src="" style="width:100px;border:1px solid rgb(228,228,228)";>
+     					</div>
+     					<div id="journal_identifiers" class="media-body">     						
+     					</div>
+     				</div>
+					<div id="rawcoverage"></div>
+					<div id="identifiers"></div>
 					
 				</div>
-				<div id="identifiers"></div>
+				
+				
 			</div>
 			
 			
@@ -116,41 +127,39 @@ if (isset($_GET['journal']))
 					$('#title').html(data.title);
 				
 					document.title = data.title;
-				
-					var html = '';
 					
 					if (data.thumbnail) {
-						html += '<img style="border:1px solid rgb(128,128,128);" src="' + data.thumbnail + '" width="88"/>';					
+						$('#thumbnail').attr('src', data.thumbnail);					
 					}
-					
-					html += '<table>';
-					html += '<tbody style="font-size:80%;">';
+
+					// ISSNs and RSS feed
+					html = '';
+					html += '<table class="table">';
+					html += '<tbody>';
 					
 					for (var i in data) {
 						switch (i)
 						{
 							case 'issnl':
 								html += '<tr>';
-								html += '<td align="right" valign="top" style="color:rgb(128,128,128);">' + i + '</td>';
-								html += '<td valign="top">' + '<a href="mockup_journal.php?issn=' + data[i] + '">' + data[i] + '</a>' + '</td>';
+								html += '<td class="muted">' + i.toUpperCase() + '</td>';
+								html += '<td>' + '<a href="mockup_journal.php?issn=' + data[i] + '">' + data[i] + '</a>' + '</td>';
 								html += '</tr>';
 								break;
 						
 							case 'issn':
-							case 'publisher':
-							case 'rawcoverage':
+							//case 'publisher':
+							//case 'rawcoverage':
 								html += '<tr>';
-								html += '<td align="right" valign="top" style="color:rgb(128,128,128);">' + i + '</td>';
-								html += '<td valign="top">' + data[i] + '</td>';
+								html += '<td class="muted">' + i.toUpperCase() + '</td>';
+								html += '<td>' + data[i] + '</td>';
 								html += '</tr>';
-								break;
+								break; 
 							case 'rssurl':
 								html += '<tr>';
-								html += '<td align="right" valign="top" style="color:rgb(128,128,128);">' + i + '</td>';
-								html += '<td valign="top">' + '<a href="' + data[i] + '">' + 'RSS' + '</a>' + '</td>';
+								html += '<td class="muted">Latest articles</td>';
+								html += '<td>' + '<a href="' + data[i] + '">' + 'RSS' + '</a>' + '</td>';
 								html += '</tr>';
-								break;
-							
 								break;
 							default:
 								break;
@@ -158,8 +167,16 @@ if (isset($_GET['journal']))
 					}
 					html += '</tbody>';
 					html += '</table>';
+					$('#journal_identifiers').html(html);
 					
-							
+					// Text details
+					if (data.rawcoverage) {
+						$('#rawcoverage').html(data.rawcoverage);
+					}
+					
+					// Credit
+					
+					/*
 					if (data.preceding)
 					{
 						if (data.preceding.length > 0 )
@@ -199,33 +216,12 @@ if (isset($_GET['journal']))
 							html += '</ul>';
 						}
 					}
-					
-					/*
-					// Other ISSNs
-					if (data.other)
-					{
-					if (data.other.length > 0)
-					{
-						html += '<h3>Other ISSNs</h3>';
-						html += '<div class="row">';
-						
-						html += '<div class="span2">';
-						html += '<ul>';
-						for (var i in data.other)
-						{
-							html += '<li>' + '<a href="../issn/' + data.other[i] + '">' + data.other[i] + '</a>' + '</li>';
-						}
-						html += '</ul>';
-						html += '</div>';
-
-						html += '</div>';							
-					}					
 					*/
 					
-					html += '<small>Data from WorldCat</small>';
+					//html += '<small>Data from WorldCat</small>';
 					
 					
-					$('#metadata').html(html);
+					//$('#metadata').html(html);
 				}
 			});
 	}
@@ -373,11 +369,11 @@ if (isset($_GET['journal']))
 					var html = '';
 					if (data.status == 200)
 					{			
-						html += '<div style="width:200px;position:relative;">';
+						html += '<div style="position:relative;">';
 
 						html += '<h5>Identifier coverage</h5>';
 						html += '<small>DOI, Handle, BioStor, JSTOR, CiNii, PMID, PMC</small>';
-						html += '<div style="width:200px;position:relative;">';
+						html += '<div style="position:relative;">';
 						for (var i in data.years)
 						{
 							for (j in data.years[i])
@@ -437,7 +433,7 @@ if (isset($_GET['journal']))
 
 						html += '<h5>Links</h5>';
 						html += '<small>URL or PDF link</small>';
-						html += '<div style="width:200px;position:relative;">';
+						html += '<div style="position:relative;">';
 						for (var i in data.years)
 						{
 							for (j in data.years[i])
