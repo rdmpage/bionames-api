@@ -24,53 +24,62 @@ if (isset($_GET['journal']))
 <html>
 <head>
 	<base href="/bionames-api/" />
-	<title>Title</title>
+	<!-- <base href="/~rpage/bionames-api/" /> -->
+	<title>Journal</title>
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<?php require 'stylesheets.inc.php'; ?>
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">	
 	
-	<?php require 'javascripts.inc.php'; ?>
-	<?php require 'uservoice.inc.php'; ?>
+	<!-- responsive -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">	
+	
+	<link href="snippet.css" rel="stylesheet">	
+	
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
     
-	<!--<script src="js/snippet.js"></script>   -->
-	<script src="js/publication.js"></script>   
+<!--<script src="js/snippet.js"></script>   -->
+<script src="js/publication.js"></script>   
+    
+			<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+			<!--[if lt IE 9]>
+			  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<![endif]-->
+    
+	
 </head>
 <body>
-	<?php require 'analyticstracking.inc.php'; ?>
-	<?php require 'navbar.inc.php'; ?>
-	
-	<div class="container-fluid">
-	  <div class="row-fluid">
-			<div class="span2">
-				<div id="volumes" class="affix"></div>  			
-			</div>
-			
-			<div class="span6" style="border:1px solid red;">
-				<div id="articles"></div>
-			</div>
-			
-			<!--
-			<div class="span2">
-				<h4 id="title"></h4>
-				<div id="metadata"></div>
-				<div id="identifiers"></div>
-			</div> -->
-			
-			<div class="sidebar span4">
-				<div class="sidebar-header">
-					<h1 id="title"></h1>
-				</div>
-				<div id="metadata" class="sidebar-metadata">
-					<div id="stats" class="stats"></div>
-					
-				</div>
-				<div id="identifiers"></div>
-			</div>
-			
-			
-		</div>
+
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+	 <a class="brand" href="mockup_index.php">BioNames</a>
+	 <ul class="nav">
+	  <li><form class="navbar-search pull-left" method="get" action="mockup_search.php">
+		<input type="text" id='q' name='q' data-provide="typeahead" class="search-query" placeholder="Search" autocomplete="off" value="<?php echo $q; ?>">
+		</form> 
+	  </li>
+	  <li><a href="#">More...</a></li>
+	  </ul>
 	</div>
+</div>
+	
+<div style="margin-top:50px;" class="container-fluid">
+	<div class="row-fluid">
+  		<div class="span2">
+  			<div id="volumes" class="affix"></div>  			
+  		</div>
+  		<div class="span8">
+  			<div id="articles"></div>
+  		</div>
+  		<div class="span2">
+  			<h4 id="title"></h4>
+  			<div id="metadata"></div>
+  			<div id="identifiers"></div>
+  		</div>
+	</div>
+</div>
 
 <script type="text/javascript">
 	var issn = "<?php echo $issn;?>";
