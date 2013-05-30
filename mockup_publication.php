@@ -20,6 +20,7 @@ $id = $_GET['id'];
 	<?php require 'stylesheets.inc.php'; ?>
 	
 	<?php require 'javascripts.inc.php'; ?>
+	<?php require 'uservoice.inc.php'; ?>
 	
 	<!-- citeproc-js -->
 	<script src="vendor/citeproc-js/loadabbrevs.js"></script>
@@ -57,6 +58,7 @@ $id = $_GET['id'];
 	
 </head>
 <body onload="$(window).resize()">
+	<?php require 'analyticstracking.inc.php'; ?>
 	<?php require 'navbar.inc.php'; ?>
 	
 	<div style="margin-top:41px;" class="container-fluid">
@@ -93,7 +95,8 @@ $id = $_GET['id'];
 				</div>
 				<div id="metadata" class="sidebar-metadata">
 					<div id="stats" class="stats"></div>
-					<div id="authors" class="sidebar-section"></div>					
+					<div id="authors" class="sidebar-section"></div>
+					<div id="map" class="sidebar-section"></div>	
 				</div>
 			</div>
 		</div>
@@ -207,6 +210,39 @@ $id = $_GET['id'];
 							html += '<tr><td class="muted">Pages</td><td>' + data.journal.pages + '</td></tr>';
 						}
 					}
+					
+					// Book
+					if (data.book)
+					{
+						if (data.book.title && (data.type == 'chapter'))
+						{
+							html += '<tr><td class="muted">Book title</td><td>' + data.book.title + '</td></tr>';
+						}
+						if (data.book.pages)
+						{
+							html += '<tr><td class="muted">Pages</td><td>' + data.book.pages + '</td></tr>';
+						}
+						if (data.book.identifier)
+						{
+							for (var j in data.book.identifier)
+							{
+								switch (data.book.identifier[j].type)
+								{	
+									case "googleBooks":
+										html += '<tr><td class="muted">Google Books</td><td>' + '<a href="http://books.google.co.uk/books?id=' + data.book.identifier[j].id + '" target="_new">' + data.book.identifier[j].id + '</a>' + '</td></tr>';
+										break;
+
+									case "isbn":
+										html += '<tr><td class="muted">ISBN</td><td>' + data.book.identifier[j].id + '</td></tr>';
+										break;
+										
+									default:
+										break;
+								}
+							}	
+						}
+					}
+					
 					// Item-level identifiers
 					if (data.identifier)
 					{
@@ -272,7 +308,7 @@ $id = $_GET['id'];
 									break;
 
 								case "LINK":
-									html += '<tr><td class="muted">URL</td><td><a href="' + data.link[j].url + '" target="_new"><i class="icon-share"></i> ' +  data.link[j].url + '</a></td></tr>';
+									html += '<tr><td class="muted">URL</td><td><a href="' + data.link[j].url + '" target="_new"><i class="icon-share"></i> ' + data.link[j].url + '</a></td></tr>';
 									break;
 									
 								default:
@@ -321,12 +357,15 @@ $id = $_GET['id'];
 					html += '</table>';
 					
 					// Citation
-					
-					
-					
-					
-					
 					$("#metadata").html(html);
+					
+					// Map if we have points
+					if (data.geometry) {
+						html = '<h3>Map</h3>';
+						html += '<p class="muted">Localities in publication.</p>';
+						html += '<object id="mapsvg" type="image/svg+xml" width="360" height="180" data="map.php?coordinates=' + encodeURIComponent(JSON.stringify(data.geometry.coordinates)) + '"></object>';
+						$("#map").html(html);
+					}
 					
 					// Display document viewer if we have a document
 					var docUrl = '';					
@@ -531,6 +570,8 @@ $id = $_GET['id'];
 	})
 	
 </script>
+
+
 
 </body>
 </html>
