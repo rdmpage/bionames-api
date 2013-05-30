@@ -41,7 +41,15 @@ if (isset($_GET['id']))
 			  </div>
 			  
 			  <div class="tab-pane" id="biblio-tab">
-				Bibliography 
+				<div id="publication-timeline" class="publication-timeline">
+				    <h3>Publications</h3>
+				    <table id="synonymTimeline">
+				        <thead><tr><td></td><td><div class="axis top"></div></td></tr></thead>
+				        <tbody id="nameTimelines"></tbody>
+				        <tfoot><tr><td></td><td><div class="axis bottom"></div></td></tr></thead>
+				    </table>
+				    <div id="pubList"></div>
+				</div>
 			  </div>
 			  
 			  <div class="tab-pane" id="data-tab">...</div>
@@ -325,9 +333,144 @@ if (isset($_GET['id']))
 		function show_publications(concept) {
 			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs&callback=?", function(data){
 				
-				
 				add_metadata_stat("Publications", data.publications.length);
 				
+				var publication_list = [];
+    
+			    // Clean up and type cast the JSON objects where necessary.
+			    for(var i in data.publications) {
+			        var pub = data.publications[i];
+        
+			        pub.year = +pub.year; // Cast to integer
+			        pub.tags = pub.tags.sort();
+        
+        
+			        // For each tag, we need to create a new object. Hacky I know, but 
+			        // Crossfilter doesn't handle dimensions where an object can have multiple values
+			        for(var t = 0; t < pub.tags.length; t++) {
+			            var newPub = {};
+            
+			            for(var prop in pub) {
+			                newPub[prop] = pub[prop];
+			            }
+            
+			            newPub.tag  = pub.tags[t];            
+			            publication_list.push(newPub);
+			        }
+			    }
+    
+
+			    // Crossfilter
+			    var pubs = crossfilter( publication_list );
+    
+			    // Dimensions and groups
+			    var pubsByYear = pubs.dimension( function(d){ return d.year; } );
+			    var years = pubsByYear.group();
+			    var pubsByName = pubs.dimension( function(d){ return d.tag; } );
+			    var names = pubsByName.group();
+    
+    
+			    // Nest for grouping publication list by decade
+			    var nestByDecade = d3.nest().key(function(d){ return Math.floor(d.year/10) * 10; });
+    
+    
+			    // Used to set the maximum domain of the y-axis of timelines
+			    countMax = 0;
+			    names.all().forEach(function(n){
+			        var name = n.key,
+			            maxForName;
+            
+			        pubsByName.filter(name);
+			        maxForName = d3.max(years.all(), function(v){ return v.value});
+			        countMax = d3.max([countMax, maxForName]);
+			    });
+			    pubsByName.filterAll();
+    
+			    // Used in the x-axis of timelines
+			    var yearExtent = d3.extent( years.all(), function(d){ return d.key; } );
+    
+			    // Crossfilter unfortunately does not support union filters, so we have to kind of build our own
+			    // This set will keep track of which names have been selected with the checkboxes,
+			    // and the unionNames function is used later to filter pubsByName by the selectedNames
+			    var selectedNames = d3.set( names.all().map(function(d){ return d.key; }) );
+			    var unionNames = function(d){ return selectedNames.has(d); };
+    
+			    var xScale = d3.scale.linear()
+			            .domain([ yearExtent[0], yearExtent[1]+1])
+			            .rangeRound([0, 600]);
+			    var yScale = d3.scale.linear().domain([0, countMax]).rangeRound([0, 30]);
+    
+			    var nameTimeline = d3.select("#nameTimelines").selectAll(".nameTimeline")
+			        .data( names.all().map(function(d){ return d.key; }) ) 
+			        .enter().append('tr')
+			            .attr('class', 'nameTimeline')
+    
+			    var nameLabel = nameTimeline.append('td').append('label')
+			    nameLabel.append('input')
+			        .attr({type: 'checkbox', checked: 'checked' })
+			        .on('change', function(d){
+			            d3.select(this.parentNode.parentNode.parentNode).classed("disabled", !this.checked);
+			            this.checked ? selectedNames.add(d) : selectedNames.remove(d);
+			            pubsByName.filter(unionNames);
+			            renderAll();
+			        });
+			    nameLabel.append('span').text(function(d){ return d; });
+    
+			    nameTimeline.append('td').append('div').attr("class", "chart")
+    
+			    var charts = names.all().map(function(n){
+			        var name = n.key;
+			        return (filterWidgets.histogram()
+			            .dimension(pubsByYear)
+			            .group(years)
+			            .beforeDraw( function(){ pubsByName.filter(name); })
+			            .afterDraw( function(){ pubsByName.filterAll(); })
+			            .round( Math.round )
+			            .xScale( xScale )
+			            .yScale( yScale )
+			            .margin({ top: 5, right: 12, bottom: 0, left: 12 })
+			        );
+			    });
+    
+			    var axes = [
+			        filterWidgets.axis()
+			            .xScale( xScale )
+			            .orient('top'),
+			        filterWidgets.axis()
+			            .xScale( xScale )
+			            .orient('bottom')
+			    ];
+    
+			    var lists = [
+			        filterWidgets.publicationList().dimension(pubsByYear).nest(nestByDecade)
+			    ];
+    
+    
+			    var chart = d3.selectAll(".nameTimeline .chart")
+			        .data(charts)
+			        .each(function(chart) {
+			             chart.on("brush", function(c){
+			                 charts.forEach(function(chrt){ chrt.filter(c.brush().extent())});
+			                 renderAll()
+			             }).on("brushend", renderAll); });
+    
+			    var axis = d3.selectAll(".axis")
+			        .data(axes);
+    
+			    var list = d3.selectAll("#pubList")
+			        .data(lists);
+
+			    function renderAll(){
+			        list.each(render);
+			        axis.each(render);
+			        chart.each(render);
+			    }
+
+			    function render( method ) {
+			        d3.select(this).call(method);
+			    }
+
+			    renderAll();
 			});
 			
 		}

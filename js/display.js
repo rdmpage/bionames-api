@@ -74,40 +74,52 @@ function display_reference(data)
 	}
 	html += '</div>';
 	
-	if (data.identifier)
-	{
-		html += '<ul>';
-		for (var j in data.identifier)
-		{
-			switch (data.identifier[j].type)
-			{
-				case "biostor":
-					html += "<li><a href=\"http://biostor.org/reference/" + data.identifier[j].id + "\" target=\"_new\">biostor.org/reference/" + data.identifier[j].id + "</a></li>";
-					break;
-
-				case "cinii":
-					html += "<li><a href=\"http://ci.nii.ac.jp/naid/" + data.identifier[j].id + "\" target=\"_new\">ci.nii.ac.jp/naid/" + data.identifier[j].id + "</a></li>";
-					break;
-					
-				case "doi":
-					html += "<li><a href=\"http://dx.doi.org/" + data.identifier[j].id + "\" target=\"_new\">dx.doi.org/" + data.identifier[j].id + "</a></li>";
-					break;
-
-				case "handle":
-					html += "<li><a href=\"http://hdl.handle.net/" + data.identifier[j].id + "\" target=\"_new\">hdl.handle.net/" + data.identifier[j].id + "</a></li>";
-					break;
-
-				case "jstor":
-					html += "<li><a href=\"http://www.jstor.org/stable" + data.identifier[j].id + "\" target=\"_new\">www.jstor.org/stable/" + data.identifier[j].id + "</a></li>";
-					break;
-					
-				default:
-					break;
-			}
-		}	
-		html += '</ul>';
-	}
-  html += "</div>"; // RMS 
+  // if (data.identifier)
+  // {
+  //   html += '<ul>';
+  //   for (var j in data.identifier)
+  //   {
+  //     switch (data.identifier[j].type)
+  //     {
+  //       case "biostor":
+  //         html += "<li><a href=\"http://biostor.org/reference/" + data.identifier[j].id + "\" target=\"_new\">biostor.org/reference/" + data.identifier[j].id + "</a></li>";
+  //         break;
+  // 
+  //       case "cinii":
+  //         html += "<li><a href=\"http://ci.nii.ac.jp/naid/" + data.identifier[j].id + "\" target=\"_new\">ci.nii.ac.jp/naid/" + data.identifier[j].id + "</a></li>";
+  //         break;
+  //         
+  //       case "doi":
+  //         html += "<li><a href=\"http://dx.doi.org/" + data.identifier[j].id + "\" target=\"_new\">dx.doi.org/" + data.identifier[j].id + "</a></li>";
+  //         break;
+  // 
+  //       case "handle":
+  //         html += "<li><a href=\"http://hdl.handle.net/" + data.identifier[j].id + "\" target=\"_new\">hdl.handle.net/" + data.identifier[j].id + "</a></li>";
+  //         break;
+  // 
+  //       case "jstor":
+  //         html += "<li><a href=\"http://www.jstor.org/stable" + data.identifier[j].id + "\" target=\"_new\">www.jstor.org/stable/" + data.identifier[j].id + "</a></li>";
+  //         break;
+  //         
+  //       default:
+  //         break;
+  //     }
+  //   }  
+  //   html += '</ul>';
+  // }
+  
+  html += "</div>"; // RMS end <div class="meta">
+  
+  if( data.tags ) {
+    html += '<div class="tags">';
+    
+    for(var j in data.tags) {
+      html += '<span class="tag">' + data.tags[j] + '</span>';
+    }
+    
+    html += '</div>';
+  }
+  
 	html += "<span class=\"Z3988\" title=\"" + referenceToOpenUrl(data) + "\"></span>";		
 	html += '</div>';
 
