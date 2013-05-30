@@ -126,10 +126,10 @@ $id = $_GET['id'];
 					html += '<thead></thead>';
 					html += '<tbody>';
 					
-					// Title of article, don't include in table as it appears in side panel
+					// Title of article
 					if (data.title)
 					{
-						//html += '<tr><td class="muted">Title</td><td>' + data.title + '</td></tr>';
+						html += '<tr><td class="muted">Title</td><td>' + data.title + '</td></tr>';
 						$('#title').html(data.title);
 						document.title = data.title;
 					}

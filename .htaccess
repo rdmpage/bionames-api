@@ -109,6 +109,7 @@ RewriteRule ^taxon/(.*)   api_concept.php?id=$1  [QSA,L]
 #---------------------------------------------------------------------------------------------------
 # Journals
 
+#---------------------------------------------------------------------------------------------------
 # ISSN
 
 # Identifiers for each article
@@ -132,6 +133,7 @@ RewriteRule ^journals/issn/(.*)/geometry   api_journal.php?issn=$1&geometry [QSA
 # Journal with this ISSN
 RewriteRule ^journals/issn/([0-9]{4}[\-]?[0-9]{3}[0-9X])   api_journal.php?issn=$1  [QSA,L]
 
+#---------------------------------------------------------------------------------------------------
 # OCLC
 
 # Identifiers for each article

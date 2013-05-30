@@ -40,7 +40,7 @@ width="360px" height="180px">
 <!--  <rect id="dot" x="-1" y="-1" width="3" height="3" style="stroke:none; stroke-width:0; fill:yellow;opacity:0.7;"/> -->
  <!-- <rect id="dot" x="-10" y="-1" width="2" height="2" style="stroke:none; stroke-width:0; fill:black"/> -->
 
-<circle id="dot" x="-2" y="-2" r="4" style="stroke:none; stroke-width:0; fill:yellow; opacity:0.7;"/>
+<circle id="dot" x="-2" y="-2" r="2" style="stroke:none; stroke-width:0; fill:yellow; opacity:0.7;"/>
 
 
  <image x="0" y="0" width="360" height="180" xlink:href="' . 'images/gbif.png"/>
