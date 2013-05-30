@@ -110,6 +110,11 @@ $id = $_GET['id'];
 	var windowWidth = $(window).width();
 	var windowHeight =$(window).height();
 	
+	function add_metadata_stat(title,value) {
+		$(display_stat(title,value)).appendTo($('#stats'));		
+	}
+	
+	
 	// Display an object
 	function display_publication (id)
 	{
@@ -180,18 +185,20 @@ $id = $_GET['id'];
 							{
 								for (var j in data.journal.identifier)
 								{
-									switch (data.journal.identifier[j].type)
-									{
-										case 'issn':
-											html += '<tr><td class="muted">ISSN</td><td><a href="mockup_journal.php?issn=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
-											break;
-
-										case 'oclc':
-											html += '<tr><td class="muted">OCLC</td><td><a href="mockup_journal.php?oclc=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
-											break;
-											
-										default:
-											break;
+									if (data.journal.identifier[j]) { // kludge, some record may have null identifiers !?
+										switch (data.journal.identifier[j].type)
+										{
+											case 'issn':
+												html += '<tr><td class="muted">ISSN</td><td><a href="mockup_journal.php?issn=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
+												break;
+	
+											case 'oclc':
+												html += '<tr><td class="muted">OCLC</td><td><a href="mockup_journal.php?oclc=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
+												break;
+												
+											default:
+												break;
+										}
 									}
 								}
 							}
@@ -460,25 +467,29 @@ $id = $_GET['id'];
 			function(data){
 				if (data.status == 200)
 				{
+					add_metadata_stat('Names', data.names.length);				
+				
 					var html = '';
 					
 					html += '<h4>Names published</h4>';
 					
-					html += '<ul>';
+					html += '<table class="table">';
 					for (var i in data.names) {
-						html += '<li>';
+						html += '<tr>';
+						html += '<td>';
 						html += '<a href="mockup_taxon_name.php?id=' + data.names[i].cluster + '">';
 						html += data.names[i].nameComplete;
 						html += '</a>';
-						html += ' ';
+						html += '</td>';
+						html += '<td>';
 						
 						if (data.names[i].id.match(/urn:lsid:organismnames.com:name:/)) {
 							var lsid = 
 							html += '<a href="http://www.organismnames.com/details.htm?lsid=' + data.names[i].id.replace('urn:lsid:organismnames.com:name:', '') + '" target="_new"><i class="icon-share"></i> ' + data.names[i].id + '</a>';
 						}						
-						html += '</li>';
+						html += '</td>';
 					}
-					html += '</ul>';
+					html += '</table>';
 					
 					$('#names').html(html);
 				}
