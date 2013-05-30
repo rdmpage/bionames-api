@@ -31,7 +31,7 @@ if (isset($_GET['id']))
   		<div class="span8">
 			<ul class="nav nav-tabs">
 			  <li class="active" ><a href="#name-tab" data-toggle="tab">Name</a></li>
-			  <li><a href="#biblio-tab" data-toggle="tab">Bibliography</a></li>
+			  <li class="bibliography"><a href="#biblio-tab" data-toggle="tab">Bibliography</a></li>
 			  <li><a href="#data-tab" data-toggle="tab">Data</a></li>
 			</ul>
 			
@@ -42,12 +42,13 @@ if (isset($_GET['id']))
 			  
 			  <div class="tab-pane" id="biblio-tab">
 				<div id="publication-timeline" class="publication-timeline">
-				    <h3>Publications</h3>
-				    <table id="synonymTimeline">
-				        <thead><tr><td></td><td><div class="axis top"></div></td></tr></thead>
-				        <tbody id="nameTimelines"></tbody>
-				        <tfoot><tr><td></td><td><div class="axis bottom"></div></td></tr></thead>
-				    </table>
+					<div class="pub-timeline">
+					    <table id="synonymTimeline">
+					        <thead><tr><td></td><td><div class="axis top"></div></td></tr></thead>
+					        <tbody id="nameTimelines"></tbody>
+					        <tfoot><tr><td></td><td><div class="axis bottom"></div></td></tr></thead>
+					    </table>
+					</div>
 				    <div id="pubList"></div>
 				</div>
 			  </div>
@@ -490,6 +491,7 @@ if (isset($_GET['id']))
 
 	
 </script>
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 
 </body>
 </html>

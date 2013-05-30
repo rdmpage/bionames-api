@@ -365,15 +365,20 @@ $id = $_GET['id'];
 	<div class="container-fluid">
 	  <div class="row-fluid">
 	    <div class="main-content span8">
-	        <!-- <div class="page-header">
-	            <h1 id="title"></h1>
-	            <div id="cluster"></div>
-	        </div> -->
-	        <div id="publication-timeline" class="publication-timeline">
-	            <h3>Publications</h3>
-	            <div id="pubHistogram" class="chart"></div>
-	            <div id="pubList"></div>
-	        </div>
+			<ul class="nav nav-tabs">
+			  <li class="bibliography active"><a href="#biblio-tab" data-toggle="tab">Bibliography</a></li>
+			</ul>
+			
+			<div class="tab-content">
+			  <div class="tab-pane active" id="biblio-tab">
+		        <div id="publication-timeline" class="publication-timeline">
+					<div class="pub-timeline">
+						<div id="pubHistogram" class="chart"></div>
+					</div>
+		            <div id="pubList"></div>
+		        </div>
+			  </div>
+		  </div>
 	    </div>
 	    <div class="sidebar span4">
 			<div class="sidebar-header">
