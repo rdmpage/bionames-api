@@ -536,11 +536,12 @@ table,th, td, tr {
 .nameTimeline label { 
   display: inline-block;
   margin: 0;
+  font-size: 11px;
 }
 .nameTimeline label input { margin: 0 0.25em 0 0; }
 
-.nameTimeline.disabled { color: #505054; }
-.nameTimeline.disabled svg .bars { fill: #505054; }
+.nameTimeline.disabled { color: #D2D3D7; }
+.nameTimeline.disabled svg .bars { fill: #f2f2f2; }
 
 /* Publication Lists */
 .decadeYear {
@@ -590,8 +591,9 @@ table,th, td, tr {
   font-weight: 700;
 }
 
-.pub .meta, .pub .tag {
-  font-size: 12px;
+.pub .meta, 
+.pub .tag {
+  font-size: 11px;
 }
 
 .pub .meta,
@@ -611,7 +613,6 @@ table,th, td, tr {
   display: inline-block;
   position: relative;
   background-color: #BBBFC6;
-  font-size: 12px;
   line-height: 16px;
   height: 16px;
   margin-left: 8px;

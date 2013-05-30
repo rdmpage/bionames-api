@@ -212,7 +212,7 @@ function show_snippet (element_id, doc) {
           html += '<div class="metadata gbif">';
 					html += 'According to GBIF ' + doc._id.replace(/gbif\//, '');
 					html += '</div>';
-          html += '<div class="logo"><img src="images/logo-ncbi.png"/></div>';
+          html += '<div class="logo"><img src="images/logo-gbif.png"/></div>';
 			}									
 			if (doc._id.match(/ncbi/)) {
 					html += '<div class="metadata ncbi">';

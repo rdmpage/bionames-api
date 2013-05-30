@@ -336,6 +336,8 @@ if (isset($_GET['id']))
 				
 				add_metadata_stat("Publications", data.publications.length);
 				
+				if( data.publications.length == 0 ) return;
+				
 				var publication_list = [];
     
 			    // Clean up and type cast the JSON objects where necessary.
