@@ -252,7 +252,7 @@ if (isset($_GET['id']))
 						  {
 						  	 var html ='';
 						  	 html += '<div>';
-						  	 html += '<b>Names</b>';
+						  	 html += '<h4>Names</h4>';
 						     for (var j in data.identifier.ion) {
 								 num_names++;
 						     	var element_id = 'cluster/' + j;
@@ -267,6 +267,9 @@ if (isset($_GET['id']))
 							 
 						  
 							 if(num_names > 0) add_metadata_stat("Names", num_names);
+							 
+							 $("#name-tab").html(html);
+							 
 						  	 /*
 						  	 var publishedInCitation = [];
 						  	 var html ='';
