@@ -523,13 +523,13 @@ text-overflow: ellipsis;
 .name-cluster {
   margin: 10px;
 }
-  .name-cluster a { color: inherit; }*/
+  .name-cluster a { color: inherit; }
 
 
 
 /* homepage */
   
-.home .jumbo {
+body.home .jumbo {
   margin-top: -20px;
   margin-bottom: 0;
   background: #2a2b2d url(/bionames-api/images/squairy-dark.png);
@@ -537,7 +537,6 @@ text-overflow: ellipsis;
   -webkit-border-radius: 0;
      -moz-border-radius: 0;
           border-radius: 0;
-  
 }
 
 .homepage-search {
@@ -553,8 +552,11 @@ text-overflow: ellipsis;
 }
 
 .marketing {
+  padding: 10px;
   text-align:center;
   margin-bottom: 20px;
+  background: #2a2b2d url(/bionames-api/images/squairy-dark.png);
+  
 }
 
 .marketing img{
