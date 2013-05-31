@@ -37,9 +37,14 @@ body {
   margin-bottom: 0;
 }
 
+.nav-tabs .loading {
+  background-image: url(/bionames-api/images/ajax-loader.gif);
+  background-repeat: no-repeat;
+  background-position: 2px center;
+}
+
 .nav-tabs > li > a {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding: 8px 20px;
   line-height: 20px;
   border: 1px solid transparent;
   -webkit-border-radius: 4px 4px 0 0;
