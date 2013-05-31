@@ -31,8 +31,8 @@ if (isset($_GET['id']))
 	<div class="row-fluid">
   		<div class="span8">
 			<ul id="concept-tabs" class="nav nav-tabs">
-			  <li class="active" ><a href="#name-tab" data-toggle="tab">Name <span id="name-badge" class="badge badge-info"></span></a></li>
-			  <li class="bibliography"><a href="#biblio-tab" data-toggle="tab">Bibliography <span id="bibliography-badge"class="badge badge-info"></span></a></li>
+			  <li class="active" ><a href="#name-tab" data-toggle="tab" id="tab-name">Name <span id="name-badge" class="badge badge-info"></span></a></li>
+			  <li class="bibliography"><a href="#biblio-tab" data-toggle="tab" id="tab-biblio">Bibliography <span id="bibliography-badge"class="badge badge-info"></span></a></li>
 			  <li><a href="#data-tab" data-toggle="tab">Data</a></li>
 			</ul>
 			
@@ -130,9 +130,14 @@ if (isset($_GET['id']))
 			$("#classification").html("");
 			$("#namemap").html("");
 			
+			$("#tab-name").addClass("loading");
+			
+			
 //			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "?callback=?",
 			$.getJSON("api/taxon/" + concept + "?callback=?",
 				function(data){
+					$("#tab-name").removeClass("loading");
+					
 					if (data.status == 200)
 					{		
 						
@@ -312,9 +317,13 @@ if (isset($_GET['id']))
 		
 		
 		function show_publications(concept) {
+			
+			$("#tab-biblio").addClass("loading");
+			
 			//$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs&callback=?", function(data){
 			$.getJSON("api/taxon/" + concept + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs&callback=?", function(data){
-			
+				$("#tab-biblio").removeClass("loading");
+				
 				add_metadata_stat("Publications", data.publications.length);
 				
 				if( data.publications.length == 0 ) return;
