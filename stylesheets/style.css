@@ -434,36 +434,94 @@ text-overflow: ellipsis;
 
 /* Search Results */
 .facet {
-  overflow: hidden;
 }
 
-.facet h2 {
+.facet .cards {
   clear: both;
-  color: #f9f9f9;
-  font-size: 20px;
-  line-height: 40px;
-  font-weight: 700;
-  margin: 0;
+  overflow:hidden;
+  background-color: #fafafa;
+/*  border-top: 1px solid #e9e9e9;
+*/  
 }
 
-.facet.names h2 { 
-  background: #d36e2b url(/bionames-api/images/icon-tag-white.png) no-repeat 19px 11px;
-  padding-left: 53px;
+.facet .cards:after,
+.facet-title:after {
+  clear: both;
 }
-.facet.concepts h2 { 
-  background: #899369 url(/bionames-api/images/icon-taxon-concept-white.png) no-repeat 17px 6px;
-  padding-left: 45px;
+
+/* GROUP tab-style search results */
+/*.facet-title {
+    clear: both;
+    overflow: hidden;
+      margin-bottom: -1px;
+    
 }
-.facet.articles     h2,
-.facet.publications h2 {
-   background: #4d95be url(/bionames-api/images/icon-articles-white.png) no-repeat 20px 6px;
-   padding-left: 45px;
+
+.facet-title h2 {
+  float: left;
+  background-color: #fff;
+  font-size: 18px;
+  line-height: 40px;
+  font-weight: 400;
+
+  padding-right: 12px;
+  padding-left: 12px;
+  margin: 0;
+  
+  border: 1px solid #e9e9e9;
+  border-bottom-color: #fff;
+  
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 20px;
+  -webkit-border-radius: 4px 4px 0 0;
+     -moz-border-radius: 4px 4px 0 0;
+          border-radius: 4px 4px 0 0;
 }
+*/
+/* END GROUP tab-style search results */
+
+/* GROUP list-style search results */
+.facet:first-child .facet-title h2 {
+  -webkit-border-radius: 4px 4px 0 0;
+     -moz-border-radius: 4px 4px 0 0;
+          border-radius: 4px 4px 0 0;
+}
+
+
+.facet-title h2 {
+  margin: 0;
+  padding: 10px;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 18px;
+  background-color: #fafafa;
+  border: 1px solid #f2f2f2;
+  border-right: none;
+}
+
+.facet .cards {
+  background-color: #fff;
+  margin-bottom :-1px;
+}
+
+.cards .snippet {
+  background-color: transparent;
+  border-bottom-color: #f2f2f2;
+  border-right-color: #f2f2f2;
+}
+/* END GROUP list-style search results */
+
+
+
+
+
 
 .name-cluster {
   float: left;
-  margin-left: 20px;
-  padding: 10px 0;
+  padding: 10px 20px;
+  height: 20px;
+  width: auto;
 }
   .name-cluster a { color: inherit; }
 

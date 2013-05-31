@@ -78,7 +78,7 @@ if (isset($_GET['q']))
 					  var results_in_facet = 0;
 					  
 					  facet_html += '<div class="facet '+ facet_class +'" id="'+facet_id+'">';
-					  facet_html +=   '<h2>' + facet.name + '</h2>';
+					  facet_html +=   '<div class="facet-title"><h2>' + facet.name + '</h2></div>';
 					  facet_html +=   '<div class="cards">';
 					  
 					  for(var fk in facet.facet_keys) {
@@ -86,13 +86,13 @@ if (isset($_GET['q']))
 						if(data.results.facets[facet_key]){
 							for(var id in data.results.facets[facet_key]) {
 								results_in_facet++;
-								ids.push(id);
 								var html_id = id.replace(/\//, '_');
 								var result = data.results.facets[facet_key][id];
 								
 								if(facet.name == 'Names') {
-								  facet_html += '<div class="name-cluster snippet-wrapper">' + result.term + '</div>';
+								  facet_html += '<div class="name-cluster snippet-wrapper"><a href="mockup_taxon_name.php?id=' + id + '">' + result.term + '</a></div>';
 								} else {
+								  ids.push(id);	
 								  facet_html += '<div id="id'+html_id+'" class="snippet-wrapper"><span class="loading">loading</span></div>';
 								}	
 							}
@@ -174,6 +174,7 @@ if (isset($_GET['q']))
 	
 
 
+	<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 
 </body>
 </html>
