@@ -539,7 +539,6 @@ text-overflow: ellipsis;
 
 .homepage-search {
   text-align: center;
-  margin-bottom: 20px;
   padding: 10px 0;
   background-color: #fff;
   
@@ -548,6 +547,15 @@ text-overflow: ellipsis;
 }
 .homepage-search h4{
   font-weight: 400;
+}
+
+.marketing {
+  text-align:center;
+  margin-bottom: 20px;
+}
+
+.marketing img{
+  height: 80px;
 }
 
 .feature {

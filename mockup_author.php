@@ -33,7 +33,7 @@ if (isset($_GET['name']))
 		<div class="row-fluid">
 		    <div class="main-content span8">
 				<ul id="author-tabs" class="nav nav-tabs">
-				  <li class="bibliography active"><a href="#biblio-tab" data-toggle="tab">Bibliography <span id="bibliography-badge"class="badge badge-info"></span></a></li>
+				  <li class="bibliography active"><a href="#biblio-tab" data-toggle="tab" id="tab-biblio">Bibliography <span id="bibliography-badge"class="badge badge-info"></span></a></li>
 				  <li><a href="#data-tab" data-toggle="tab">Data</a></li>				  
 				</ul>
 			
@@ -168,10 +168,13 @@ if (isset($_GET['name']))
 		{
 			$("#publications").html("");
 			
+			$("#tab-biblio").addClass("loading");
+			
 				
 //			$.getJSON("http://bionames.org/bionames-api/authors/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 			$.getJSON("api/authors/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 				function(data){
+					$("#tab-biblio").removeClass("loading");
 					if (data.status == 200)
 					{		
 						if (data.publications.length > 0)
