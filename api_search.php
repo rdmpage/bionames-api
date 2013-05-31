@@ -91,14 +91,13 @@ function simple_search($query, $callback = '')
 		
 		if (isset($obj->results->facets['nameCluster']))
 		{
-			if (count($obj->results->facets['nameCluster']))
+			if (count($obj->results->facets['nameCluster']) != 0)
 			{
-				$distances = array();
+				$scores = array();
 				foreach ($obj->results->facets['nameCluster'] as $k => $v)
 				{
-					$distances[$v->term] = levenshtein($query, $v->term);
-				}	
-				$scores = array_values($distances);
+					$scores[] = levenshtein($query, $v->term);
+				}					
 				array_multisort($obj->results->facets['nameCluster'], SORT_ASC, SORT_NUMERIC, $scores);
 			}
 		}
