@@ -29,7 +29,7 @@ if (isset($_GET['q']))
 	<div class="container-fluid">
 		<div class="row-fluid">
 		    <div class="main-content span8">
-			  <div id="results"></div>
+			  <div id="results"><span class="loading">Loading</span></div>
 		    </div>
 	  		
 	  		<div class="sidebar span4">
@@ -54,8 +54,8 @@ if (isset($_GET['q']))
 	
 		function search(q) {
 		
-//			$.getJSON("http://bionames.org/bionames-api/search/" + encodeURIComponent(q) + "?callback=?",
-			$.getJSON("api/search/" + encodeURIComponent(q) + "?callback=?",
+			$.getJSON("http://bionames.org/bionames-api/search/" + encodeURIComponent(q) + "?callback=?",
+//			$.getJSON("api/search/" + encodeURIComponent(q) + "?callback=?",
 			function(data) {
 			  if (data.status == 200) {
 			    var html = '';

@@ -31,16 +31,20 @@ body {
 }
 
 
+
+.
+
 /* Tabs */
 .nav-tabs {
   border-bottom: 1px solid #e9e9e9;
   margin-bottom: 0;
 }
 
-.nav-tabs .loading {
+.loading {
   background-image: url(/bionames-api/images/ajax-loader.gif);
   background-repeat: no-repeat;
   background-position: 2px center;
+  padding-left: 20px;
 }
 
 .nav-tabs > li > a {
