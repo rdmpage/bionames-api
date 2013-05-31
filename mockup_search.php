@@ -54,8 +54,8 @@ if (isset($_GET['q']))
 	
 		function search(q) {
 		
-			$.getJSON("http://bionames.org/bionames-api/search/" + encodeURIComponent(q) + "?callback=?",
-//			$.getJSON("api/search/" + encodeURIComponent(q) + "?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/search/" + encodeURIComponent(q) + "?callback=?",
+			$.getJSON("api/search/" + encodeURIComponent(q) + "?callback=?",
 			function(data) {
 			  if (data.status == 200) {
 			    var html = '';
@@ -101,7 +101,7 @@ if (isset($_GET['q']))
 									
 									if(facet.name == 'Names') {
 	//								  facet_html += '<div class="name-cluster snippet-wrapper"><a href="mockup_taxon_name.php?id=' + id + '">' + result.term + '</a></div>';
-									  facet_html += '<div class="name-cluster snippet-wrapper"><a href="name/' + id + '">' + result.term + '</a></div>';
+									  facet_html += '<div class="name-cluster"><a href="name/' + id + '">' + result.term + '</a></div>';
 									} else {
 									  ids.push(id);	
 									  facet_html += '<div id="id'+html_id+'" class="snippet-wrapper"><span class="loading">loading</span></div>';

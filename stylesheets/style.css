@@ -32,8 +32,6 @@ body {
 
 
 
-.
-
 /* Tabs */
 .nav-tabs {
   border-bottom: 1px solid #e9e9e9;
@@ -518,13 +516,14 @@ text-overflow: ellipsis;
   border-right-color: #f2f2f2;
 }
 
-.name-cluster {
-  float: left;
-  padding: 10px 20px;
-  height: 20px;
-  width: auto;
+
+.facet.names .cards {
+  padding-left: 20px;
 }
-  .name-cluster a { color: inherit; }
+.name-cluster {
+  margin: 10px;
+}
+  .name-cluster a { color: inherit; }*/
 
 
 
@@ -741,7 +740,8 @@ table,th, td, tr {
   font-style: italic;
 }
 
-.pub .tag {
+.pub .tag,
+.name-cluster {
   display: inline-block;
   position: relative;
   background-color: #b7b7bd;
@@ -760,7 +760,8 @@ table,th, td, tr {
   
 }
 
-.pub .tag:before {
+.pub .tag:before,
+.name-cluster:before {
   position: absolute;
   top: 0;
   left: -8px;
@@ -773,7 +774,8 @@ table,th, td, tr {
   border-width:8px 8px 8px 0;
 }
 
-.pub .tag:after {
+.pub .tag:after,
+.name-cluster:after {
   content:"";
   position:absolute;
   top:6px;
@@ -785,8 +787,10 @@ table,th, td, tr {
   -webkit-border-radius:2px;
   border-radius:2px;
   background:#FAFAFA;
-
 }
+
+.tag a,
+.name-cluster a { color: inherit; }
 
 
 
