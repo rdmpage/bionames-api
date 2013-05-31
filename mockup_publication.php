@@ -237,7 +237,7 @@ $id = $_GET['id'];
 								switch (data.book.identifier[j].type)
 								{	
 									case "googleBooks":
-										html += '<tr><td class="muted">Google Books</td><td>' + '<a href="http://books.google.co.uk/books?id=' + data.book.identifier[j].id + '" target="_new">' + data.book.identifier[j].id + '</a>' + '</td></tr>';
+										html += '<tr><td class="muted">Google Books</td><td>' + '<a href="http://books.google.co.uk/books?id=' + data.book.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'googlebooks\', \'' + data.identifier[j].id + '\', 0]);">' + data.book.identifier[j].id + '</a>' + '</td></tr>';
 										break;
 
 									case "isbn":
@@ -259,23 +259,23 @@ $id = $_GET['id'];
 							switch (data.identifier[j].type)
 							{
 								case "ark":
-									html += '<tr><td class="muted">ARK</td><td><a href="http://gallica.bnf.fr/ark:/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ark:/' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">ARK</td><td><a href="http://gallica.bnf.fr/ark:/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'gallica\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ark:/' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "biostor":
-									html += '<tr><td class="muted">BioStor</td><td><a href="http://biostor.org/reference/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">BioStor</td><td><a href="http://biostor.org/reference/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'biostor\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "cinii":
-									html += '<tr><td class="muted">CiNii</td><td><a href="http://ci.nii.ac.jp/naid/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">CiNii</td><td><a href="http://ci.nii.ac.jp/naid/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'cinii\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 									
 								case "doi":
-									html += '<tr><td class="muted">DOI</a></td><td><a href="http://dx.doi.org/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">DOI</a></td><td><a href="http://dx.doi.org/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'doi\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "handle":
-									html += '<tr><td class="muted">Handle</td><td><a href="http://hdl.handle.net/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">Handle</td><td><a href="http://hdl.handle.net/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'handle\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "isbn":
@@ -283,7 +283,7 @@ $id = $_GET['id'];
 									break;
 
 								case "jstor":
-									html += '<tr><td class="muted">JSTOR</td><td><a href="http://www.jstor.org/stable/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">JSTOR</td><td><a href="http://www.jstor.org/stable/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'jstor\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "oclc":
@@ -291,11 +291,11 @@ $id = $_GET['id'];
 									break;
 
 								case "pmc":
-									html += '<tr><td class="muted">PMC</td><td><a href="http://www.ncbi.nlm.nih.gov/pmc/PMC' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + 'PMC' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">PMC</td><td><a href="http://www.ncbi.nlm.nih.gov/pmc/PMC' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'pmc\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + 'PMC' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "pmid":
-									html += '<tr><td class="muted">PMID</td><td><a href="http://www.ncbi.nlm.nih.gov/pubmed/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">PMID</td><td><a href="http://www.ncbi.nlm.nih.gov/pubmed/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'pmid\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 									
 								default:
@@ -312,11 +312,11 @@ $id = $_GET['id'];
 							switch (data.link[j].anchor)
 							{
 								case "PDF":
-									html += '<tr><td class="muted">PDF</td><td><a href="' + data.link[j].url + '" target="_new"><i class="icon-share"></i> ' +  data.link[j].url + '</a></td></tr>';
+									html += '<tr><td class="muted">PDF</td><td><a href="' + data.link[j].url + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'pdf\', \'' + data.link[j].url + '\', 0]);"><i class="icon-share"></i> ' +  data.link[j].url + '</a></td></tr>';
 									break;
 
 								case "LINK":
-									html += '<tr><td class="muted">URL</td><td><a href="' + data.link[j].url + '" target="_new"><i class="icon-share"></i> ' + data.link[j].url + '</a></td></tr>';
+									html += '<tr><td class="muted">URL</td><td><a href="' + data.link[j].url + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'url\', \'' + data.link[j].url + '\', 0]);"><i class="icon-share"></i> ' + data.link[j].url + '</a></td></tr>';
 									break;
 									
 								default:
@@ -494,7 +494,7 @@ $id = $_GET['id'];
 						
 						if (data.names[i].id.match(/urn:lsid:organismnames.com:name:/)) {
 							var lsid = 
-							html += '<a href="http://www.organismnames.com/details.htm?lsid=' + data.names[i].id.replace('urn:lsid:organismnames.com:name:', '') + '" target="_new"><i class="icon-share"></i> ' + data.names[i].id + '</a>';
+							html += '<a href="http://www.organismnames.com/details.htm?lsid=' + data.names[i].id.replace('urn:lsid:organismnames.com:name:', '') + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'lsid\', \'' + data.names[i].id + '\', 0]);"><i class="icon-share"></i> ' + data.names[i].id + '</a>';
 						}						
 						html += '</td>';
 					}
