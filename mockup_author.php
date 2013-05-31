@@ -38,7 +38,7 @@ if (isset($_GET['name']))
 				</ul>
 			
 				<div class="tab-content">
-				  <div class="tab-pane active" id="biblio-tab">
+				  <div class="tab-pane active no-pad" id="biblio-tab">
 			        <div id="publication-timeline" class="publication-timeline">
 						<div class="pub-timeline">
 							<div id="pubHistogram" class="chart"></div>
