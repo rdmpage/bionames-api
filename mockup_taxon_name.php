@@ -170,9 +170,14 @@ $id = $_GET['id'];
 			
 		function show_publications(name)
 		{		
+			
+			$("#tab-biblio").addClass("loading");
+			
 //			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 			$.getJSON("api/name/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 				function(data){
+					$("#tab-biblio").addClass("loading");
+					
 					if (data.status == 200)
 					{		
 						
@@ -304,7 +309,7 @@ $id = $_GET['id'];
 	  <div class="row-fluid">
 	    <div class="main-content span8">
 			<ul class="nav nav-tabs">
-			  <li class="bibliography active"><a href="#biblio-tab" data-toggle="tab">Bibliography</a></li>
+			  <li class="bibliography active"><a href="#biblio-tab" data-toggle="tab" id="tab-biblio">Bibliography</a></li>
 			</ul>
 			
 			<div class="tab-content">
