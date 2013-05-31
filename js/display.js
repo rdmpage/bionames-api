@@ -140,9 +140,14 @@ function display_reference(data)
 	return html;
 }
 
-function display_stat(title, value) {
+function display_stat(title, value, anchor) {
   var html = '';
   var title_class = title.toLowerCase().replace(/\W/, '-');
+  
+  if(anchor){
+    title = '<a href="#'+anchor+'">' + title + '</a>';
+    value = '<a href="#'+anchor+'">' + value + '</a>';
+  }
   
   html += '<div class="metadatum">' +
             '<div class="metadatum-title '+title_class+'">'+title+'</div>' +

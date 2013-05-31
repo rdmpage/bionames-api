@@ -15,126 +15,108 @@ if (isset($_GET['q']))
 	
 	<!-- standard stuff -->
 	<meta charset="utf-8" />
-	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">	
-
-	<link href="snippet.css" rel="stylesheet">	
-
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    
-	<script src="js/snippet.js"></script>
-    
-
-</head>
-<body>
+	<?php require 'stylesheets.inc.php'; ?>
 	
-	<form class="navbar-search pull-left" method="get" action="ms.php">
-	<input type="text" id='q' name='q' data-provide="typeahead" data-minLength="3" class="search-query" placeholder="Search" autocomplete="off" value="<?php echo $q; ?>">
-	<input type="submit" value="Search">
-	</form>      
+	<?php require 'javascripts.inc.php'; ?>
+</head>
+<body class="search">
+	
+	<?php require 'navbar.inc.php'; ?>
+	
 
-
-<div id="didyoumean"></div>
-<div id="results"><div>
-
+	<div class="container-fluid">
+		<div class="row-fluid">
+		    <div class="main-content span8">
+			  <div id="results"></div>
+		    </div>
+	  		
+	  		<div class="sidebar span4">
+				<div class="sidebar-header">
+					<h1 id="title"><?php echo($q); ?></h1>
+				</div>
+				<div id="metadata" class="sidebar-metadata">
+					<div id="stats" class="stats"></div>
+				</div>
+				<div id="didyoumean" class="sidebar-section"></div>
+	  		</div>
+		</div>
+	</div>
 
 	<script>
+	
+		var $metadata_stats = $('#stats');
+	
+		function add_metadata_stat(title,value,anchor) {
+			$(display_stat(title,value,anchor)).appendTo($metadata_stats);
+		}
+	
 		function search(q) {
 		
 			$.getJSON("http://bionames.org/bionames-api/search/" + encodeURIComponent(q) + "?callback=?",
-				function(data){
-					if (data.status == 200)
-					{		
-						var html = '';
-						
-						if (data.results) {
-							var ids=[];
-							
-							// order in which we want to display facets
-							var facet_key_order = [
-								'nameCluster',
-								'taxonConcept',
-								'article',
-								'book',
-								'chapter',
-								'generic'
-								];		
-							
-							for (var facet in facet_key_order) {
-								console.log(facet_key_order[facet]);
+			function(data) {
+			  if (data.status == 200) {
+			    var html = '';
+
+			    if (data.results) {
+			      var ids = [];
+
+			      // order in which we want to display facets
+				  
+				  var facet_display_categories = [
+				  	{ name: 'Names',         facet_keys: ['nameCluster'] },
+					{ name: 'Taxa' ,         facet_keys: ['taxonConcept'] },
+					{ name: 'Articles' ,     facet_keys: ['article'] },
+					{ name: 'Publications' , facet_keys: ['book', 'chapter', 'generic'] },
+				  ];
+				  
+				  
+				  for(var f in facet_display_categories){
+					  var facet = facet_display_categories[f];
+					  var facet_class = facet.name.toLowerCase().replace(/\W/, '-');
+					  var facet_id = 'facet-' + facet_class;
+					  var facet_html = '';
+					  var results_in_facet = 0;
+					  
+					  facet_html += '<div class="facet '+ facet_class +'" id="'+facet_id+'">';
+					  facet_html +=   '<h2>' + facet.name + '</h2>';
+					  facet_html +=   '<div class="cards">';
+					  
+					  for(var fk in facet.facet_keys) {
+						var facet_key = facet.facet_keys[fk];
+						if(data.results.facets[facet_key]){
+							for(var id in data.results.facets[facet_key]) {
+								results_in_facet++;
+								ids.push(id);
+								var html_id = id.replace(/\//, '_');
+								var result = data.results.facets[facet_key][id];
 								
-								//console.log(data.results.facets[facet_key_order[facet]]);
-								
-							//}
-							//for (var facet in data.results.facets) {
-								if (data.results.facets[facet_key_order[facet]]) {
-								
-								switch(facet_key_order[facet]) {
-									case 'nameCluster':
-										html += '<div class="facet names">';
-										html += '<h2>Names</h2>';
-										break;
-									case 'taxonConcept':
-										html += '<div class="facet taxa">';
-										html += '<h2>Taxa</h2>';
-										break;
-									case 'article':
-										html += '<div class="facet articles">';
-										html += '<h2>Articles</h2>';
-										break;
-									case 'book':
-									case 'chapter':
-									case 'generic':
-										html += '<div class="facet publications">';
-										html += '<h2>Publications</h2>';
-										break;
-									default:
-										html += '<div>';
-										html += '<h2>Unknown facet</h2>';
-										break;
-								}
-								
-								// output
-								html += '<div>';
-								for (var hit in data.results.facets[facet_key_order[facet]]) {
-									var id = hit;
-									ids.push(id);
-									id = hit.replace(/\//, '_');
-									
-									html += '<div style="float:left;">';
-									
-									switch(facet_key_order[facet]) {
-										case 'nameCluster':
-											html += '<div class="name-cluster snippet-wrapper">' + data.results.facets[facet_key_order[facet]][hit].term + '</div>';
-											break;
-										default:
-											html += '<div id="id' + id + '" class="snippet-wrapper">' + id + '</div>';
-											break;
-									}
-									
-									html += '</div>';
-								}							
-								//html += '<div style="clear:both;">';
-								//html += '</div>';
-								
-								
-								// end of facet
-								html += '</div>';
-								}
+								if(facet.name == 'Names') {
+								  facet_html += '<div class="name-cluster snippet-wrapper">' + result.term + '</div>';
+								} else {
+								  facet_html += '<div id="id'+html_id+'" class="snippet-wrapper"><span class="loading">loading</span></div>';
+								}	
 							}
 						}
-						
-						// display details
-						for (var id in ids) {
-							html += '<script>display_snippets("' + ids[id] + '");<\/script>';
-						}
-						
-						
-						$('#results').html(html);
-					}
-				
-				
-				});
+					  }
+					  
+					  facet_html +=   '</div>'; // div.cards
+					  facet_html += '</div>';   // div.facet
+					
+		              add_metadata_stat(facet.name, results_in_facet);
+					
+					  if(results_in_facet > 0) {
+						  html += facet_html;
+					  }
+				  }
+			    for (var id in ids) {
+			      html += '<script>display_snippets("' + ids[id] + '");<\/script>';
+			    }
+
+
+			    $('#results').html(html);
+			  }
+		    }
+		  });
 		}
 	
 	
@@ -148,7 +130,7 @@ if (isset($_GET['q']))
 					{		
 						var html = '';
 						if (data.names.length > 0) {
-							html += '<b>Did you mean:</b>';
+							html += '<h3>Did you mean</h3>';
 							html += '<ul>';
 							
 							for (var i in data.names) {

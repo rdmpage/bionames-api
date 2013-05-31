@@ -100,7 +100,7 @@ body {
   color: #fff;
   
   padding-bottom: 35px;
-  border-bottom: 5px solid #000;
+  border-bottom: 5px solid #2b2b2e;
   
   background-image: -ms-radial-gradient(center, circle farthest-corner, #404045 0%, #2B2B2E 100%);
   background-image: -moz-radial-gradient(center, circle farthest-corner, #404045 0%, #2B2B2E 100%);
@@ -331,7 +331,7 @@ body.concept .sidebar-header { border-color: #899369; }
 
 /* Snippets */
 .snippet-wrapper {
-	height: 100px;
+	height: 120px;
   width: 320px;
 	overflow: hidden;
   float: left;
