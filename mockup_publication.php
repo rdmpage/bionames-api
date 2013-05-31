@@ -67,15 +67,15 @@ $id = $_GET['id'];
 			<div class="main-content span8">
 			
 				<ul id="publication-tabs" class="nav nav-tabs">
-				  <li class="active"><a href="#view-tab" data-toggle="tab">View</a></li>
-				  <li><a href="#about-tab" data-toggle="tab">About</a></li>
-				  <li><a href="#data-tab" data-toggle="tab">Data <span id="data-badge" class="badge badge-info"></span></a></li>
+				  <li class="active"><a href="#view-tab" data-toggle="tab" id="tab-view">View</a></li>
+				  <li><a href="#about-tab" data-toggle="tab" id="tab-about">About</a></li>
+				  <li><a href="#data-tab" data-toggle="tab" id="tab-data">Data <span id="data-badge" class="badge badge-info"></span></a></li>
 				</ul>
 			
 				<div class="tab-content">				  
 				  <div class="tab-pane active" id="view-tab">
 					<div id="document-viewer-span">
-						<div id="doc">Loading...</div>
+						<div id="doc"><span class="loading">Loading...</span></div>
 					</div>  
 				  </div>
 
@@ -118,9 +118,11 @@ $id = $_GET['id'];
 	// Display an object
 	function display_publication (id)
 	{
+		$("#tab-about").addClass("loading");
 		//$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
 		$.getJSON("api/id/" + id + "?callback=?",
 			function(data){
+				$("#tab-about").removeClass("loading");
 				if (data.status == 200)
 				{
 					bibdata = reference_to_bibdata(data);
@@ -463,8 +465,10 @@ $id = $_GET['id'];
 	
 	function display_publication_names (id)
 	{
+		$("#tab-data").addClass("loading");
 		$.getJSON("http://bionames.org/bionames-api/publication/" + id + "/names?callback=?",
 			function(data){
+				$("#tab-data").removeClass("loading");
 				if (data.status == 200)
 				{
 					add_metadata_stat('Names', data.names.length);	
