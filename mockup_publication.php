@@ -57,11 +57,11 @@ $id = $_GET['id'];
 	
 	
 </head>
-<body onload="$(window).resize()">
+<body onload="$(window).resize()" class="publication">
 	<?php require 'analyticstracking.inc.php'; ?>
 	<?php require 'navbar.inc.php'; ?>
 	
-	<div style="margin-top:41px;" class="container-fluid">
+	<div class="container-fluid" style="margin-top: 60px;">
 
 		<div class="row-fluid">
 			<div class="main-content span8">
