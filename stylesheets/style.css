@@ -529,7 +529,7 @@ text-overflow: ellipsis;
 .home .jumbo {
   margin-top: -20px;
   margin-bottom: 0;
-  background: url(/bionames-api/images/squairy-dark.png);
+  background: #2a2b2d url(/bionames-api/images/squairy-dark.png);
   color: #f2f2f2;
   -webkit-border-radius: 0;
      -moz-border-radius: 0;
@@ -542,14 +542,32 @@ text-overflow: ellipsis;
   margin-bottom: 20px;
   padding: 10px 0;
   background-color: #fff;
+  
+  padding-bottom: 9px;
+  border-bottom: 1px solid #e9e9e9;
 }
 .homepage-search h4{
   font-weight: 400;
 }
 
-.homepage-features {
+.feature {
+  background-color: #fff;
+  margin-bottom: 20px;
+}
+
+.feature h3 {
+  margin: 0 0 10px 0;
+  padding: 10px 20px;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 18px;
   background-color: #fafafa;
-  border-top: 1px solid #e9e9e9;  
+  border: 1px solid #f2f2f2;
+  border-right: none;
+}
+
+.feature p {
+  margin: 0 0 0 20px;
 }
 
 .home .snippet {
