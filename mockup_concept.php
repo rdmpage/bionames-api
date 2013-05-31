@@ -12,7 +12,7 @@ if (isset($_GET['id']))
 <!DOCTYPE html>
 <html>
 <head>
-	<!--<base href="/bionames-api/" />-->
+	<base href="/bionames-api/" />
 	<title>Title</title>
 	
 	<!-- standard stuff -->
@@ -103,7 +103,8 @@ if (isset($_GET['id']))
       function show_images(concept)
       {
 			$("#images").html("");
-			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/thumbnail?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/thumbnail?callback=?",
+			$.getJSON("api/taxon/" + concept + "/thumbnail?callback=?",
 				function(data){
 					if (data.status == 200) {
 						if (data.thumbnails.length != 0) {
@@ -129,7 +130,8 @@ if (isset($_GET['id']))
 			$("#classification").html("");
 			$("#namemap").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "?callback=?",
+			$.getJSON("api/taxon/" + concept + "?callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -171,7 +173,7 @@ if (isset($_GET['id']))
 						html += '<li class="root">';
 						if (data.ancestors)
 						{
-							html += '<a href="?id=' + sourcePrefix[data.source] + '/' + data.ancestors[data.ancestors.length-1].sourceIdentifier + '">' + '<p style="line-height:16px;padding:0px;margin:0px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;opacity:0.6">' + data.ancestors[data.ancestors.length-1].scientificName + '</p>' + '</a>';
+							html += '<a href="taxa/' + sourcePrefix[data.source] + '/' + data.ancestors[data.ancestors.length-1].sourceIdentifier + '">' + '<p style="line-height:16px;padding:0px;margin:0px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;opacity:0.6">' + data.ancestors[data.ancestors.length-1].scientificName + '</p>' + '</a>';
 						}
 						
 						// This taxon
@@ -199,7 +201,7 @@ if (isset($_GET['id']))
 								{
 									html += '<li class="child">';
 								}
-								html += '<a href="?id=' + sourcePrefix[data.source] + '/' +  data.children[j].sourceIdentifier + '">' + '<p style="line-height:16px;padding:0px;margin:0px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;opacity:0.6">' + data.children[j].scientificName + '</p>' + '</a>' + '</li>';
+								html += '<a href="taxa/' + sourcePrefix[data.source] + '/' +  data.children[j].sourceIdentifier + '">' + '<p style="line-height:16px;padding:0px;margin:0px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;opacity:0.6">' + data.children[j].scientificName + '</p>' + '</a>' + '</li>';
 							}
 							html += '</ul>';
 						}
@@ -310,8 +312,9 @@ if (isset($_GET['id']))
 		
 		
 		function show_publications(concept) {
-			$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs&callback=?", function(data){
-				
+			//$.getJSON("http://bionames.org/bionames-api/taxon/" + concept + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs&callback=?", function(data){
+			$.getJSON("api/taxon/" + concept + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs&callback=?", function(data){
+			
 				add_metadata_stat("Publications", data.publications.length);
 				
 				if( data.publications.length == 0 ) return;
@@ -464,7 +467,8 @@ if (isset($_GET['id']))
 <!-- typeahead for search box -->
 	$("#q").typeahead({
 	  source: function (query, process) {
-		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+		//$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+		$.getJSON('api/name/' + query + '/suggestions?callback=?', 
 		function (data) {
 		  //data = ['Plecopt', 'Peas'];
 		  

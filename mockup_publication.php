@@ -118,7 +118,8 @@ $id = $_GET['id'];
 	// Display an object
 	function display_publication (id)
 	{
-		$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
+		//$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
+		$.getJSON("api/id/" + id + "?callback=?",
 			function(data){
 				if (data.status == 200)
 				{
@@ -152,7 +153,8 @@ $id = $_GET['id'];
 						for (var j in data.author)
 						{
 							sidepanel_html += '<li>';
-							sidepanel_html += '<a href="mockup_author.php?name=' + data.author[j].name + '"><i class="icon-user"></i>';
+//							sidepanel_html += '<a href="mockup_author.php?name=' + data.author[j].name + '"><i class="icon-user"></i>';
+							sidepanel_html += '<a href="authors/' + data.author[j].name + '"><i class="icon-user"></i>';
 							sidepanel_html += data.author[j].name + ' ';
 							sidepanel_html += '</a>';
 							sidepanel_html += '</li>';
@@ -164,7 +166,8 @@ $id = $_GET['id'];
 						html += '<tr><td class="muted">Author(s)</td><td>';
 						for (var j in data.author)
 						{
-							html += '<a href="mockup_author.php?name=' + data.author[j].name + '"><i class="icon-user"></i>';
+//							html += '<a href="mockup_author.php?name=' + data.author[j].name + '"><i class="icon-user"></i>';
+							html += '<a href="authors/' + data.author[j].name + '"><i class="icon-user"></i>';
 							html += data.author[j].name + ' ';
 							html += '</a>';
 							html += '  ';
@@ -190,11 +193,13 @@ $id = $_GET['id'];
 										switch (data.journal.identifier[j].type)
 										{
 											case 'issn':
-												html += '<tr><td class="muted">ISSN</td><td><a href="mockup_journal.php?issn=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
+												//html += '<tr><td class="muted">ISSN<td><a href="mockup_journal.php?issn=' + data.journal.identifier[j].id + '" rel="tooltip" title="The International Standard Serial Number (ISSN) ' + data.journal.identifier[j].id + ' is a unique identifier for this journal" class="tip">' + data.journal.identifier[j].id + '</a></td></tr>';
+												html += '<tr><td class="muted">ISSN<td><a href="issn/' + data.journal.identifier[j].id + '" rel="tooltip" title="The International Standard Serial Number (ISSN) ' + data.journal.identifier[j].id + ' is a unique identifier for this journal" class="tip">' + data.journal.identifier[j].id + '</a></td></tr>';
 												break;
 	
 											case 'oclc':
-												html += '<tr><td class="muted">OCLC</td><td><a href="mockup_journal.php?oclc=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
+//												html += '<tr><td class="muted">OCLC</td><td><a href="mockup_journal.php?oclc=' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
+												html += '<tr><td class="muted">OCLC</td><td><a href="oclc/' + data.journal.identifier[j].id + '">' + data.journal.identifier[j].id + '</a></td></tr>';
 												break;
 												
 											default:
@@ -271,7 +276,7 @@ $id = $_GET['id'];
 									break;
 									
 								case "doi":
-									html += '<tr><td class="muted">DOI</a></td><td><a href="http://dx.doi.org/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'doi\', \'' + data.identifier[j].id + '\', 0]);"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">DOI</td><td><a href="http://dx.doi.org/' + data.identifier[j].id + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'doi\', \'' + data.identifier[j].id + '\', 0]);" rel="tooltip" title="The Digital Object Identifier (DOI) ' + data.identifier[j].id + ' is the persistent identifier for this publication" class="tip"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "handle":
@@ -335,12 +340,6 @@ $id = $_GET['id'];
 					{
 						html += '<tr><td class="muted">Year</td><td>' +  data.year + '</td></tr>';
 					}
-					/*
-					if (data.issued)
-					{
-						html += '<tr><td>Year</td><td>' +  data.year + '</td></tr>';
-					}
-					*/
 					
 					if (data.publisher)
 					{
@@ -404,10 +403,7 @@ $id = $_GET['id'];
 									break;
 							}
 						}
-					}
-					
-					
-					
+					}					
 					html += '</div>';
 					
 					if (docUrl == '')
@@ -421,8 +417,6 @@ $id = $_GET['id'];
 						}
 					
 					}
-					
-					//console.log(docUrl);
 					
 					if (docUrl != '')
 					{
@@ -445,8 +439,8 @@ $id = $_GET['id'];
 							html += '</div>';
 							html += '<img style="border:1px solid rgb(128,128,128);padding:10px;background-color:white;" src="' + data.thumbnail + '" width="400" />';
 							html += '</div>';
-							$('#doc').html(html);
 							
+							$('#doc').html(html);							
 						}
 						else
 						{
@@ -460,6 +454,9 @@ $id = $_GET['id'];
 							$('#doc').html(html);
 						}
 					}
+					
+					$('.tip').tooltip();
+					
 				}
 			});
 	}
@@ -486,7 +483,8 @@ $id = $_GET['id'];
 					for (var i in data.names) {
 						html += '<tr>';
 						html += '<td>';
-						html += '<a href="mockup_taxon_name.php?id=' + data.names[i].cluster + '">';
+						//html += '<a href="mockup_taxon_name.php?id=' + data.names[i].cluster + '">';
+						html += '<a href="names/' + data.names[i].cluster + '">';
 						html += data.names[i].nameComplete;
 						html += '</a>';
 						html += '</td>';
@@ -494,13 +492,15 @@ $id = $_GET['id'];
 						
 						if (data.names[i].id.match(/urn:lsid:organismnames.com:name:/)) {
 							var lsid = 
-							html += '<a href="http://www.organismnames.com/details.htm?lsid=' + data.names[i].id.replace('urn:lsid:organismnames.com:name:', '') + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'lsid\', \'' + data.names[i].id + '\', 0]);"><i class="icon-share"></i> ' + data.names[i].id + '</a>';
+							html += '<a href="http://www.organismnames.com/details.htm?lsid=' + data.names[i].id.replace('urn:lsid:organismnames.com:name:', '') + '" target="_new" onClick="_gaq.push([\'_trackEvent\', \'External\', \'lsid\', \'' + data.names[i].id + '\', 0]);" rel="tooltip" title="Life Science Identifier (LSID) for this taxon name" class="tip"><i class="icon-share"></i> ' + data.names[i].id + '</a>';
 						}						
 						html += '</td>';
 					}
 					html += '</table>';
 					
 					$('#names').html(html);
+					
+					$('.tip').tooltip();
 				}
 			});
 	}
@@ -588,6 +588,8 @@ $id = $_GET['id'];
 		})
 	  }
 	})
+	
+	
 	
 </script>
 

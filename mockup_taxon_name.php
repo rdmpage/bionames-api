@@ -5,11 +5,10 @@
 $id = $_GET['id'];
 
 ?>
-
+<!DOCTYPE html>
 <html>
 <head>
 	<base href="/bionames-api/" />
-	<!-- <base href="/~rpage/bionames-api/" /> -->
 	<title>Taxon Name</title>
 	
 	<!-- standard stuff -->
@@ -18,18 +17,18 @@ $id = $_GET['id'];
 	<?php require 'javascripts.inc.php'; ?>
 	<?php require 'uservoice.inc.php'; ?>
 	
-	<script>
+	<script>	
 	
 		function add_metadata_stat(title,value) {
 			$(display_stat(title,value)).appendTo($('#stats'));		
-		}
-	
+		}	
 	
 		function show_cluster(id)
 		{
 			$("#cluster").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/id/" + id + "?callback=?",
+			$.getJSON("api/id/" + id + "?callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -58,7 +57,8 @@ $id = $_GET['id'];
 							
 							html += '<div class="authority">';
 							html += 'Published by ';
-							html += '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">'+author+'</a>.';
+							//html += '<a href="mockup_search.php?q=' + encodeURIComponent(author) + '">'+author+'</a>.';
+							html += '<a href="q/' + encodeURIComponent(author) + '">'+author+'</a>.';
 							html += '</div>';
 						}
 						$("#cluster").html(html);
@@ -81,9 +81,6 @@ $id = $_GET['id'];
 								$("#cluster").html(html);
 							}
 						}
-						
-						
-						
 						
 						// Sidebar
 						
@@ -120,20 +117,17 @@ $id = $_GET['id'];
 						if (data.publishedInCitation) {
 							show_name_publications(data.publishedInCitation);
 						}
-						
-						
 					}
-				});
-				
+				});				
 			
 		}
-		
-		
+				
 		function show_name_publications(publishedInCitation)
 		{
 			for (var id in publishedInCitation)
 			{
-				$.getJSON("http://bionames.org/bionames-api/id/" + publishedInCitation[id] + "?callback=?",
+				//$.getJSON("http://bionames.org/bionames-api/id/" + publishedInCitation[id] + "?callback=?",
+				$.getJSON("api/id/" + publishedInCitation[id] + "?callback=?",
 					function(data){
 						if (data.status == 200) {
 							//$('#publication' + publishedInCitation[id]).html(display_reference(data));
@@ -143,14 +137,14 @@ $id = $_GET['id'];
 					});
 			}
 				
-		}
-		
+		}		
 		
 		function show_concepts(id)
 		{
 			$("#concepts").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/name/" + id + "/concepts?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/name/" + id + "/concepts?callback=?",
+			$.getJSON("api/name/" + id + "/concepts?callback=?",
 				function(data){
 					if (data.status == 200)
 					{	
@@ -163,67 +157,6 @@ $id = $_GET['id'];
 							for (var i in data.concepts) {
 								html += '<div id="id' + data.concepts[i].concept.replace(/\//, '_') + '"></div>';
 								concepts.push(data.concepts[i].concept);
-							
-								/*
-								var accepted = (data.concepts[i].nameComplete ==  data.concepts[i].canonicalName);
-								
-								
-								var style = 'border:1px solid black;padding:10px;';
-								
-								if (accepted)
-								{
-									style += 'background-color:00FF00;';
-								}
-								else
-								{
-									style += 'background-color:#FF0000;';
-								}
-								
-								html += '<div style="' + style + '">';
-								
-								if (accepted) 
-								{
-									html += '<div style="float:right;color:white;font-weight:bold;font-size:300%">✓</div>';
-								} 
-								else 
-								{
-									html += '<div style="float:right;color:white;font-weight:bold;font-size:300%">✗</div>';
-								}								
-								
-														
-								html += '<div>' + '<b>' + data.concepts[i].scientificName + '</b>' + '</div>';
-								html += '<div>' + '<a href="mockup_concept.php?id=' + data.concepts[i].concept + '" >' + data.concepts[i].concept + '</a>' + '</div>';
-								
-								if (data.concepts[i].concept.match(/gbif/))
-								{
-										html += '<div>' + 'According to GBIF';										
-										html += '<div style="float:right;"><img src="images/logo_leaf.gif" width="48"/></div>';
-										html += '</div>';
-								}									
-
-								if (data.concepts[i].concept.match(/ncbi/))
-								{
-										html += '<div>' + 'According to NCBI';										
-										html += '<div style="float:right;"><img src="images/ncbi-twitter.jpg" width="48"/></div>';
-										html += '</div>';
-								}									
-								
-								if (data.concepts[i].eol)
-								{
-									html += '<div>';
-									html += '<a href="concept.php?id=' + data.concepts[i].concept + '" >';
-									html += '<img src="http://bionames.org/bionames-api/taxon/eol/' + data.concepts[i].eol + '/thumbnail" /></div>';
-									html += '</a>';
-									html += '</div>';
-								}
-								
-															
-								
-								html += '<div style="clear:both;" />';
-								html += '</div>';
-								*/
-								
-								
 							}
 							$("#concepts").html(html);
 							
@@ -234,11 +167,11 @@ $id = $_GET['id'];
 					}
 				});
 		}
-		
-	
+			
 		function show_publications(name)
 		{		
-			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
+			$.getJSON("api/name/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -311,7 +244,8 @@ $id = $_GET['id'];
 		{
 			$("#epithet").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(epithet) + "/epithet?callback=?",
+			//$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(epithet) + "/epithet?callback=?",
+			$.getJSON("api/name/" + encodeURIComponent(epithet) + "/epithet?callback=?",
 				function(data){
 					if (data.status == 200)
 					{	
@@ -321,7 +255,8 @@ $id = $_GET['id'];
 							for (var i in data.names)
 							{
 								var s = data.names[i];
-								html += '<a href="mockup_search.php?q=' + encodeURIComponent(s) + '">' + s + '</a>' + '<br />';
+								//html += '<a href="mockup_search.php?q=' + encodeURIComponent(s) + '">' + s + '</a>' + '<br />';
+								html += '<a href="q/' + encodeURIComponent(s) + '">' + s + '</a>' + '<br />';
 							}
 							html += '</div>';
 							var current_html = $("#epithet").html();
@@ -335,7 +270,8 @@ $id = $_GET['id'];
 		{
 			$("#related").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/related?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/related?callback=?",
+			$.getJSON("api/name/" + encodeURIComponent(name) + "/related?callback=?",
 				function(data){
 					if (data.status == 200)
 					{	
@@ -347,7 +283,8 @@ $id = $_GET['id'];
 							for (var i in data.related)
 							{
 								var s = data.related[i];
-								html += '<li><a href="mockup_search.php?q=' + encodeURIComponent(s) + '">' + s + '</a></li>';
+//								html += '<li><a href="mockup_search.php?q=' + encodeURIComponent(s) + '">' + s + '</a></li>';
+								html += '<li><a href="q/' + encodeURIComponent(s) + '">' + s + '</a></li>';
 							}
 							html += '</ul>';
 							var current_html = $("#related").html();
@@ -356,7 +293,6 @@ $id = $_GET['id'];
 					}
 				});
 		}
-		
 		
 	</script>	
 </head>
@@ -403,7 +339,7 @@ $id = $_GET['id'];
 		show_cluster(id);
 </script>
 
-<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+<script> if (use_livereload) { document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>'); }</script>
 
 </body>
 </html>

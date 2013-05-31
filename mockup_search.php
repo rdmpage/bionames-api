@@ -54,7 +54,8 @@ if (isset($_GET['q']))
 	
 		function search(q) {
 		
-			$.getJSON("http://bionames.org/bionames-api/search/" + encodeURIComponent(q) + "?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/search/" + encodeURIComponent(q) + "?callback=?",
+			$.getJSON("api/search/" + encodeURIComponent(q) + "?callback=?",
 			function(data) {
 			  if (data.status == 200) {
 			    var html = '';
@@ -83,20 +84,29 @@ if (isset($_GET['q']))
 					  facet_html +=   '<div class="facet-title"><h2>' + facet.name + '</h2></div>';
 					  facet_html +=   '<div class="cards">';
 					  
+					  
 					  for(var fk in facet.facet_keys) {
 						var facet_key = facet.facet_keys[fk];
 						if(data.results.facets[facet_key]){
 							for(var id in data.results.facets[facet_key]) {
-								results_in_facet++;
-								var html_id = id.replace(/\//, '_');
-								var result = data.results.facets[facet_key][id];
 								
-								if(facet.name == 'Names') {
-								  facet_html += '<div class="name-cluster snippet-wrapper"><a href="mockup_taxon_name.php?id=' + id + '">' + result.term + '</a></div>';
-								} else {
-								  ids.push(id);	
-								  facet_html += '<div id="id'+html_id+'" class="snippet-wrapper"><span class="loading">loading</span></div>';
-								}	
+								var skip = false;
+								if ((facet_key == 'nameCluster') && (results_in_facet == 5)) {
+									skip = true;
+								}
+								if (!skip) {								
+									results_in_facet++;
+									var html_id = id.replace(/\//, '_');
+									var result = data.results.facets[facet_key][id];
+									
+									if(facet.name == 'Names') {
+	//								  facet_html += '<div class="name-cluster snippet-wrapper"><a href="mockup_taxon_name.php?id=' + id + '">' + result.term + '</a></div>';
+									  facet_html += '<div class="name-cluster snippet-wrapper"><a href="name/' + id + '">' + result.term + '</a></div>';
+									} else {
+									  ids.push(id);	
+									  facet_html += '<div id="id'+html_id+'" class="snippet-wrapper"><span class="loading">loading</span></div>';
+									}
+								}
 							}
 						}
 					  }
@@ -126,7 +136,8 @@ if (isset($_GET['q']))
 		{
 			$("#didyoumean").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/didyoumean?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/name/" + encodeURIComponent(name) + "/didyoumean?callback=?",
+			$.getJSON("api/name/" + encodeURIComponent(name) + "/didyoumean?callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -137,7 +148,8 @@ if (isset($_GET['q']))
 							
 							for (var i in data.names) {
 								html += '<li>';
-								html += '<a href="mockup_search.php?q=' + encodeURIComponent(data.names[i]) + '">' + data.names[i] + '</a>';
+//								html += '<a href="mockup_search.php?q=' + encodeURIComponent(data.names[i]) + '">' + data.names[i] + '</a>';
+								html += '<a href="q?' + encodeURIComponent(data.names[i]) + '">' + data.names[i] + '</a>';
 								html += '</li>';
 							}
 							html += '</ul>';
@@ -162,7 +174,8 @@ if (isset($_GET['q']))
 	<script>
 	$("#q").typeahead({
 	  source: function (query, process) {
-		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+//		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+		$.getJSON('api/name/' + query + '/suggestions?callback=?', 
 		function (data) {
 		  //data = ['Plecopt', 'Peas'];
 		  
@@ -176,7 +189,7 @@ if (isset($_GET['q']))
 	
 
 
-	<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+	<script> if (use_livereload) { document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>'); }</script>
 
 </body>
 </html>

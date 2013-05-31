@@ -12,7 +12,35 @@ RewriteBase /bionames-api/
 #---------------------------------------------------------------------------------------------------
 # HTML
 
-RewriteRule ^page/(.*)   doc.php?id=$1   [NC,L]
+#RewriteRule ^page/(.*)   doc.php?id=$1   [NC,L]
+
+# Generic
+
+# Search
+RewriteRule ^q/(.*)   mockup_search.php?q=$1   [NC,L]
+
+# Taxon name
+RewriteRule ^taxa/(.*)   mockup_concept.php?id=$1   [NC,L]
+
+
+# Taxon name
+RewriteRule ^names/(.*)   mockup_taxon_name.php?id=$1   [NC,L]
+
+# Publication
+RewriteRule ^references/(.*)   mockup_publication.php?id=$1   [NC,L]
+
+
+RewriteRule ^issn/(.*)   mockup_journal.php?issn=$1   [NC,L]
+RewriteRule ^oclc/(.*)   mockup_journal.php?oclc=$1   [NC,L]
+
+
+# Author
+RewriteRule ^author/(.*)   mockup_author.php?name=$1   [NC,L]
+
+
+# API calls
+RewriteRule ^api/(.*)   $1   [NC,L]
+
 
 #---------------------------------------------------------------------------------------------------
 # Search

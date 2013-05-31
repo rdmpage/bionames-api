@@ -81,7 +81,8 @@ if (isset($_GET['name']))
 		{
 			$("#coauthors").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/authors/" + name + "/coauthors?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/authors/" + name + "/coauthors?callback=?",
+			$.getJSON("api/authors/" + name + "/coauthors?callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -90,7 +91,8 @@ if (isset($_GET['name']))
 						html += '<ul>';
 						for (var i in data.coauthors)
 						{
-							html += '<li><a href="mockup_author.php?name=' + data.coauthors[i] + '">' + data.coauthors[i] + '</a></li>';
+//							html += '<li><a href="mockup_author.php?name=' + data.coauthors[i] + '">' + data.coauthors[i] + '</a></li>';
+							html += '<li><a href="authors/' + data.coauthors[i] + '">' + data.coauthors[i] + '</a></li>';
 						}
 						html += '</ul>';
 						$("#coauthors").html(html);
@@ -103,7 +105,8 @@ if (isset($_GET['name']))
 		{
 			$("#taxa").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/authors/" + name + "/publications/taxa?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/authors/" + name + "/publications/taxa?callback=?",
+			$.getJSON("api/authors/" + name + "/publications/taxa?callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -112,7 +115,8 @@ if (isset($_GET['name']))
 						html += '<ul>';
 						for (var i in data.names) {
 							html += '<li>';
-							html += '<a href="mockup_taxon_name.php?id=' + data.names[i].cluster + '">';
+//							html += '<a href="mockup_taxon_name.php?id=' + data.names[i].cluster + '">';
+							html += '<a href="names/' + data.names[i].cluster + '">';
 							html += data.names[i].nameComplete;
 							html += '</a>';
 							//html += '<br/>';
@@ -137,7 +141,8 @@ if (isset($_GET['name']))
 			{
 				lastname = match[1];
 			
-				$.getJSON("http://bionames.org/bionames-api/authors/lastname/" + lastname + "?callback=?",
+//				$.getJSON("http://bionames.org/bionames-api/authors/lastname/" + lastname + "?callback=?",
+				$.getJSON("api/authors/lastname/" + lastname + "?callback=?",
 					function(data){
 						if (data.status == 200)
 						{		
@@ -146,7 +151,8 @@ if (isset($_GET['name']))
 							html += '<ul>';
 							for (var i in data.firstnames)
 							{
-								html += '<a href="mockup_author.php?name=' + data.firstnames[i] + ' ' + lastname + '">';
+//								html += '<a href="mockup_author.php?name=' + data.firstnames[i] + ' ' + lastname + '">';
+								html += '<a href="authors/' + data.firstnames[i] + ' ' + lastname + '">';
 								html += '<li>' + data.firstnames[i] + ' ' + lastname + '</li>';
 								html += '</a>';
 							}
@@ -163,7 +169,8 @@ if (isset($_GET['name']))
 			$("#publications").html("");
 			
 				
-			$.getJSON("http://bionames.org/bionames-api/authors/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/authors/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
+			$.getJSON("api/authors/" + encodeURIComponent(name) + "/publications?fields=title,thumbnail,identifier,author,journal,year&include_docs" + "&callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -244,7 +251,8 @@ if (isset($_GET['name']))
 		{
 			$("#timeline").html("");
 			
-			$.getJSON("http://bionames.org/bionames-api/authors/" + name + "/publications/years?callback=?",
+//			$.getJSON("http://bionames.org/bionames-api/authors/" + name + "/publications/years?callback=?",
+			$.getJSON("api/authors/" + name + "/publications/years?callback=?",
 				function(data){
 					if (data.status == 200)
 					{		
@@ -272,7 +280,8 @@ if (isset($_GET['name']))
 <!-- typeahead for search box -->
 	$("#q").typeahead({
 	  source: function (query, process) {
-		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+//		$.getJSON('http://bionames.org/bionames-api/name/' + query + '/suggestions?callback=?', 
+		$.getJSON('api/name/' + query + '/suggestions?callback=?', 
 		function (data) {
 		  //data = ['Plecopt', 'Peas'];
 		  
