@@ -530,6 +530,7 @@ text-overflow: ellipsis;
 /* homepage */
   
 body.home .jumbo {
+  text-align: center;
   margin-top: -20px;
   margin-bottom: 0;
   background: #2a2b2d url(/bionames-api/images/squairy-dark.png);
@@ -552,7 +553,7 @@ body.home .jumbo {
 }
 
 .marketing {
-  padding: 10px;
+  padding: 20px 0;
   text-align:center;
   margin-bottom: 20px;
   background: #2a2b2d url(/bionames-api/images/squairy-dark.png);
