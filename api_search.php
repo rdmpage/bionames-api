@@ -70,17 +70,25 @@ function simple_search($query, $callback = '')
 		foreach ($response_obj->rows as $row)
 		{
 			$type = $row->value->type;
-			if (!isset($obj->results->facets[$type]))
+			
+			// Filter out EOL concepts as we're not ready for this just yet...
+			if (($type == 'taxonConcept') && preg_match('/^eol/', $row->value->id))
 			{
-				$obj->results->facets[$type] = array();
 			}
-			if (!isset($obj->results->facets[$type][$row->value->id]))
+			else
 			{
-				$obj->results->facets[$type][$row->value->id] = new stdclass;
-				$obj->results->facets[$type][$row->value->id]->count = 0;
-				$obj->results->facets[$type][$row->value->id]->term = $row->value->term;
+				if (!isset($obj->results->facets[$type]))
+				{
+					$obj->results->facets[$type] = array();
+				}
+				if (!isset($obj->results->facets[$type][$row->value->id]))
+				{
+					$obj->results->facets[$type][$row->value->id] = new stdclass;
+					$obj->results->facets[$type][$row->value->id]->count = 0;
+					$obj->results->facets[$type][$row->value->id]->term = $row->value->term;
+				}
+				$obj->results->facets[$type][$row->value->id]->count++;
 			}
-			$obj->results->facets[$type][$row->value->id]->count++;
 		}
 		
 		
@@ -101,6 +109,9 @@ function simple_search($query, $callback = '')
 				array_multisort($obj->results->facets['nameCluster'], SORT_ASC, SORT_NUMERIC, $scores);
 			}
 		}
+		
+		
+		
 		
 		//print_r($obj);
 	}	

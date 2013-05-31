@@ -18,9 +18,11 @@ if (isset($_GET['q']))
 	<?php require 'stylesheets.inc.php'; ?>
 	
 	<?php require 'javascripts.inc.php'; ?>
+	<?php require 'uservoice.inc.php'; ?>
+	
 </head>
 <body class="search">
-	
+	<?php require 'analyticstracking.inc.php'; ?>	
 	<?php require 'navbar.inc.php'; ?>
 	
 

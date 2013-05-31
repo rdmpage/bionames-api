@@ -16,6 +16,7 @@ $id = $_GET['id'];
 	<meta charset="utf-8" />
 	<?php require 'stylesheets.inc.php'; ?>
 	<?php require 'javascripts.inc.php'; ?>
+	<?php require 'uservoice.inc.php'; ?>
 	
 	<script>
 	
@@ -360,6 +361,7 @@ $id = $_GET['id'];
 	</script>	
 </head>
 <body class="name">
+	<?php require 'analyticstracking.inc.php'; ?>
 	<?php require 'navbar.inc.php'; ?>
 
 	<div class="container-fluid">

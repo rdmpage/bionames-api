@@ -58,7 +58,7 @@ function show_publication (element_id, doc) {
 			// Publication snippet
 			html += '<a class="pull-right" href="mockup_publication.php?id=' + doc._id + '">';
 			if (doc.thumbnail) {
-				html += '<img class="media-object" style="border:1px solid #e5e5e5;" width="64" src="' + doc.thumbnail + '"/>';
+				html += '<img class="media-object" style="border:1px solid #e5e5e5;background-color:white;" width="64" src="' + doc.thumbnail + '"/>';
 			} 
 			/*else {
 				html += '<div class="thumbnail_blank"></div>';

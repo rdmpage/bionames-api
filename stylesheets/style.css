@@ -143,6 +143,28 @@ body.concept .sidebar-header { border-color: #899369; }
     background-position: left 1px;
     padding-left: 34px;
   }
+  
+  /* rdmp */
+  
+  body.publication  .sidebar-header #title { 
+    background-image: url(/bionames-api/images/icon-doc-white.png); 
+    background-position: left 1px;
+    padding-left: 34px;
+  }
+  
+  body.journal  .sidebar-header #title { 
+    background-image: url(/bionames-api/images/icon-books-white.png); 
+    background-position: left 1px;
+    padding-left: 34px;
+  }
+  
+  
+  body.search  .sidebar-header #title { 
+    background-image: url(/bionames-api/images/icon-search-white.png); 
+    background-position: left 1px;
+    padding-left: 34px;
+  }
+  
 
 .sidebar-section {
   margin: 0;

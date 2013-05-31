@@ -12,6 +12,8 @@ function api_output($obj, $callback)
 	}
 	
 	header("Content-type: text/plain");
+	header('Cache-Control: max-age=28800');
+
 //	header("Content-type: application/json");
 	
 	if ($callback != '')

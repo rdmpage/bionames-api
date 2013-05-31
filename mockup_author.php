@@ -21,21 +21,24 @@ if (isset($_GET['name']))
 	<?php require 'stylesheets.inc.php'; ?>
 	
 	<?php require 'javascripts.inc.php'; ?>
+	<?php require 'uservoice.inc.php'; ?>
 	
 </head>
 <body class="author">
+	<?php require 'analyticstracking.inc.php'; ?>
 
 	<?php require 'navbar.inc.php'; ?>
 	
 	<div class="container-fluid">
 		<div class="row-fluid">
 		    <div class="main-content span8">
-				<ul class="nav nav-tabs">
-				  <li class="bibliography active"><a href="#biblio-tab" data-toggle="tab">Bibliography</a></li>
+				<ul id="author-tabs" class="nav nav-tabs">
+				  <li class="bibliography active"><a href="#biblio-tab" data-toggle="tab">Bibliography <span id="bibliography-badge"class="badge badge-info"></span></a></li>
+				  <li><a href="#data-tab" data-toggle="tab">Data</a></li>				  
 				</ul>
 			
 				<div class="tab-content">
-				  <div class="tab-pane active no-pad" id="biblio-tab">
+				  <div class="tab-pane active" id="biblio-tab">
 			        <div id="publication-timeline" class="publication-timeline">
 						<div class="pub-timeline">
 							<div id="pubHistogram" class="chart"></div>
@@ -43,6 +46,10 @@ if (isset($_GET['name']))
 			            <div id="pubList"></div>
 			        </div>
 				  </div>
+				  <div class="tab-pane" id="data-tab">
+					...
+				  </div>
+				  
 			  </div>
 		    </div>
 	  		
@@ -160,6 +167,16 @@ if (isset($_GET['name']))
 				function(data){
 					if (data.status == 200)
 					{		
+						if (data.publications.length > 0)
+						{
+							// Set badge on this tab so people know it has something to see
+							$('#bibliography-badge').text(data.publications.length);
+							// Need this to force tab update
+							$('#author-tabs li:eq(0) a').show();
+						}
+
+					
+					
 	                    // Type cast years into integers
 						for (var i in data.publications)
 						{

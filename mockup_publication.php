@@ -66,10 +66,10 @@ $id = $_GET['id'];
 		<div class="row-fluid">
 			<div class="main-content span8">
 			
-				<ul class="nav nav-tabs">
+				<ul id="publication-tabs" class="nav nav-tabs">
 				  <li class="active"><a href="#view-tab" data-toggle="tab">View</a></li>
 				  <li><a href="#about-tab" data-toggle="tab">About</a></li>
-				  <li><a href="#data-tab" data-toggle="tab">Data</a></li>
+				  <li><a href="#data-tab" data-toggle="tab">Data <span id="data-badge" class="badge badge-info"></span></a></li>
 				</ul>
 			
 				<div class="tab-content">				  
@@ -84,7 +84,7 @@ $id = $_GET['id'];
 				  </div>
 				  
 				  <div class="tab-pane" id="data-tab">
-					<div id="names"></div>
+					<div id="names">...</div>
 				  </div>
 				</div>
 			</div>
@@ -126,7 +126,8 @@ $id = $_GET['id'];
 					
 					// Bibliographic details as a table
 					var html = '';
-										
+					
+					html += '<div id="publication_data">';
 					html += '<table class="table">';
 					html += '<thead></thead>';
 					html += '<tbody>';
@@ -270,7 +271,7 @@ $id = $_GET['id'];
 									break;
 									
 								case "doi":
-									html += '<tr><td class="muted">DOI</td><td><a href="http://dx.doi.org/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
+									html += '<tr><td class="muted">DOI</a></td><td><a href="http://dx.doi.org/' + data.identifier[j].id + '" target="_new"><i class="icon-share"></i> ' + data.identifier[j].id + '</a></td></tr>';
 									break;
 
 								case "handle":
@@ -363,6 +364,8 @@ $id = $_GET['id'];
 					html += '</tbody>';
 					html += '</table>';
 					
+					html += '</div>';
+					
 					// Citation
 					$("#metadata").html(html);
 					
@@ -426,7 +429,8 @@ $id = $_GET['id'];
 						DV.load(docUrl, {
 							container: '#doc',
 							width:$('#document-viewer-span').width(),
-							height:$('#document-viewer-span').height(),
+							height:$(window).height() -  $('#document-viewer-span').offset().top,
+							//height:$('#document-viewer-span').height(),
 							sidebar: false
 						});	
 					}
@@ -455,7 +459,6 @@ $id = $_GET['id'];
 							
 							$('#doc').html(html);
 						}
-						//$(window).resize(); // force drawing to be centred
 					}
 				}
 			});
@@ -467,7 +470,13 @@ $id = $_GET['id'];
 			function(data){
 				if (data.status == 200)
 				{
-					add_metadata_stat('Names', data.names.length);				
+					add_metadata_stat('Names', data.names.length);	
+					
+					// Set badge on this tab so people know it has something to see
+					$('#data-badge').text(data.names.length);
+					// Need this to force tab update
+					$('#publication-tabs li:eq(2) a').show();
+					
 				
 					var html = '';
 					

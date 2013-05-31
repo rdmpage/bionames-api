@@ -20,18 +20,19 @@ if (isset($_GET['id']))
 	<?php require 'stylesheets.inc.php'; ?>
 	
 	<?php require 'javascripts.inc.php'; ?>
+	<?php require 'uservoice.inc.php'; ?>
 	
 </head>
 <body class="concept">
-
+	<?php require 'analyticstracking.inc.php'; ?>
 	<?php require 'navbar.inc.php'; ?>
 	
 <div class="container-fluid">
 	<div class="row-fluid">
   		<div class="span8">
-			<ul class="nav nav-tabs">
-			  <li class="active" ><a href="#name-tab" data-toggle="tab">Name</a></li>
-			  <li class="bibliography"><a href="#biblio-tab" data-toggle="tab">Bibliography</a></li>
+			<ul id="concept-tabs" class="nav nav-tabs">
+			  <li class="active" ><a href="#name-tab" data-toggle="tab">Name <span id="name-badge" class="badge badge-info"></span></a></li>
+			  <li class="bibliography"><a href="#biblio-tab" data-toggle="tab">Bibliography <span id="bibliography-badge"class="badge badge-info"></span></a></li>
 			  <li><a href="#data-tab" data-toggle="tab">Data</a></li>
 			</ul>
 			
@@ -271,7 +272,17 @@ if (isset($_GET['id']))
 								 }
 							 
 						  
-							 if(num_names > 0) add_metadata_stat("Names", num_names);
+							 if(num_names > 0) {
+							 	add_metadata_stat("Names", num_names);
+							 	
+							 	// Set badge on this tab so people know it has something to see
+								$('#name-badge').text(num_names);
+								// Need this to force tab update
+								$('#concept-tabs li:eq(0) a').show();
+							}
+
+							 
+							 
 							 
 						// Publications
 						for (var pubs in publications) {
@@ -304,6 +315,11 @@ if (isset($_GET['id']))
 				add_metadata_stat("Publications", data.publications.length);
 				
 				if( data.publications.length == 0 ) return;
+				
+				// Set badge on this tab so people know it has something to see
+				$('#bibliography-badge').text(data.publications.length);
+				// Need this to force tab update
+				$('#concept-tabs li:eq(1) a').show();
 				
 				var publication_list = [];
     

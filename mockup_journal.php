@@ -36,17 +36,18 @@ if (isset($_GET['journal']))
 	<!--<script src="js/snippet.js"></script>   -->
 	<script src="js/publication.js"></script>   
 </head>
-<body>
+<body class="journal">
 	<?php require 'analyticstracking.inc.php'; ?>
 	<?php require 'navbar.inc.php'; ?>
 	
 	<div class="container-fluid">
 	  <div class="row-fluid">
 			<div class="span2">
-				<div id="volumes" class="affix"></div>  			
+<!--				<div id="volumes" class="affix"></div>  			-->
+				<div id="volumes"></div>  			
 			</div>
 			
-			<div class="span6" style="border:1px solid red;">
+			<div class="span6">
 				<div id="articles"></div>
 			</div>
 			
@@ -66,7 +67,7 @@ if (isset($_GET['journal']))
 					
 					<div class="media">
 						<div class="pull-right">
-     						<img id="thumbnail" class="media-object" src="" style="width:100px;border:1px solid rgb(228,228,228)";>
+     						<img id="thumbnail" class="media-object" src="" style="width:100px;background-color:white;border:1px solid rgb(228,228,228)";>
      					</div>
      					<div id="journal_identifiers" class="media-body">     						
      					</div>
@@ -262,6 +263,9 @@ if (isset($_GET['journal']))
 						}
 
 						$("#articles").html(html);
+						
+						// http://stackoverflow.com/a/1145297/9684
+						$("html, body").animate({ scrollTop: 0 }, "slow");
 					}
 				});
 		}
@@ -291,14 +295,14 @@ if (isset($_GET['journal']))
 						var html = '';
 						if (data.status == 200)
 						{							
-							html += '<div class="accordion" id="accordion">';
+							html += '<div class="accordion" id="accordion" >';
 							
 							if (data.decades)
 							{
 								var first = true;
 								for (var decade in data.decades)
 								{								
-									html += '<div class="accordion-group">';
+									html += '<div class="accordion-group" style="background-color:white;">';
 									html += '  <div class="accordion-heading">';
 									html += '  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse' + decade + '">';
 									html += decade + '\'s';
