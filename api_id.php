@@ -84,7 +84,7 @@ function display_thumbnail ($id, $callback = '')
 	global $couch;
 	
 	// grab JSON from CouchDB
-	$couch_id = $id;
+	$couch_id = $id;	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
 	
@@ -123,6 +123,11 @@ function display_record_namespace ($id, $namespace, $callback = '')
 	
 	$url = '_design/identifier/_view/' . $namespace . '?key=' . urlencode('"' . $id . '"') . '&include_docs=true';
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+		
 	//echo $url;
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
@@ -164,6 +169,11 @@ function display_namespace_count ($namespace, $callback = '')
 	
 	$url = '_design/count/_view/identifier?key=' . urlencode('"' . $namespace . '"') . '&reduce=true';
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+		
 	//echo $url;
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
