@@ -12,6 +12,54 @@ function default_display()
 	echo "hi";
 }
 
+
+//--------------------------------------------------------------------------------------------------
+function get_eol_thumbnails($eol_id)
+{
+	global $config;
+	global $couch;
+	
+	$thumbnails = array();
+
+	$couch_id = 'eol/' . $eol_id;
+	
+	// now get details from local EOL data
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	if (isset($response_obj->error))
+	{
+	}
+	else
+	{
+		if (isset($response_obj->dataObjects))
+		{
+			foreach ($response_obj->dataObjects as $dataObject)
+			{
+				switch($dataObject->dataType)
+				{
+					case 'http://purl.org/dc/dcmitype/StillImage':
+						$image_url = $dataObject->eolThumbnailURL;
+						if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
+						{
+							$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
+						}
+						$thumbnails[] = $image_url;
+						break;
+						
+					default:
+						break;
+				}
+			}
+		}
+	}
+	
+	return $thumbnails;
+}
+
+
+
 //--------------------------------------------------------------------------------------------------
 // One taxon concept
 function display_concept ($id, $callback = '')
@@ -495,40 +543,46 @@ function taxon_thumbnail_urls ($id, $callback = '')
 					$obj->eol = $response_obj->identifier->eol[0];
 					$obj->thumbnails = array();
 					
-					$couch_id = 'eol/' . $obj->eol;
-					
-					// now get details from local EOL data
-					$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
-					
-					$response_obj = json_decode($resp);
-					
-					if (isset($response_obj->error))
+					if (1)
 					{
+						$obj->thumbnails = get_eol_thumbnails($obj->eol);
 					}
 					else
-					{
-						if (isset($response_obj->dataObjects))
+					{					
+						$couch_id = 'eol/' . $obj->eol;
+						
+						// now get details from local EOL data
+						$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+						
+						$response_obj = json_decode($resp);
+						
+						if (isset($response_obj->error))
 						{
-							foreach ($response_obj->dataObjects as $dataObject)
+						}
+						else
+						{
+							if (isset($response_obj->dataObjects))
 							{
-								switch($dataObject->dataType)
+								foreach ($response_obj->dataObjects as $dataObject)
 								{
-									case 'http://purl.org/dc/dcmitype/StillImage':
-										$image_url = $dataObject->eolThumbnailURL;
-										if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
-										{
-											$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
-										}
-										$obj->thumbnails[] = $image_url;
-										break;
-										
-									default:
-										break;
+									switch($dataObject->dataType)
+									{
+										case 'http://purl.org/dc/dcmitype/StillImage':
+											$image_url = $dataObject->eolThumbnailURL;
+											if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
+											{
+												$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
+											}
+											$obj->thumbnails[] = $image_url;
+											break;
+											
+										default:
+											break;
+									}
 								}
 							}
 						}
 					}
-					
 				}
 			}
 		}
@@ -537,40 +591,70 @@ function taxon_thumbnail_urls ($id, $callback = '')
 	// NCBI uses index based on EOL data
 	if (preg_match('/ncbi\/(?<id>\d+)$/', $id, $m))
 	{
-		// Get mapping to EOL...
-		$url = '_design/eol/_view/ncbi_thumbnail?key=' . urlencode('"' . $id . '"');
-		
-		if ($config['stale'])
+		if (1)
 		{
-			$url .= '&stale=ok';
-		}		
+			// get NCBI to EOL map, then get images
+			$url = '_design/eol/_view/ncbi?key=' . urlencode('"' . $id . '"');
 			
-		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
-		
-		$response_obj = json_decode($resp);
-		
-		if (isset($response_obj->error))
-		{
+			if ($config['stale'])
+			{
+				$url .= '&stale=ok';
+			}		
+				
+			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+			
+			$response_obj = json_decode($resp);
+			
+			if (isset($response_obj->error))
+			{
+			}
+			else
+			{
+				$obj->status = 200;
+				$obj->eol = str_replace('eol/', '', $response_obj->rows[0]->id);
+				
+				$obj->thumbnails = get_eol_thumbnails($obj->eol);
+			}
+			
 		}
 		else
 		{
-			$obj->status = 200;
-			$obj->eol = str_replace('eol/', '', $response_obj->rows[0]->id);
-
-			$obj->thumbnails = array();
+			// Use index 
+			// Get mapping to EOL...
+			$url = '_design/eol/_view/ncbi_thumbnail?key=' . urlencode('"' . $id . '"');
 			
-			foreach ($response_obj->rows as $row)
+			if ($config['stale'])
 			{
-				$image_url = $row->value;
+				$url .= '&stale=ok';
+			}		
 				
-				// hack to get 88x88 image				
-				if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
-				{
-					$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
-				}
+			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 			
-				$obj->thumbnails[] = $image_url;
-			}	
+			$response_obj = json_decode($resp);
+			
+			if (isset($response_obj->error))
+			{
+			}
+			else
+			{
+				$obj->status = 200;
+				$obj->eol = str_replace('eol/', '', $response_obj->rows[0]->id);
+	
+				$obj->thumbnails = array();
+				
+				foreach ($response_obj->rows as $row)
+				{
+					$image_url = $row->value;
+					
+					// hack to get 88x88 image				
+					if (preg_match('/_(\d+)_(\d+).jpg/', $image_url))
+					{
+						$image_url = preg_replace('/_(\d+)_(\d+).jpg/', '_88_88.jpg', $image_url);
+					}
+				
+					$obj->thumbnails[] = $image_url;
+				}	
+			}
 		}
 	}
 
