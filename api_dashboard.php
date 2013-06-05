@@ -129,7 +129,9 @@ function display_issn_count ($callback = '')
 	
 	global $stale_ok;
 	
-	$url = '_design/issn/_view/count?group_level=2';
+	//$url = '_design/issn/_view/count?group_level=2';
+	//$url = '_design/issn/_view/count?group_level=1';
+	$url = '_design/issn/_view/count?reduce=true&group_level=1';
 	
 	if ($config['stale'])
 	{
