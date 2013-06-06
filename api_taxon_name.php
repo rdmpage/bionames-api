@@ -503,6 +503,7 @@ function name_related($name, $callback = '')
 	
 	global $stale_ok;
 	
+	/*
 	// BHL page co-occurrence
 	$url = "/_design/bhl/_view/name_synonym?key=" . urlencode(json_encode($name));
 	
@@ -544,6 +545,8 @@ function name_related($name, $callback = '')
 		}
 	}
 	
+	*/
+	
 	// Names that one or more classifications say are synonyms
 	$url = "/_design/classification/_view/synonyms?key=" . urlencode(json_encode($name));
 	
@@ -553,6 +556,11 @@ function name_related($name, $callback = '')
 	}	
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;	
+	$obj->related = array();
 	
 	$response_obj = json_decode($resp);
 		
@@ -577,10 +585,71 @@ function name_related($name, $callback = '')
 			{
 				$obj->related[] = $row->value;
 			}
-			
-			$obj->related = array_values(array_unique($obj->related));
 		}
 	}
+	
+	// Use search index to get other possible variants
+	$to_do[] = $name;
+		
+	while (count($to_do) > 0)
+	{	
+		//echo "To do\n";
+		//print_r($to_do);
+		
+		$string = array_pop($to_do);
+		
+		// parse
+		$parts = explode(' ', $string);
+		if (count($parts) == 3)
+		{
+			// First and last (e.g., ignore subgenus, promote subspecies)
+			$query = $parts[0] . ' ' . $parts[2];
+			if (!in_array($query, $to_do) && !in_array($query, $obj->related))
+			{
+				$to_do[] = $query;
+			}
+			
+			// Promote subgenus species
+			if (preg_match('/\w+ \(\w+\) \w+/', $string))
+			{
+				$query = $parts[1] . ' ' . $parts[2];
+				$query = preg_replace('/\(/', '', $query);
+				$query = preg_replace('/\)/', '', $query);
+				if (!in_array($query, $to_do) && !in_array($query, $obj->related))
+				{
+					$to_do[] = $query;
+				}
+			}
+			
+		}
+		
+		$url = '_design/search/_view/short?key=' . urlencode(json_encode($string));
+	
+		$url .= '&stale=ok';
+	
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+		$response_obj = json_decode($resp);
+	
+		//print_r($response_obj);
+		
+		foreach ($response_obj->rows as $row)
+		{
+			if ($row->value->type == 'nameCluster')
+			{
+				$obj->related[] = $row->value->term;
+				if (!in_array($row->value->term, $to_do) && !in_array($row->value->term, $obj->related))
+				{
+					$to_do[] = $row->value->term;
+				}
+			}			
+		}
+		
+		
+	}
+	
+	// Remove duplicates
+	$obj->related = array_unique($obj->related);
 	
 	// Make sure this name isn't in list of "related" names
 	if (isset($obj->related))
@@ -592,6 +661,13 @@ function name_related($name, $callback = '')
 		}
 	}
 	
+	// Ensure array is list of values without keys
+	$obj->related = array_values($obj->related);
+	
+	if (count($obj->related) > 0)
+	{
+		$obj->status = 200;
+	}
 	
 	api_output($obj, $callback);
 }
