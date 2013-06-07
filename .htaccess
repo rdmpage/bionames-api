@@ -131,8 +131,17 @@ RewriteRule ^taxon/(.*)/timeline   api_concept.php?id=$1&timeline  [QSA,L]
 
 RewriteRule ^taxon/(.*)/thumbnail   api_concept.php?id=$1&thumbnail  [QSA,L]
 
+RewriteRule ^taxon/(.*)/trees   api_tree.php?taxon=$1  [QSA,L]
 
 RewriteRule ^taxon/(.*)   api_concept.php?id=$1  [QSA,L]
+
+#---------------------------------------------------------------------------------------------------
+# Trees
+
+
+RewriteRule ^tree/(.*)/nexus   api_tree.php?tree=$1&format=nexus  [QSA,L]
+
+RewriteRule ^tree/(.*)   api_tree.php?tree=$1  [QSA,L]
 
 #---------------------------------------------------------------------------------------------------
 # Journals

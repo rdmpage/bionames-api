@@ -40,6 +40,14 @@ $config['couchdb_options'] = array(
 		'host' => '<username>:<password>@rdmpage.cloudant.com',
 		'port' => 5984
 		);
+		
+// local PhyLoTA
+$config['phylota_couchdb_options'] = array(
+		'database' => 'phylota_184',
+		'host' => '<username>:<password>@bionames.org',
+		'port' => 5984
+		);		
+		
 
 // HTTP proxy
 if ($config['proxy_name'] != '')
