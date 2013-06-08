@@ -73,9 +73,8 @@ function get_tree_nexus($tree)
 		else
 		{
 			$nexus = $response_obj->rows[0]->value;
-			echo '<pre>';
+			header('Content-Type:text/plain'); 
 			echo $nexus;
-			echo '</pre>';
 		}
 	}
 	
@@ -85,7 +84,7 @@ function get_tree_nexus($tree)
 
 
 //--------------------------------------------------------------------------------------------------
-// Get trees for a given tax_id
+// Get tree ids for a given tax_id
 function get_trees_for_taxon($tax_id, $callback)
 {
 	global $config;
@@ -122,6 +121,45 @@ function get_trees_for_taxon($tax_id, $callback)
 	api_output($obj, $callback);
 }
 
+//--------------------------------------------------------------------------------------------------
+// Get newick strings for a given tax_id
+function get_newick_strings_for_taxon($tax_id, $callback)
+{
+	global $config;
+	$phylota_couch = new CouchSimple($config['phylota_couchdb_options']);
+	
+	$url = "/_design/tree/_view/newick?key=" . $tax_id . '&reduce=false'; 
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
+	
+	$resp = $phylota_couch->send("GET", "/" . $config['phylota_couchdb_options']['database'] . $url);
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		$obj->status = 200;
+		$obj->trees = array();
+		foreach ($response_obj->rows as $row)
+		{
+			$obj->trees[$row->id] = $row->value;				
+		}
+		
+	}
+
+	api_output($obj, $callback);
+}
+
+
 
 //--------------------------------------------------------------------------------------------------
 function main()
@@ -153,8 +191,28 @@ function main()
 			if (preg_match('/ncbi\/(?<tax_id>\d+)/', $taxon, $m))
 			{
 				$tax_id = $m['tax_id'];
-				get_trees_for_taxon($tax_id, $callback);
-				$handled = true;
+				
+				if (isset($_GET['format']))
+				{	
+					$format = $_GET['format'];
+					
+					switch ($format)
+					{
+						case 'newick':					
+							get_newick_strings_for_taxon($tax_id, $callback);
+							$handled = true;
+							break;
+							
+						default:
+							break;
+					}
+				}
+				
+				if (!$handled)
+				{
+					get_trees_for_taxon($tax_id, $callback);
+					$handled = true;
+				}
 			}			
 		}
 	
