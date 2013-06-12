@@ -1,7 +1,17 @@
 <?php
 
+
 require_once (dirname(__FILE__) . '/couchsimple.php');
-require_once (dirname(__FILE__) . '/find.php');
+
+if ($config['search'] == 'cloudant')
+{
+	require_once (dirname(__FILE__) . '/find.php');
+}
+if ($config['search'] == 'elastic')
+{
+	require_once (dirname(__FILE__) . '/elastic.php');
+}
+
 require_once (dirname(__FILE__) . '/nameparse.php');
 require_once (dirname(__FILE__) . '/reference.php');
 
@@ -462,6 +472,11 @@ function main()
 							$url =  $config['couchdb_options']['database'] . "/_design/identifier/_view/doi?key=" . urlencode('"' . $identifier->id . '"');
 							//echo $url . '<br />';
 							
+							if ($config['stale'])
+							{
+								$url .= '&stale=ok';
+							}		
+							
 		
 							$resp = $couch->send("GET", "/" . $url . '&limit=1' );
 							$result = json_decode($resp);
@@ -540,8 +555,13 @@ function main()
 				
 				$url =  $config['couchdb_options']['database'] . "/_design/openurl/_view/journal_to_issn?key=" . urlencode('"' . $journal . '"');
 		
-				//echo $url;
-		
+				if ($config['stale'])
+				{
+					$url .= '&stale=ok';
+				}	
+				
+				//echo $url;				
+							
 				$resp = $couch->send("GET", "/" . $url . '&limit=1' );
 				$result = json_decode($resp);
 				
@@ -559,6 +579,11 @@ function main()
 			
 					$url = $config['couchdb_options']['database'] . "/_design/openurl/_view/triple?key=" . urlencode(json_encode($keys));
 					//echo $url . '<br />';
+	
+					if ($config['stale'])
+					{
+						$url .= '&stale=ok';
+					}			
 	
 					$resp = $couch->send("GET", "/" . $url );
 					$r = json_decode($resp);
@@ -586,8 +611,7 @@ function main()
 	if (count($openurl_result->results) == 0)
 	{			
 		find_citation(reference_to_citation_string($context_object->referent), $openurl_result);
-	}
-	
+	}	
 	
 	// ok, if we have one or more results we return these and let user/agent decide what to do
 	

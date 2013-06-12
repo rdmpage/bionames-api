@@ -65,6 +65,8 @@ $config['simstring_db'] = dirname(__FILE__) . '/db/all_names.db';
 // Stale flag for queries
 $config['stale'] = true;
 
+// Flag for full text search engine
+$config['search'] = 'elastic'; // 'cloudant', 'none'
 
 	
 ?>
