@@ -24,6 +24,11 @@ function names_published($id, $callback = '')
 	
 	$url = '_design/publication/_view/names_published?key=' . urlencode(json_encode($id));
 	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}			
+	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
 	$response_obj = json_decode($resp);

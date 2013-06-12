@@ -18,8 +18,6 @@ function clusters_with_name($name, $callback = '')
 {
 	global $config;
 	global $couch;
-	
-	global $stale_ok;
 		
 	$include_docs = true;
 	
@@ -84,8 +82,6 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 	global $config;
 	global $couch;
 	
-	global $stale_ok;
-	
 	// Names listed as "tags" of articles
 	
 	$startkey = array($name);
@@ -106,6 +102,8 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 	}	
 	
 	//echo $url;
+	
+	//exit();
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -134,12 +132,6 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 	// names published
 	$url = '_design/publication/_view/names?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
 		
-	/*
-	if ($include_docs)
-	{
-		$url .= '&include_docs=true';
-	}
-	*/
 	
 	if ($config['stale'])
 	{
@@ -214,7 +206,7 @@ function publications_with_name($name, $year = '', $fields=array('all'), $callba
 	}
 	
 	$url = '_design/publication/_view/tags?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&reduce=false';
-		
+	
 	$include_docs = true;
 	$include_docs = false;
 	
@@ -503,9 +495,8 @@ function name_related($name, $callback = '')
 	
 	global $stale_ok;
 	
-	/*
 	// BHL page co-occurrence
-	$url = "/_design/bhl/_view/name_synonym?key=" . urlencode(json_encode($name));
+	$url = "/_design/bhl/_view/epithet?key=" . urlencode(json_encode($name));
 	
 	if ($config['stale'])
 	{
@@ -544,9 +535,7 @@ function name_related($name, $callback = '')
 			$obj->related = array_values(array_unique($obj->related));
 		}
 	}
-	
-	*/
-	
+		
 	// Names that one or more classifications say are synonyms
 	$url = "/_design/classification/_view/synonyms?key=" . urlencode(json_encode($name));
 	
@@ -557,16 +546,16 @@ function name_related($name, $callback = '')
 	
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
-	$obj = new stdclass;
+	/*$obj = new stdclass;
 	$obj->status = 404;
 	$obj->url = $url;	
-	$obj->related = array();
+	$obj->related = array();*/
 	
 	$response_obj = json_decode($resp);
 		
 	if (isset($response_obj->error))
 	{
-		$obj->error = $response_obj->error;
+		//$obj->error = $response_obj->error;
 	}
 	else
 	{
@@ -588,64 +577,66 @@ function name_related($name, $callback = '')
 		}
 	}
 	
-	// Use search index to get other possible variants
-	$to_do[] = $name;
-		
-	while (count($to_do) > 0)
-	{	
-		//echo "To do\n";
-		//print_r($to_do);
-		
-		$string = array_pop($to_do);
-		
-		// parse
-		$parts = explode(' ', $string);
-		if (count($parts) == 3)
-		{
-			// First and last (e.g., ignore subgenus, promote subspecies)
-			$query = $parts[0] . ' ' . $parts[2];
-			if (!in_array($query, $to_do) && !in_array($query, $obj->related))
-			{
-				$to_do[] = $query;
-			}
+	// Use search index to get other possible variants of a multinomial name
+	
+	if (preg_match('/\w+\s+\w+/', $name))
+	{
+		$to_do[] = $name;
 			
-			// Promote subgenus species
-			if (preg_match('/\w+ \(\w+\) \w+/', $string))
+		while (count($to_do) > 0)
+		{	
+			//echo "To do\n";
+			//print_r($to_do);
+			
+			$string = array_pop($to_do);
+			
+			// parse
+			$parts = explode(' ', $string);
+			if (count($parts) == 3)
 			{
-				$query = $parts[1] . ' ' . $parts[2];
-				$query = preg_replace('/\(/', '', $query);
-				$query = preg_replace('/\)/', '', $query);
+				// First and last (e.g., ignore subgenus, promote subspecies)
+				$query = $parts[0] . ' ' . $parts[2];
 				if (!in_array($query, $to_do) && !in_array($query, $obj->related))
 				{
 					$to_do[] = $query;
 				}
+				
+				// Promote subgenus species
+				if (preg_match('/\w+ \(\w+\) \w+/', $string))
+				{
+					$query = $parts[1] . ' ' . $parts[2];
+					$query = preg_replace('/\(/', '', $query);
+					$query = preg_replace('/\)/', '', $query);
+					if (!in_array($query, $to_do) && !in_array($query, $obj->related))
+					{
+						$to_do[] = $query;
+					}
+				}
+				
 			}
 			
-		}
+			$url = '_design/search/_view/short?key=' . urlencode(json_encode($string));
 		
-		$url = '_design/search/_view/short?key=' . urlencode(json_encode($string));
-	
-		$url .= '&stale=ok';
-	
-		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
-	
-		$response_obj = json_decode($resp);
-	
-		//print_r($response_obj);
+			$url .= '&stale=ok';
 		
-		foreach ($response_obj->rows as $row)
-		{
-			if ($row->value->type == 'nameCluster')
+			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+		
+			$response_obj = json_decode($resp);
+		
+			//print_r($response_obj);
+			
+			foreach ($response_obj->rows as $row)
 			{
-				$obj->related[] = $row->value->term;
-				if (!in_array($row->value->term, $to_do) && !in_array($row->value->term, $obj->related))
+				if ($row->value->type == 'nameCluster')
 				{
-					$to_do[] = $row->value->term;
-				}
-			}			
+					$obj->related[] = $row->value->term;
+					if (!in_array($row->value->term, $to_do) && !in_array($row->value->term, $obj->related))
+					{
+						$to_do[] = $row->value->term;
+					}
+				}			
+			}
 		}
-		
-		
 	}
 	
 	// Remove duplicates

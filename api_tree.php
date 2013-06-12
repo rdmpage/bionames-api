@@ -247,6 +247,13 @@ function main()
 		}
 		
 	}
+	
+	if (!$handled)
+	{
+		$obj = new stdclass;
+		$obj->status = 400;
+		api_output($obj, $callback);	
+	}
 
 }
 
