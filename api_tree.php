@@ -90,6 +90,7 @@ function get_trees_for_taxon($tax_id, $callback)
 	global $config;
 	$phylota_couch = new CouchSimple($config['phylota_couchdb_options']);
 	
+	// PhyLoTA index (tax_id is root of tree)
 	$url = "/_design/tree/_view/tax_id?key=" . $tax_id . '&reduce=false'; 
 	
 	if ($config['stale'])
@@ -114,10 +115,45 @@ function get_trees_for_taxon($tax_id, $callback)
 		foreach ($response_obj->rows as $row)
 		{
 			$obj->trees[] = $row->id;				
-		}
-		
+		}		
 	}
+	
+	/*
+	// Trees that contain this tax_id
+	http://direct.bionames.org:5984/phylota_184/_design/taxa/_view/tax_id_tree?start_key=[237995]&end_key=[237995,{}]&group_level=2
+	
+	$start_key 	= array((Integer)$tax_id);
+	$end_key 	= array((Integer)$tax_id, new stdclass);
+	
+	$url = "/_design/taxa/_view/tax_id_tree?start_key=" . urlencode(json_encode($start_key)) . '&end_key=' . urlencode(json_encode($end_key)) . '&group_level=2'; 
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
+	
+	$resp = $phylota_couch->send("GET", "/" . $config['phylota_couchdb_options']['database'] . $url);
+	$response_obj = json_decode($resp);
 
+	if (isset($response_obj->error))
+	{
+	}
+	else
+	{
+		if (isset($obj->error))
+		{
+			unset($obj->error);
+		}
+		$obj->status = 200;
+		foreach ($response_obj->rows as $row)
+		{
+			$obj->trees[] = $row->key[1];				
+		}		
+	}
+	
+	$obj->trees = array_unique($obj->trees);	
+	*/
+	
 	api_output($obj, $callback);
 }
 
@@ -155,6 +191,31 @@ function get_newick_strings_for_taxon($tax_id, $callback)
 		}
 		
 	}
+	
+	// get tags 
+	$url = "/_design/tree/_view/tags?key=" . $tax_id; 
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
+	
+	$resp = $phylota_couch->send("GET", "/" . $config['phylota_couchdb_options']['database'] . $url);
+	
+	$response_obj = json_decode($resp);
+	if (isset($response_obj->error))
+	{
+	}
+	else
+	{
+		$obj->tags = array();
+		foreach ($response_obj->rows as $row)
+		{
+			$obj->tags[$row->id] = $row->value;				
+		}
+		
+	}
+	
 
 	api_output($obj, $callback);
 }

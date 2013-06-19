@@ -665,7 +665,7 @@ function name_related($name, $callback = '')
 
 
 //--------------------------------------------------------------------------------------------------
-// Return taxon concepts that include this name
+// Return taxon concepts that include this name (by identifier)
 function name_to_concept($id, $callback = '')
 {
 	global $config;
@@ -713,6 +713,141 @@ function name_to_concept($id, $callback = '')
 	
 	api_output($obj, $callback);
 }
+
+//--------------------------------------------------------------------------------------------------
+// Return taxon concepts that include this name (by name)
+function namestring_to_concept($name, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	global $stale_ok;
+	
+	$url = "/_design/classification/_view/namestring_to_concept?key=" . urlencode(json_encode($name));
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
+	$include_docs = true;
+	
+	if ($include_docs)
+	{
+		$url .= '&include_docs=true';
+	}
+	
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	//echo $resp;
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+			$obj->error = 'Not found';
+		}
+		else
+		{	
+			$obj->status = 200;
+			$obj->concepts = array();
+			foreach ($response_obj->rows as $row)
+			{
+				if ($include_docs)
+				{
+					$obj->concepts[] = $row->doc;
+				}
+				else
+				{
+					$obj->concepts[] = $row->value;				
+				}
+			}
+		}
+	}
+	
+	api_output($obj, $callback);
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// Return species names associated with this genus
+function species_for_genus($name, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	global $stale_ok;
+	
+	$startkey = array($name);
+	$endkey = array($name, new stdclass);
+	$url = '_design/genus/_view/species_year?start_key=' . urlencode(json_encode($startkey)) . '&end_key=' . urlencode(json_encode($endkey));
+		
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	//echo $resp;
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (count($response_obj->rows) == 0)
+		{
+			$obj->error = 'Not found';
+		}
+		else
+		{	
+			$obj->status = 200;
+			
+			$obj->species = array();
+			
+			$years = array();
+			foreach ($response_obj->rows as $row)
+			{
+				$years[] = $row->key[1];
+				
+				$species = new stdclass;
+				$species->id = $row->id;
+				$species->name = $row->value;
+				$species->year = $row->key[1];
+				
+				$obj->species[] = $species;
+			}
+			
+			
+			// sort
+			array_multisort($years, SORT_DESC, $obj->species);
+			
+		}
+	}
+	
+	api_output($obj, $callback);
+}
+
 
 //--------------------------------------------------------------------------------------------------
 // Return names that resemble query string
@@ -843,6 +978,25 @@ function main()
 		if (isset($_GET['name']))
 		{	
 			$name = $_GET['name'];
+			
+			if (!$handled)
+			{
+				if (isset($_GET['concepts']))
+				{	
+					namestring_to_concept($name, $callback);
+					$handled = true;
+				}
+			}
+
+			if (!$handled)
+			{
+				if (isset($_GET['species']))
+				{	
+					species_for_genus($name, $callback);
+					$handled = true;
+				}
+			}
+			
 			
 			if (!$handled)
 			{
