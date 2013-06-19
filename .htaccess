@@ -8,6 +8,10 @@ RewriteEngine on
 #RewriteBase /~rpage/bionames-api/
 RewriteBase /bionames-api/
 
+#---------------------------------------------------------------------------------------------------
+# RSS
+RewriteRule ^rss   api_rss.php   [NC,L]
+
 
 #---------------------------------------------------------------------------------------------------
 # HTML
@@ -92,7 +96,10 @@ RewriteRule ^authors/lastname/(.*)   api_author.php?lastname=$1  [QSA,L]
 RewriteRule ^name/(.*)/didyoumean   api_taxon_name.php?name=$1&didyoumean  [QSA,L]
 
 # Concepts [note that this requires name GUID as parameter, not name string]
-RewriteRule ^name/(.*)/concepts   api_taxon_name.php?id=$1&concepts [QSA,L]
+RewriteRule ^name/id/(.*)/concepts   api_taxon_name.php?id=$1&concepts [QSA,L]
+
+# Concepts with name
+RewriteRule ^name/(.*)/concepts   api_taxon_name.php?name=$1&concepts [QSA,L]
 
 # Epithet
 RewriteRule ^name/(.*)/epithet   api_taxon_name.php?name=$1&epithet  [QSA,L]
@@ -108,6 +115,10 @@ RewriteRule ^name/(.*)/publications/year/([0-9]{4})   api_taxon_name.php?name=$1
 
 # Return publications tagged with this name
 RewriteRule ^name/(.*)/publications   api_taxon_name.php?name=$1&publications  [QSA,L]
+
+# Return species for a genus, reverse sorted by year
+RewriteRule ^name/(.*)/species   api_taxon_name.php?name=$1&species  [QSA,L]
+
 
 # Return clusters with this name
 RewriteRule ^name/(.*)   api_taxon_name.php?name=$1  [QSA,L]
