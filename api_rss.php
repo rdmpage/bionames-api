@@ -159,7 +159,7 @@ function api_rss($limit = 50)
 
 function main()
 {
-	$xml = api_rss(100);
+	$xml = api_rss(25);
 	
 	header("Content-type: text/xml;charset=utf-8");
 	echo $xml;
