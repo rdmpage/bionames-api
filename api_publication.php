@@ -51,12 +51,20 @@ function names_published($id, $callback = '')
 		{	
 			$obj->status = 200;
 			$obj->names = array();
+			
+			$keys = array();
+			
 			foreach ($response_obj->rows as $row)
-			{
+			{				
 				$obj->names[] = $row->value;				
+				
+				$keys[] = $row->value->nameComplete;
 			}
+			array_multisort($keys, SORT_ASC, $obj->names);
+			
 		}
 	}
+		
 	
 	api_output($obj, $callback);
 }
