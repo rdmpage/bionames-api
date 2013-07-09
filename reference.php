@@ -272,18 +272,31 @@ function reference_to_openurl($reference)
 	// generic stuff
 	
 	// authors
-	if (count($reference->author) > 0)
+	// authors
+	if (isset($reference->author))
 	{
-		$openurl .= '&amp;rft.aulast=' . urlencode($reference->author[0]->lastname);
-		$openurl .= '&amp;rft.aufirst=' . urlencode($reference->author[0]->firstname);
+		if (count($reference->author) > 0)
+		{
+			if (isset($reference->author[0]->lastname))
+			{
+				$openurl .= '&amp;rft.aulast=' . urlencode($reference->author[0]->lastname);
+				if (isset($reference->author[0]->firstname))
+				{
+					$openurl .= '&amp;rft.aufirst=' . urlencode($reference->author[0]->firstname);
+				}
+			}
+		}
+		foreach ($reference->author as $author)
+		{
+			$openurl .= '&amp;rft.au=' . urlencode($author->name);
+		}
 	}
-	foreach ($reference->author as $author)
-	{
-		$openurl .= '&amp;rft.au=' . urlencode($author->name);
-	}	
 	
 	// date
-	$openurl .= '&amp;rft.date=' . $reference->year;
+	if (isset($reference->year))
+	{
+		$openurl .= '&amp;rft.date=' . $reference->year;
+	}
 	
 	// identifiers
 	if (isset($reference->identifier))

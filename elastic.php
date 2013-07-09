@@ -48,6 +48,11 @@ function find_citation($citation, &$result, $threshold = 0.8)
 	
 	if (isset($obj->hits))
 	{
+		if (isset($result->debug))
+		{
+			$result->debug->hits = $obj->hits;
+		}	
+	
 		$best_hit = 0;
 	
 		$q = strtolower($q);
@@ -102,6 +107,9 @@ function find_citation($citation, &$result, $threshold = 0.8)
 if (0)
 {
 	$text = '(2003) A revision of the Scaphiophryne marmorata complex of marbled toads from Madagascar, including the description of a new species. Herpetological Journal, 13(2): 69--79';
+	
+	$text = 'Uchikawa, K. (1989) Ten new taxa of chiropteran myobiids of the genus Pteracarus (Acarina: Myobiidae). Bull. Br. Mus. nat. Hist. (Zool.), 55: 97-108';
+
 
 	$result = new stdclass;
 	find_citation($text, $result);

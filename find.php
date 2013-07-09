@@ -25,7 +25,7 @@ function find_citation($citation, &$result, $threshold = 0.8)
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	$obj = json_decode($resp);
 	
-	print_r($q);
+	//print_r($q);
 	
 	if (isset($obj->error))
 	{
@@ -107,7 +107,9 @@ if (0)
 	
 	$q = 'Peterson RL, Smith DA (1973) A new species of Glauconycteris (Vespertilionidae, Chiroptera). Royal Ontario Museum, Life Sciences Occasional Papers 22: 1-9.';
 	
-	find_citation($q, $result);
+	$q = 'Uchikawa, K. (1989) Ten new taxa of chiropteran myobiids of the genus Pteracarus (Acarina: Myobiidae). Bull. Br. Mus. nat. Hist. (Zool.), 55: 97-108';
+	
+	find_citation($q, $result, 0.5);
 	
 	print_r($result);
 }

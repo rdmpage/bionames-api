@@ -1,5 +1,17 @@
 <?php
 
+/*
+ OpenURL resolver that uses BioNames as source database.
+ 
+ Uses CouchDB views for identifiers and [ISSN,volume,spage] triple, and also full text search
+ (Elastic when run locally, Lucene on Cloudant). 
+ 
+ Note that it accepts unparsed citations if they are supplied using the "rft.dat" key, e.g. 
+ 
+http://bionames.org/api/openurl.php?rft.dat=Uchikawa%2C%20K.%20%281989%29%20Ten%20new%20taxa%20of%20chiropteran%20myobiids%20of%20the%20genus%20Pteracarus%20%28Acarina%3A%20Myobiidae%29.%20Bull.%20Br.%20Mus.%20nat.%20Hist.%20%28Zool.%29%2C%2055%3A%2097-108 
+ 
+*/
+
 
 require_once (dirname(__FILE__) . '/couchsimple.php');
 
@@ -17,6 +29,91 @@ require_once (dirname(__FILE__) . '/reference.php');
 
 require_once (dirname(__FILE__) . '/api_utils.php');
 
+$debug_openurl = false;
+
+
+
+//--------------------------------------------------------------------------------------------------
+// From http://snipplr.com/view/6314/roman-numerals/
+// Expand subtractive notation in Roman numerals.
+function roman_expand($roman)
+{
+	$roman = str_replace("CM", "DCCCC", $roman);
+	$roman = str_replace("CD", "CCCC", $roman);
+	$roman = str_replace("XC", "LXXXX", $roman);
+	$roman = str_replace("XL", "XXXX", $roman);
+	$roman = str_replace("IX", "VIIII", $roman);
+	$roman = str_replace("IV", "IIII", $roman);
+	return $roman;
+}
+    
+//--------------------------------------------------------------------------------------------------
+// From http://snipplr.com/view/6314/roman-numerals/
+// Convert Roman number into Arabic
+function arabic($roman)
+{
+	$result = 0;
+	
+	$roman = strtoupper($roman);
+
+	// Remove subtractive notation.
+	$roman = roman_expand($roman);
+
+	// Calculate for each numeral.
+	$result += substr_count($roman, 'M') * 1000;
+	$result += substr_count($roman, 'D') * 500;
+	$result += substr_count($roman, 'C') * 100;
+	$result += substr_count($roman, 'L') * 50;
+	$result += substr_count($roman, 'X') * 10;
+	$result += substr_count($roman, 'V') * 5;
+	$result += substr_count($roman, 'I');
+	return $result;
+} 
+
+//--------------------------------------------------------------------------------------------------
+// Convert Arabic numerals into Roman numerals.
+function roman($arabic)
+{
+	$ones = Array("", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX");
+	$tens = Array("", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC");
+	$hundreds = Array("", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM");
+	$thousands = Array("", "M", "MM", "MMM", "MMMM");
+
+	if ($arabic > 4999)
+	{
+		// For large numbers (five thousand and above), a bar is placed above a base numeral to indicate multiplication by 1000.
+		// Since it is not possible to illustrate this in plain ASCII, this function will refuse to convert numbers above 4999.
+		die("Cannot represent numbers larger than 4999 in plain ASCII.");
+	}
+	elseif ($arabic == 0)
+	{
+		// About 725, Bede or one of his colleagues used the letter N, the initial of nullae,
+		// in a table of epacts, all written in Roman numerals, to indicate zero.
+		return "N";
+	}
+	else
+	{
+		// Handle fractions that will round up to 1.
+		if (round(fmod($arabic, 1) * 12) == 12)
+		{
+			$arabic = round($arabic);
+		}
+
+		// With special cases out of the way, we can proceed.
+		// NOTE: modulous operator (%) only supports integers, so fmod() had to be used instead to support floating point.
+		$roman = $thousands[($arabic - fmod($arabic, 1000)) / 1000];
+		$arabic = fmod($arabic, 1000);
+		$roman .= $hundreds[($arabic - fmod($arabic, 100)) / 100];
+		$arabic = fmod($arabic, 100);
+		$roman .= $tens[($arabic - fmod($arabic, 10)) / 10];
+		$arabic = fmod($arabic, 10);
+		$roman .= $ones[($arabic - fmod($arabic, 1)) / 1];
+		$arabic = fmod($arabic, 1);
+
+
+		return $roman;
+	}
+}
 //--------------------------------------------------------------------------------------------------
 /**
  * @brief Parse OpenURL parameters and return context object
@@ -27,7 +124,7 @@ require_once (dirname(__FILE__) . '/api_utils.php');
  */
 function parse_openurl($params, &$context_object)
 {
-	global $debug;
+	global $debug_openurl;
 	
 	$context_object->referring_entity = new stdClass;
 	$context_object->referent = new stdClass;
@@ -100,6 +197,7 @@ function parse_openurl($params, &$context_object)
 				$context_object->referent->type = 'article';
 				break;
 				
+			// ISSN
 			case 'rft.issn':
 			case 'issn':
 				$identifier = new stdclass;
@@ -281,8 +379,7 @@ function parse_openurl($params, &$context_object)
 				}
 				$context_object->referent->journal->pages = $value[0];
 				break;
-
-						
+				
 			default:
 				$k = str_replace("rft.", '', $key);
 				$context_object->referent->$k = $value[0];				
@@ -383,8 +480,7 @@ function main()
 	global $config;
 	global $couch;
 	
-	global $debug;
-	$debug = false;
+	$debug_openurl = false;
 	
 	$webhook = '';
 	$callback = '';
@@ -403,7 +499,7 @@ function main()
 	
 	if (isset($_GET['debug']))
 	{	
-		$debug = true;
+		$debug_openurl = true;
 	}
 	
 	if (isset($_GET['callback']))
@@ -422,25 +518,9 @@ function main()
 	  $params[$key][] = trim(urldecode($value));
 	}
 	
-	if ($debug)
-	{
-		echo '<h1>Params</h1>';
-		echo '<pre>';
-		print_r($params);
-		echo '</pre>';
-	}
-
 	// This is what we got from user
 	$context_object = new stdclass;
 	parse_openurl($params, $context_object);
-	
-	if ($debug)
-	{
-		echo '<h1>Referent</h1>';
-		echo '<pre>';
-		print_r($context_object);
-		echo '</pre>';
-	}
 	
 	// OK, can we find this?
 	
@@ -451,6 +531,11 @@ function main()
 	$openurl_result->context_object = $context_object;
 	
 	$openurl_result->results = array();
+	
+	if ($debug_openurl)
+	{
+		$openurl_result->debug = new stdclass;
+	}
 	
 		
 	// via DOI or other identifier
@@ -463,7 +548,12 @@ function main()
 			$found = false;
 			foreach ($context_object->referent->identifier as $identifier)
 			{
-				//print_r($identifier);
+			
+				if ($debug_openurl)
+				{
+					$openurl_result->debug->identifiers[] = $identifier;
+				}
+			
 				if (!$found)
 				{
 					switch ($identifier->type)
@@ -483,6 +573,8 @@ function main()
 				
 							if (count($result->rows) == 1)
 							{
+								$openurl_result->debug->found_from_identifiers = true;
+							
 								$found = true;
 								
 								$match = new stdclass;
@@ -512,12 +604,23 @@ function main()
 		{
 			$journal = $context_object->referent->journal->name;
 			
+			// Convert accented characters
+			$journal = strtr(utf8_decode($journal), 
+					utf8_decode("ÀÁÂÃÄÅàáâãäåĀāĂăĄąÇçĆćĈĉĊċČčÐðĎďĐđÈÉÊËèéêëĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħÌÍÎÏìíîïĨĩĪīĬĭĮįİıĴĵĶķĸĹĺĻļĽľĿŀŁłÑñŃńŅņŇňŉŊŋÒÓÔÕÖØòóôõöøŌōŎŏŐőŔŕŖŗŘřŚśŜŝŞşŠšſŢţŤťŦŧÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųŴŵÝýÿŶŷŸŹźŻżŽž"),
+					"aaaaaaaaaaaaaaaaaaccccccccccddddddeeeeeeeeeeeeeeeeeegggggggghhhhiiiiiiiiiiiiiiiiiijjkkkllllllllllnnnnnnnnnnnoooooooooooooooooorrrrrrsssssssssttttttuuuuuuuuuuuuuuuuuuuuwwyyyyyyzzzzzz");
+				 
+			$journal = utf8_encode($journal);
+						
 			$journal = strtolower($journal);
 			
 			$journal = preg_replace('/\bfor\b/', '', $journal);
 			$journal = preg_replace('/\band\b/', '', $journal);
 			$journal = preg_replace('/\bof\b/', '', $journal);
 			$journal = preg_replace('/\bthe\b/', '', $journal);
+
+			$journal = preg_replace('/\bde\b/', '', $journal);
+			$journal = preg_replace('/\bla\b/', '', $journal);
+			$journal = preg_replace('/\bet\b/', '', $journal);
 			
 			// whitespace
 			$journal = preg_replace('/\s+/', '', $journal);
@@ -549,6 +652,12 @@ function main()
 			
 			if ($triple)
 			{
+				if ($debug_openurl)
+				{
+					$openurl_result->debug->triple = $triple;
+					$openurl_result->debug->journal = $journal;
+				}
+			
 				$openurl_result->status = 200;
 			
 				// i. get ISSN
@@ -569,6 +678,11 @@ function main()
 				{
 					// we have an ISSN for this journal
 					$issn = $result->rows[0]->value;
+					
+					if ($debug_openurl)
+					{
+						$openurl_result->debug->issn = $issn;
+					}
 	
 					// build triple [ISSN, volume, spage]			
 					$keys = array(
@@ -576,6 +690,11 @@ function main()
 						$volume,
 						$spage
 						);
+						
+					if ($debug_openurl)
+					{
+						$openurl_result->debug->keys = $keys;
+					}
 			
 					$url = $config['couchdb_options']['database'] . "/_design/openurl/_view/triple?key=" . urlencode(json_encode($keys));
 					//echo $url . '<br />';
@@ -600,7 +719,52 @@ function main()
 							$openurl_result->results[] = $match;
 						}
 					}
-	
+					else
+					{
+						// No hit, try converting volume to/from Roman
+						if (is_numeric($volume))
+						{
+							$volume = strtolower (roman($volume));
+						}
+						else
+						{
+							$volume = arabic($volume);
+						}
+						$keys = array(
+							$issn, 
+							$volume,
+							$spage
+							);
+							
+						if ($debug_openurl)
+						{
+							$openurl_result->debug->keys = $keys;
+						}
+				
+						$url = $config['couchdb_options']['database'] . "/_design/openurl/_view/triple?key=" . urlencode(json_encode($keys));
+						//echo $url . '<br />';
+		
+						if ($config['stale'])
+						{
+							$url .= '&stale=ok';
+						}			
+		
+						$resp = $couch->send("GET", "/" . $url );
+						$r = json_decode($resp);
+						//print_r($r);
+						
+						if (count($r->rows) > 0)
+						{
+							foreach ($r->rows as $row)
+							{
+								$match = new stdclass;
+								$match->match = true;
+								$match->triple = $keys;
+								$match->id = $row->id;
+								$openurl_result->results[] = $match;
+							}
+						}
+					}
 				}
 			}
 				
@@ -610,7 +774,15 @@ function main()
 	// full text search
 	if (count($openurl_result->results) == 0)
 	{			
-		find_citation(reference_to_citation_string($context_object->referent), $openurl_result);
+		// Has user supplied an unparsed string?
+		if (isset($context_object->referent->dat))
+		{
+			find_citation($context_object->referent->dat, $openurl_result, 0.7);
+		}
+		else
+		{
+			find_citation(reference_to_citation_string($context_object->referent), $openurl_result, 0.7);
+		}
 	}	
 	
 	// ok, if we have one or more results we return these and let user/agent decide what to do
