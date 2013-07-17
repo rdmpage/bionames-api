@@ -143,6 +143,51 @@ function api_rss($limit = 50)
 				
 					break;
 					
+				case 'nameCluster':
+					$entry = $feed->createElement('entry');
+					$entry = $rss->appendChild($entry);
+					
+					// title
+					$title = $entry->appendChild($feed->createElement('title'));
+					$title->appendChild($feed->createTextNode($result->doc->nameComplete));
+
+					// link
+					$link = $entry->appendChild($feed->createElement('link'));
+					$link->setAttribute('rel', 'alternate');
+					$link->setAttribute('type', 'text/html');
+					$link->setAttribute('href', 'http://bionames.org/names/' . $result->doc->_id);
+
+					// dates
+					$updated = $entry->appendChild($feed->createElement('updated'));
+					$updated->appendChild($feed->createTextNode(date(DATE_ATOM, time())));
+	
+					$created = $entry->appendChild($feed->createElement('published'));
+					$created->appendChild($feed->createTextNode(date(DATE_ATOM, time())));
+
+					// id
+					$id = $entry->appendChild($feed->createElement('id'));
+					$id->appendChild($feed->createTextNode($result->doc->_id));
+
+					$description = '<div>';
+					if ($result->doc->group)
+					{
+						$description .= join(',', $result->doc->group);
+					}
+					$description .= '</div>';
+					
+					// content
+					$content = $entry->appendChild($feed->createElement('content'));
+					$content->setAttribute('type', 'html');
+					$content->appendChild($feed->createTextNode($description));
+
+					// summary
+					$summary = $entry->appendChild($feed->createElement('summary'));
+					$summary->setAttribute('type', 'html');
+					$summary->appendChild($feed->createTextNode($description));
+				
+					break;
+					
+					
 				default:
 					break;
 			}
