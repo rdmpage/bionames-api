@@ -15,6 +15,51 @@ function default_display()
 }
 
 //--------------------------------------------------------------------------------------------------
+// Simple search for phylogenies with a taxon name in them
+function simple_phylogeny_search($query)
+{
+	global $config;
+	
+	$tree = array();
+		
+	$phylota_couch = new CouchSimple($config['phylota_couchdb_options']);
+	
+	$startkey = array($query);
+	$endkey = array($query, new stdclass);
+
+
+	$url = '_design/taxa/_view/tree?startkey=' . urlencode(json_encode($startkey)) . '&endkey=' . urlencode(json_encode($endkey)) . '&group_level=2&limit=5';
+
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+
+	$resp = $phylota_couch->send("GET", "/" . $config['phylota_couchdb_options']['database'] . "/" . $url);
+	
+	$response_obj = json_decode($resp);
+	
+	
+	if (isset($response_obj->error))
+	{
+	}
+	else
+	{
+		foreach ($response_obj->rows as $row)
+		{
+			$tree[$row->key[1]] = new stdclass;
+			$tree[$row->key[1]]->count = $row->value;
+			$tree[$row->key[1]]->term = $row->key[0];
+		}
+		
+	}	
+	
+	return $tree;
+}
+
+
+
+//--------------------------------------------------------------------------------------------------
 // Simple search
 function simple_search($query, $callback = '')
 {
@@ -108,6 +153,13 @@ function simple_search($query, $callback = '')
 				}					
 				array_multisort($obj->results->facets['nameCluster'], SORT_ASC, SORT_NUMERIC, $scores);
 			}
+		}
+		
+		// trees
+		$tree = simple_phylogeny_search($query);
+		if (count($tree) > 0)
+		{
+			$obj->results->facets['tree'] = $tree;
 		}
 		
 		
