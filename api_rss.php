@@ -36,6 +36,9 @@ function api_rss($limit = 50)
 	$xml = '';
 	
 	$url = '_changes?limit=' . $limit . '&descending=true&include_docs=true';
+	
+	$url .= '&filter=' . urlencode('app/publications');
+	
 		
 	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 	
@@ -142,7 +145,7 @@ function api_rss($limit = 50)
 					$summary->appendChild($feed->createTextNode($description));
 				
 					break;
-					
+									
 				case 'nameCluster':
 					$entry = $feed->createElement('entry');
 					$entry = $rss->appendChild($entry);
@@ -187,7 +190,6 @@ function api_rss($limit = 50)
 				
 					break;
 					
-					
 				default:
 					break;
 			}
@@ -204,7 +206,7 @@ function api_rss($limit = 50)
 
 function main()
 {
-	$xml = api_rss(25);
+	$xml = api_rss(10);
 	
 	header("Content-type: text/xml;charset=utf-8");
 	echo $xml;
