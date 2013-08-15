@@ -128,6 +128,49 @@ function display_group_names_year ($group, $year, $callback = '')
 }
 
 
+//--------------------------------------------------------------------------------------------------
+// Number of names with publications in a given group
+function display_group_count ($group, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	global $stale_ok;	
+	
+	$path_array = json_decode(stripcslashes($group));
+	
+	$startkey = array($path_array, (Integer)0);
+	$endkey = array($path_array, (Integer)2014);
+	
+	$url = '_design/ion/_view/group?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&reduce=true';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}	
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		$obj->status = 200;
+		$obj->group = $path_array;
+		$obj->count = $response_obj->rows[0]->value;
+		
+	}
+
+	api_output($obj, $callback);
+}
+
 
 
 
@@ -170,6 +213,12 @@ function main()
 					$handled = true;
 				}
 			}
+			
+			if (isset($_GET['count']))
+			{
+				display_group_count($group, $callback);
+				$handled = true;
+			}			
 			
 			if (!$handled)
 			{
