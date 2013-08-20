@@ -183,6 +183,142 @@ function display_namespace_count ($namespace, $callback = '')
 }
 
 
+
+//--------------------------------------------------------------------------------------------------
+// List identifiers that are the "same as" this 
+function display_sameAs ($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->identifier = $id;
+	
+	
+	// Match NCBI via EOL mapping
+	if (preg_match('/^ncbi\//', $id))
+	{
+		$url = '_design/eol/_view/ncbi?key=' . urlencode('"' . $id . '"');
+	
+		if ($config['stale'])
+		{
+			$url .= '&stale=ok';
+		}	
+			
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+
+		$response_obj = json_decode($resp);
+	
+		if (isset($response_obj->error))
+		{
+			$obj->error = $response_obj->error;
+		}
+		else
+		{
+			if (count($response_obj->rows) == 0)
+			{
+			}
+			else
+			{	
+				$obj->sameAs = new stdclass;
+				$obj->sameAs->eol = (Integer)$response_obj->rows[0]->value;
+				
+				// get GBIF
+				$url = '_design/eol/_view/provider_id?key=' . $obj->sameAs->eol;
+			
+				if ($config['stale'])
+				{
+					$url .= '&stale=ok';
+				}	
+					
+				$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+		
+				$response_obj = json_decode($resp);
+				if (isset($response_obj->error))
+				{
+				}
+				else
+				{
+					foreach ($response_obj->rows as $row)
+					{
+						if (preg_match('/^gbif\/(?<id>\d+)$/', $row->value, $m))
+						{
+							$obj->sameAs->gbif = (Integer)$m['id'];
+						}
+					}
+				}
+				
+				$obj->status = 200;
+			}
+		}
+	}
+	
+	// Match GBIF via my mapping (private EOL mapping)
+	if (preg_match('/^gbif\//', $id))
+	{
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($id));
+
+		$response_obj = json_decode($resp);
+	
+		if (isset($response_obj->error))
+		{
+			$obj->error = $response_obj->error;
+		}
+		else
+		{
+			if (isset($response_obj->identifier))
+			{
+				if (isset($response_obj->identifier->eol))
+				{			
+					$obj->sameAs = new stdclass;
+					$obj->sameAs->eol = (Integer)$response_obj->identifier->eol[0];
+				
+					
+					// get NCBI
+					$url = '_design/eol/_view/provider_id?key=' . $obj->sameAs->eol;
+				
+					if ($config['stale'])
+					{
+						$url .= '&stale=ok';
+					}	
+						
+					$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+			
+					$response_obj = json_decode($resp);
+					if (isset($response_obj->error))
+					{
+					}
+					else
+					{
+						foreach ($response_obj->rows as $row)
+						{
+							if (preg_match('/^ncbi\/(?<id>\d+)$/', $row->value, $m))
+							{
+								$obj->sameAs->ncbi = (Integer)$m['id'];
+							}
+						}
+					}
+					
+				}
+				$obj->status = 200;
+			}
+		}
+	}
+	
+
+
+	if ($status == 404)
+	{
+		header('HTTP/1.1 404 Not Found');
+	}	
+	
+	api_output($obj, $callback);
+}
+
+
+
+
 //--------------------------------------------------------------------------------------------------
 function main()
 {
@@ -217,6 +353,13 @@ function main()
 		if (isset($_GET['id']))
 		{	
 			$id = $_GET['id'];
+			
+			// sameAs mapping...
+			if (isset($_GET['sameas']))
+			{	
+				display_sameAs($id, $callback);
+				$handled = true;
+			}
 	
 			// Thumbnail image 
 			if (isset($_GET['id']) && isset($_GET['thumbnail']))

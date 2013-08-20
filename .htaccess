@@ -54,6 +54,11 @@ RewriteRule ^search/(.*)	api_search.php?q=$1	[QSA,L]
 #---------------------------------------------------------------------------------------------------
 # Object
 
+# SameAs
+RewriteRule ^id/(.*)/sameas   	api_id.php?id=$1&sameas  [QSA,L]
+RewriteRule ^id/(.*)/sameAs   	api_id.php?id=$1&sameas  [QSA,L]
+
+
 # Image (binary)
 RewriteRule ^id/(.*)/thumbnail/image   api_id.php?id=$1&thumbnail&image  [QSA,L]
 
@@ -174,7 +179,8 @@ RewriteRule ^journals/issn/(.*)/volumes/(.*)/year/(.*)   api_journal.php?issn=$1
 RewriteRule ^journals/issn/(.*)/volumes   api_journal.php?issn=$1&volumes  [QSA,L]
 
 # Articles per journal
-RewriteRule ^journals/issn/(.*)/count   api_journal.php?issn=$1&count  [QSA,L]
+#RewriteRule ^journals/issn/(.*)/count   api_journal.php?issn=$1&count  [QSA,L]
+RewriteRule ^journals/issn/count   api_journal.php?issn=&count  [QSA,L]
 
 # Localities in articles in journal
 RewriteRule ^journals/issn/(.*)/geometry   api_journal.php?issn=$1&geometry [QSA,L]
