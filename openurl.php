@@ -522,6 +522,8 @@ function main()
 	$context_object = new stdclass;
 	parse_openurl($params, $context_object);
 	
+	//print_r($context_object);
+	
 	// OK, can we find this?
 	
 	// result object

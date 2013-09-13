@@ -46,6 +46,8 @@ function find_citation($citation, &$result, $threshold = 0.8)
 		
 	$obj = json_decode($response);
 	
+	//print_r($response);
+	
 	if (isset($obj->hits))
 	{
 		if (isset($result->debug))

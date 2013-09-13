@@ -213,7 +213,7 @@ function reference_to_openurl($reference)
 	
 	//print_r($reference);
 	
-	if (isset($reference->journal))
+	if (isset($reference->journal) || $reference->type == 'article')
 	{
 		$openurl .= '&amp;rft_val_fmt=info:ofi/fmt:kev:mtx:journal';
 		$openurl .= '&amp;genre=article';
@@ -264,7 +264,15 @@ function reference_to_openurl($reference)
 	}
 	else
 	{
-		// not a journal...
+		if ($reference->type == 'book')
+		{
+			$openurl .= '&amp;rft.btitle=' . urlencode($reference->title);
+		}
+		else
+		{
+			$openurl .= '&amp;rft.title=' . urlencode($reference->title);		
+		}
+		
 		$openurl .= '&amp;rft.pages=' . $reference->journal->pages;
 		
 	}

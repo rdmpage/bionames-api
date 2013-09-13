@@ -15,6 +15,110 @@ function default_display()
 }
 
 //--------------------------------------------------------------------------------------------------
+function cited_by($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	// 1. Get this publication
+
+	// grab JSON from CouchDB
+	$couch_id = $id;
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->id = $id;
+	$obj->status = 404;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		$obj->status = 200;
+		$doc = json_decode($resp);
+		
+		$obj->references = array();
+		
+		
+		// 2. Iterate over identifiers and collect hits
+		
+		$keys = array();
+		
+		// Get list of identifiers for this reference
+		if (isset($doc->identifier))
+		{
+			foreach ($doc->identifier as $identifier)
+			{
+				$keys[] = $identifier;
+			}
+		}
+		else
+		{
+			// use local BioNames id
+			$identifier = new stdclass;
+			$identifier->type = "bionames";
+			$identifier->id = $id;
+			
+			$keys[] = $identifier;
+		}
+		
+		$citedby = array();
+		
+		foreach ($keys as $key)
+		{
+			$url = '_design/references/_view/cited_by?key=' . urlencode(json_encode($key));
+
+			if ($config['stale'])
+			{
+				$url .= '&stale=ok';
+			}			
+			
+			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+			
+			$response_obj = json_decode($resp);
+						
+			if (isset($response_obj->error))
+			{
+				$obj->error = $response_obj->error;
+			}
+			else
+			{
+				foreach ($response_obj->rows as $row)
+				{
+					$citedby[] = $row->id;
+					
+					// Store local id of reference (gives us a list of different ways this article is cited)
+					$obj->references[$row->id] = $row->value;
+				}
+			}			
+		}
+		
+		// get each document
+		
+		$citedby = array_unique($citedby);
+		
+		$obj->citedby = array();
+		foreach ($citedby as $cite)
+		{
+			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($cite));
+			$response_obj = json_decode($resp);
+			
+			$obj->citedby[] = $response_obj;
+
+		}
+		
+	}
+	
+	api_output($obj, $callback);
+}	
+	
+
+
+//--------------------------------------------------------------------------------------------------
 function names_published($id, $callback = '')
 {
 	global $config;
@@ -116,6 +220,17 @@ function main()
 					$handled = true;
 				}
 			}
+			
+			if (!$handled)
+			{
+				if (isset($_GET['citedby']))
+				{	
+					cited_by($id, $callback);
+					$handled = true;
+				}
+			}
+			
+			
 		}
 	}
 

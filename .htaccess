@@ -132,7 +132,7 @@ RewriteRule ^name/(.*)   api_taxon_name.php?name=$1  [QSA,L]
 # Publication
 
 RewriteRule ^publication/(.*)/names  api_publication.php?id=$1&names   [QSA,L]
-
+RewriteRule ^publication/(.*)/citedby  api_publication.php?id=$1&citedby   [QSA,L]
 
 #---------------------------------------------------------------------------------------------------
 # Taxon concept (classification)
