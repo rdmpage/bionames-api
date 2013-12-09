@@ -171,6 +171,194 @@ function simple_search($query, $callback = '')
 	api_output($obj, $callback);
 }
 
+//--------------------------------------------------------------------------------------------------
+// Search with results in exhibit format
+function search_exhibit($query, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	$out = new stdclass;
+	$out->status = 404;
+	
+		
+	// clean
+	$query = str_replace(",", "", $query);
+	
+	$url = "_design/search/_view/short?key=" . urlencode(json_encode($query)) . '&limit=1000';
+	
+	if ($config['stale'])
+	{
+		$url .= '&stale=ok';
+	}		
+		
+	if (1)
+	{
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	}
+	else
+	{
+		// Cloudant
+		$test_config['couchdb_options'] = array(
+			'database' => 'bionames',
+			'host' => 'rdmpage:peacrab@rdmpage.cloudant.com',
+			'port' => 5984
+			);	
+		$test_couch = new CouchSimple($test_config['couchdb_options']);
+
+		$resp = $test_couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	}
+	
+	//echo $resp;
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		$obj->status = 200;
+	
+		$obj->results = new stdclass;
+		$obj->results->facets = array();
+		
+		foreach ($response_obj->rows as $row)
+		{
+			$type = $row->value->type;
+			
+			// Filter out EOL concepts as we're not ready for this just yet...
+			if (($type == 'taxonConcept') && preg_match('/^eol/', $row->value->id))
+			{
+			}
+			else
+			{
+				if (!isset($obj->results->facets[$type]))
+				{
+					$obj->results->facets[$type] = array();
+				}
+				if (!isset($obj->results->facets[$type][$row->value->id]))
+				{
+					$obj->results->facets[$type][$row->value->id] = new stdclass;
+					$obj->results->facets[$type][$row->value->id]->count = 0;
+					$obj->results->facets[$type][$row->value->id]->term = $row->value->term;
+				}
+				$obj->results->facets[$type][$row->value->id]->count++;
+			}
+		}
+		
+		
+		// trees
+		$tree = simple_phylogeny_search($query);
+		if (count($tree) > 0)
+		{
+			$obj->results->facets['tree'] = $tree;
+		}
+		
+		// convert
+		$out->status = 200;
+		$out->types = new stdclass;
+		$out->items= array();
+		
+		foreach ($obj->results->facets as $k => $v)
+		{
+			$out->types->${k} = new stdclass;
+			$out->types->${k}->pluralLabels = $k . 's';
+			
+			foreach ($v as $key => $value)
+			{
+				$item = new stdclass;
+				$item->type = $k;
+				$item->label = $value->term;
+				$item->authors = array();
+				
+				switch ($k)
+				{
+					case 'article':
+					case 'book':
+					case 'generic':
+						$item->uri = 'references/' . $key;			
+					
+						// get more details
+						
+						$j = get('http://bionames.org/api/id/' . $key);
+						
+						$o = json_decode($j);
+						
+						$item->year = $o->year;
+						
+						if (isset($o->journal))
+						{
+							$item->journal = $o->journal->name;
+						}
+		
+						if (isset($o->author))
+						{
+							foreach ($o->author as $a)
+							{
+								$item->authors[] = $a->name;
+							}
+						}
+						
+						if (isset($o->thumbnail))
+						{
+							$item->imageURL = 'api/id/' . $key . '/thumbnail/image';
+						}
+						else
+						{
+							$item->imageURL = 'images/100x150.png';
+						}
+						
+						break;
+						
+					case 'nameCluster':
+						$item->uri = 'names/' . $key;
+						break;
+						
+					case 'tree':
+						$item->label = $key;
+						$item->uri = $key;
+						break;
+					
+					case 'taxonConcept':
+						$item->uri = $key;
+						
+						if (preg_match('/gbif/', $key))
+						{
+							$item->label .= ' [GBIF]';
+						}
+						if (preg_match('/ncbi/', $key))
+						{
+							$item->label .= ' [NCBI]';
+						}
+						break;
+						
+						
+					default:
+						$item->uri = $key;
+						break;
+				}
+				
+				
+				
+				$out->items[] = $item;
+			}
+			
+			
+		}		
+		
+		
+		
+		//print_r($obj);
+	}	
+
+	api_output($out, $callback);
+}
 
 
 //--------------------------------------------------------------------------------------------------
@@ -205,9 +393,21 @@ function main()
 		if (isset($_GET['q']))
 		{	
 			$query = $_GET['q'];
-					
-			simple_search($query, $callback);
-			$handled = true;
+			
+			if (!$handled)
+			{
+				if (isset($_GET['exhibit']))
+				{	
+					search_exhibit($query, $callback);
+					$handled = true;
+				}
+			}
+			
+			if (!$handled)
+			{
+				simple_search($query, $callback);
+				$handled = true;
+			}
 		}
 	}
 
