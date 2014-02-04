@@ -269,11 +269,17 @@ function search_crossref(&$reference)
 
 	if ($match)
 	{
-		$identifiers = reference_identifiers($reference);
-		$have_doi = isset($identifiers['doi']);
-		if (!$have_doi)
+		// check if we already have a DOI
+		$have = false;
+		foreach ($reference->identifier as $i)
 		{
-			$identifier = new stdclass;
+			if ($i->type == 'doi')
+			{
+				$have = true;
+			}
+		}
+		if (!$have)
+		{
 			$identifier->type = 'doi';
 			$identifier->id = $obj->results[0]->doi;
 			$reference->identifier[] = $identifier;
@@ -332,8 +338,16 @@ function main()
 							switch ($identifier->type)
 							{
 								case 'doi':
-									if ($have_doi) {}
-									else
+									// check if we already have a DOI
+									$have = false;
+									foreach ($reference->identifier as $i)
+									{
+										if ($i->type == 'doi')
+										{
+											$have = true;
+										}
+									}
+									if (!$have)
 									{
 										$reference->identifier[]  = $identifier;
 									}
@@ -345,6 +359,7 @@ function main()
 							}
 						}
 					}
+					
 				}
 			}			
 		}

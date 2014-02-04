@@ -1,6 +1,6 @@
 <?php
 
-// Taxon name
+// Publication (a reference)
 
 require_once (dirname(__FILE__) . '/couchsimple.php');
 require_once (dirname(__FILE__) . '/lib.php');
@@ -13,6 +13,54 @@ function default_display()
 {
 	echo "hi";
 }
+
+//--------------------------------------------------------------------------------------------------
+// Get raw fulltext for article
+function get_text($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	// 1. Get this publication
+
+	// grab JSON from CouchDB
+	$couch_id = $id;
+		
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($couch_id));
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->id = $id;
+	$obj->status = 404;
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		$obj->status = 200;
+		$reference = json_decode($resp);
+		
+		// case 1: PDF
+		if (isset($reference->file->sha1))
+		{
+			$sha1 = $reference->file->sha1;
+
+			// get text from PDF
+			$url = 'http://bionames.org/bionames-archive/api_get_text.php?sha1=' . $sha1;
+			$json = get($url);
+			if ($json != '')
+			{
+				$obj = json_decode($json);
+			}
+		}		
+		
+	}
+	
+	api_output($obj, $callback);
+}	
+	
 
 //--------------------------------------------------------------------------------------------------
 function cited_by($id, $callback = '')
@@ -53,7 +101,26 @@ function cited_by($id, $callback = '')
 		{
 			foreach ($doc->identifier as $identifier)
 			{
-				$keys[] = $identifier;
+				
+				if (is_numeric($identifier->id))
+				{
+					$keys[] = $identifier;
+				}
+				else
+				{
+					// provide upper and lower case versions of alphanumeric identifiers
+					$identifier_lc = new stdclass;
+					$identifier_lc->type = $identifier->type;
+					$identifier_lc->id = strtolower($identifier->id);
+					
+					$keys[] = $identifier_lc;
+
+					$identifier_uc = new stdclass;
+					$identifier_uc->type = $identifier->type;
+					$identifier_uc->id = strtoupper($identifier->id);
+					
+					$keys[] = $identifier_lc;
+				}					
 			}
 		}
 		else
@@ -220,6 +287,16 @@ function main()
 					$handled = true;
 				}
 			}
+			
+			if (!$handled)
+			{
+				if (isset($_GET['text']))
+				{	
+					get_text($id, $callback);
+					$handled = true;
+				}
+			}
+			
 			
 			if (!$handled)
 			{
