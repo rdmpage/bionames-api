@@ -54,7 +54,33 @@ function get_text($id, $callback = '')
 			{
 				$obj = json_decode($json);
 			}
-		}		
+		}
+		
+		if (!isset($obj->pages))
+		{
+			// case 2: BioStor
+			$biostor = 0;
+			if (isset($reference->identifier))
+			{
+				foreach ($reference->identifier as $identifier)
+				{
+					if ($identifier->type='biostor')
+					{
+						$biostor = $identifier->id;
+					}
+				}
+			}
+			if ($biostor != 0)
+			{
+				$url = 'http://biostor.org/reference/'. $biostor . '.text';
+				$text = get($url);
+				if ($text != '')
+				{
+					// split pages
+					$obj->pages = explode("\f", $text);
+				}
+			}
+		}
 		
 	}
 	
@@ -186,56 +212,91 @@ function cited_by($id, $callback = '')
 
 
 //--------------------------------------------------------------------------------------------------
-function names_published($id, $callback = '')
+function names_published($id, $namespace = '', $callback = '')
 {
 	global $config;
 	global $couch;
 		
 	$include_docs = true;
 	
-	$url = '_design/publication/_view/names_published?key=' . urlencode(json_encode($id));
-	
-	if ($config['stale'])
-	{
-		$url .= '&stale=ok';
-	}			
-	
-	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
-	
-	$response_obj = json_decode($resp);
-	
 	$obj = new stdclass;
-	$obj->status = 404;
-	$obj->url = $url;
+	$obj->status = 404;	
 	
-	if (isset($response_obj->error))
+	if ($namespace != '')
 	{
-		$obj->error = $response_obj->error;
-	}
-	else
-	{
-		if (count($response_obj->rows) == 0)
+		$url = '_design/identifier/_view/' . $namespace . '?key=' . urlencode('"' . $id . '"');
+	
+		if ($config['stale'])
 		{
-			$obj->error = 'Not found';
+			$url .= '&stale=ok';
+		}	
+		
+		$obj->url = $url;
+	
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+		$response_obj = json_decode($resp);
+		
+		$id = '';
+		
+		if (isset($response_obj->error))
+		{
+			$obj->error = $response_obj->error;
 		}
 		else
-		{	
-			$obj->status = 200;
-			$obj->names = array();
-			
-			$keys = array();
-			
-			foreach ($response_obj->rows as $row)
-			{				
-				$obj->names[] = $row->value;				
-				
-				$keys[] = $row->value->nameComplete;
+		{
+			if (count($response_obj->rows) == 1)
+			{
+				$id = $response_obj->rows[0]->id;
 			}
-			array_multisort($keys, SORT_ASC, $obj->names);
-			
 		}
 	}
+	
+	if ($id != '')
+	{
 		
+		$url = '_design/publication/_view/names_published?key=' . urlencode(json_encode($id));
+		
+		if ($config['stale'])
+		{
+			$url .= '&stale=ok';
+		}			
+		
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+		
+		$response_obj = json_decode($resp);
+		
+		$obj = new stdclass;
+		$obj->status = 404;
+		$obj->url = $url;
+		
+		if (isset($response_obj->error))
+		{
+			$obj->error = $response_obj->error;
+		}
+		else
+		{
+			if (count($response_obj->rows) == 0)
+			{
+				$obj->error = 'Not found';
+			}
+			else
+			{	
+				$obj->status = 200;
+				$obj->names = array();
+				
+				$keys = array();
+				
+				foreach ($response_obj->rows as $row)
+				{				
+					$obj->names[] = $row->value;				
+					
+					$keys[] = $row->value->nameComplete;
+				}
+				array_multisort($keys, SORT_ASC, $obj->names);
+				
+			}
+		}
+	}		
 	
 	api_output($obj, $callback);
 }
@@ -281,9 +342,15 @@ function main()
 			
 			if (!$handled)
 			{
+			
 				if (isset($_GET['names']))
 				{	
-					names_published($id, $callback);
+					$namespace = '';
+					if (isset($_GET['namespace']))
+					{
+						$namespace = $_GET['namespace'];
+					}
+					names_published($id, $namespace, $callback);
 					$handled = true;
 				}
 			}
