@@ -529,7 +529,8 @@ function name_related($name, $callback = '')
 			$obj->related = array();
 			foreach ($response_obj->rows as $row)
 			{
-				$obj->related[] = $row->value->name;
+				//$obj->related[] = $row->value->name;
+				$obj->related[] = $row->value[0];
 			}
 			
 			$obj->related = array_values(array_unique($obj->related));
