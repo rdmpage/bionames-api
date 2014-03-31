@@ -131,9 +131,9 @@ function reference_to_citeprocjs($reference, $id = 'ITEM-1')
 		foreach ($reference->author as $author)
 		{
 			$a = new stdclass;
-			if (isset($author->forename))
+			if (isset($author->firstname))
 			{
-				$a->given = $author->forename;
+				$a->given = $author->firstname;
 				$a->family = $author->lastname;
 			}
 			else
