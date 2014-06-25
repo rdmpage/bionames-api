@@ -145,7 +145,7 @@ function cited_by($id, $callback = '')
 					$identifier_uc->type = $identifier->type;
 					$identifier_uc->id = strtoupper($identifier->id);
 					
-					$keys[] = $identifier_lc;
+					$keys[] = $identifier_uc;
 				}					
 			}
 		}
@@ -173,7 +173,7 @@ function cited_by($id, $callback = '')
 			$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
 			
 			$response_obj = json_decode($resp);
-						
+									
 			if (isset($response_obj->error))
 			{
 				$obj->error = $response_obj->error;
