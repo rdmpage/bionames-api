@@ -405,8 +405,9 @@ function name_suggest($name, $limit = 5, $callback = '')
 	$response_obj = json_decode($resp);
 	
 	$obj = new stdclass;
-	$obj->status = 404;
+	$obj->status = 200;
 	$obj->url = $url;
+	$obj->suggestions[] = $name;
 	
 	if (isset($response_obj->error))
 	{
@@ -416,16 +417,20 @@ function name_suggest($name, $limit = 5, $callback = '')
 	{
 		if (count($response_obj->rows) == 0)
 		{
-			$obj->error = 'Not found';
+			//$obj->error = 'Not found';
 		}
 		else
 		{	
-			$obj->status = 200;
+			//$obj->status = 200;
 			$obj->suggestions = array();
 			foreach ($response_obj->rows as $row)
 			{
 				$obj->suggestions[] = $row->key;
 			}
+			
+			// If user query is not in the suggested list it gets
+			// overridden, to avoid this add query as is to list.
+			
 			
 			$obj->suggestions = array_values(array_unique($obj->suggestions));
 		}
