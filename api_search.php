@@ -15,6 +15,54 @@ function default_display()
 }
 
 //--------------------------------------------------------------------------------------------------
+// Search for publications based on surname year author string
+function simple_author_date_search($query, &$obj)
+{
+	global $config;
+	global $couch;
+	
+	
+	if (preg_match('/\w+ [0-9]{4}$/', $query))
+	{
+		$url = "_design/publication/_view/authorstring?key=" . urlencode(json_encode($query)) . '&limit=1000';
+	
+		if ($config['stale'])
+		{
+			$url .= '&stale=ok';
+		}	
+		
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+		$response_obj = json_decode($resp);
+				
+		if (isset($response_obj->error))
+		{
+		}
+		else
+		{			
+			foreach ($response_obj->rows as $row)
+			{
+				$type = 'article'; // hack
+				if (!isset($obj->results->facets[$type]))
+				{
+					$obj->results->facets[$type] = array();
+				}
+				if (!isset($obj->results->facets[$type][$row->id]))
+				{
+					$obj->results->facets[$type][$row->id] = new stdclass;
+					$obj->results->facets[$type][$row->id]->count = 0;
+					$obj->results->facets[$type][$row->id]->term = $row->value;
+				}
+				$obj->results->facets[$type][$row->id]->count++;
+			}
+		}
+		
+	}	
+	
+}
+
+
+//--------------------------------------------------------------------------------------------------
 // Simple search for phylogenies with a taxon name in them
 function simple_phylogeny_search($query)
 {
@@ -135,6 +183,9 @@ function simple_search($query, $callback = '')
 				$obj->results->facets[$type][$row->value->id]->count++;
 			}
 		}
+		
+		// other searches
+		simple_author_date_search($query, $obj);
 		
 		
 		// Apply any prior ordering of results here...
