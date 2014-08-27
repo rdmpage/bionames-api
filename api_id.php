@@ -121,7 +121,18 @@ function display_record_namespace ($id, $namespace, $callback = '')
 	global $config;
 	global $couch;
 	
-	$url = '_design/identifier/_view/' . $namespace . '?key=' . urlencode('"' . $id . '"') . '&include_docs=true';
+	switch ($namespace)
+	{
+		// PMID is an integer so don't quote it
+		case 'pmid':
+			break;
+			
+		default:
+			$id = urlencode('"' . $id . '"');
+			break;
+	}
+	
+	$url = '_design/identifier/_view/' . $namespace . '?key=' . $id . '&include_docs=true';
 	
 	if ($config['stale'])
 	{
