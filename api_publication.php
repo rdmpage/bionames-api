@@ -64,7 +64,7 @@ function get_text($id, $callback = '')
 			{
 				foreach ($reference->identifier as $identifier)
 				{
-					if ($identifier->type='biostor')
+					if ($identifier->type == 'biostor')
 					{
 						$biostor = $identifier->id;
 					}
@@ -77,7 +77,21 @@ function get_text($id, $callback = '')
 				if ($text != '')
 				{
 					// split pages
-					$obj->pages = explode("\f", $text);
+					$pages = explode("\f", $text);
+					
+					$obj->pages = array();
+					
+					// make sure we've no blank pages
+					foreach ($pages as $page)
+					{
+						if ($page != "")
+						{
+							$page = addcslashes($page, "\\");
+						
+							$obj->pages[] = $page;
+						}
+					}
+					
 				}
 			}
 		}
