@@ -586,9 +586,35 @@ function main()
 								$openurl_result->results[] = $match;
 								$openurl_result->status = 200;
 							}
-							
-	
 							break;
+							
+						case 'pmid':
+							$url =  $config['couchdb_options']['database'] . "/_design/identifier/_view/pmid?key=" . $identifier->id;
+							//echo $url . '<br />';
+							
+							if ($config['stale'])
+							{
+								$url .= '&stale=ok';
+							}		
+									
+							$resp = $couch->send("GET", "/" . $url . '&limit=1' );
+							$result = json_decode($resp);
+				
+							if (count($result->rows) == 1)
+							{
+								$openurl_result->debug->found_from_identifiers = true;
+							
+								$found = true;
+								
+								$match = new stdclass;
+								$match->match = true;
+								$match->id = $result->rows[0]->id;
+								$match->{$identifier->type} = $identifier->id;
+								$openurl_result->results[] = $match;
+								$openurl_result->status = 200;
+							}
+							break;
+							
 							
 						default:
 							break;
