@@ -863,6 +863,8 @@ function name_did_you_mean($name, $callback = '')
 	
 	$obj = new stdclass;
 	$obj->status = 404;
+	$obj->query = $name;
+	$obj->results = array();	
 	
 	$cmd = $config['simstring'] . ' -d ' . $config['simstring_db'] . ' -t 0.75 cosine';
 	
@@ -890,6 +892,8 @@ function name_did_you_mean($name, $callback = '')
 			// clean
 			$lines = explode("\n", $output);
 			
+			//$obj->lines = $lines;
+			
 			$hits = array();
 			foreach ($lines as $line)
 			{
@@ -903,15 +907,18 @@ function name_did_you_mean($name, $callback = '')
 			//print_r($hits);
 			//print_r(array($name));
 			
-			
-			
-			
 			$candidates = array_values(array_diff($hits, array($name)));
 			
 			$distances = array();
 			foreach ($candidates as $candidate)
 			{
-				$distances[$candidate] = levenshtein($name, $candidate);
+				$hit = new stdclass;
+				$hit->d = levenshtein($name, $candidate);
+				$hit->name = $candidate;
+				$obj->results[] = $hit;
+			
+				$distances[$candidate] = $hit->d;
+				
 			}			
 			$scores = array_values($distances);
 
@@ -919,10 +926,14 @@ function name_did_you_mean($name, $callback = '')
 
 			$obj->names = array_keys($distances);
 			
+			
+			
 		}
 	}
 	api_output($obj, $callback);
 }
+
+
 
 
 
