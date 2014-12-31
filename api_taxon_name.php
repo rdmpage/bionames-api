@@ -933,6 +933,127 @@ function name_did_you_mean($name, $callback = '')
 	api_output($obj, $callback);
 }
 
+//--------------------------------------------------------------------------------------------------
+// Return possible synonyms based on names with same epithet on same page  
+function possible_synonyms($name, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	global $stale_ok;
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	
+	$obj->nodes = array();
+	$obj->edges = array();
+	
+	$node_keys = array();
+	$node_count = 0;
+	$edge_keys = array();
+	
+	$names_to_do = array($name);
+	$names_done = array();
+	
+	while (count($names_to_do) > 0)
+	{
+		$string = array_shift($names_to_do);
+		$names_done[] = $string;
+		
+		$url = "/_design/sandbox/_view/epithet?key=" . urlencode(json_encode($string));
+	
+		if ($config['stale'])
+		{
+			$url .= '&stale=ok';
+		}	
+		
+		$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . $url);
+	
+		$response_obj = json_decode($resp);
+
+		if (!isset($response_obj->error))
+		{
+			$obj->status = 200;
+			
+			foreach ($response_obj->rows as $row)
+			{
+				if (!isset($node_keys[$row->key]))
+				{
+					$node = new stdclass;
+					$node->_id = $node_count;
+					$node->caption = $row->key;
+				
+					$obj->nodes[] = $node;
+					
+					$node_keys[$row->key] = $node_count;
+					$node_count++;
+					
+					if (!in_array($row->key, $names_to_do) && !in_array($row->key, $names_done))
+					{
+						$names_to_do[]  = $row->key;
+					}
+				}
+				if (!isset($node_keys[$row->value[0]]))
+				{
+					$node = new stdclass;
+					$node->_id = $node_count;
+					$node->caption = $row->value[0];
+				
+					$obj->nodes[] = $node;
+
+					$node_keys[$row->value[0]] = $node_count;
+					$node_count++;
+
+					if (!in_array($row->value[0], $names_to_do) && !in_array($row->value[0], $names_done))
+					{
+						$names_to_do[]  = $row->value[0];
+					}
+				}
+				
+				$source = $node_keys[$row->key];
+				$target = $node_keys[$row->value[0]];
+				
+				if ($source > $target)
+				{
+					$tmp = $target;
+					$target = $source;
+					$source = $tmp;
+				}
+				
+				$edge_key = $source . '-' . $target;
+				
+				if (!isset($edges_keys[$edge_key]))
+				{				
+				
+					$edge = new stdclass;
+					$edge->_source = $source;
+					$edge->_target = $target;
+					
+					$edge->type = "SYNONYM";
+					
+					$edge->caption = $row->key . ', ' . $row->value[0];
+					
+					$edge->references = array();
+					
+					$obj->edges[] = $edge;
+					$edges_keys[$edge_key] = $edge;
+				}
+				
+				// add data
+				
+				if (!in_array($row->value[2], $edge->references))
+				{
+					$edge->references[] = $row->value[2];
+				}
+				
+				
+			}
+		}
+	}
+
+	
+	api_output($obj, $callback);
+}
 
 
 
@@ -1068,6 +1189,15 @@ function main()
 				if (isset($_GET['didyoumean']))
 				{	
 					name_did_you_mean($name, $callback);
+					$handled = true;
+				}
+			}
+
+			if (!$handled)
+			{
+				if (isset($_GET['synonym']))
+				{	
+					possible_synonyms($name, $callback);
 					$handled = true;
 				}
 			}
