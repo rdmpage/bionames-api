@@ -190,6 +190,9 @@ RewriteRule ^journals/issn/count   api_journal.php?issn=&count  [QSA,L]
 # Localities in articles in journal
 RewriteRule ^journals/issn/(.*)/geometry   api_journal.php?issn=$1&geometry [QSA,L]
 
+# ROMEO
+RewriteRule ^journals/issn/(.*)/romeo   api_journal.php?issn=$1&romeo [QSA,L]
+
 # Journal with this ISSN
 RewriteRule ^journals/issn/([0-9]{4}[\-]?[0-9]{3}[0-9X])   api_journal.php?issn=$1  [QSA,L]
 
