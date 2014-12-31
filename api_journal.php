@@ -587,6 +587,70 @@ function display_article_geometry($namespace, $value, $callback = '')
 }
 
 
+//--------------------------------------------------------------------------------------------------
+// ROMEO status
+function display_romeo($issn, $callback = '')
+{
+	global $config;
+	
+	$url = 'http://www.sherpa.ac.uk/romeo/api29.php?issn=' . $issn;
+
+	$obj = new stdclass;
+	$obj->status = 404;
+	$obj->url = $url;
+	$obj->issn = $issn;
+	
+	$xml = get($url);
+	if ($xml != '')
+	{
+		$obj->status = 200;
+	
+		$dom= new DOMDocument;
+		$dom->loadXML($xml);
+		$xpath = new DOMXPath($dom);
+		
+		$xpath_query = '//romeocolour';
+		$nodeCollection = $xpath->query ($xpath_query);
+		foreach($nodeCollection as $node)
+		{
+			$obj->romeocolour =  $node->firstChild->nodeValue;
+		}
+
+		$xpath_query = '//publisher/preprints/prearchiving';
+		$nodeCollection = $xpath->query ($xpath_query);
+		foreach($nodeCollection as $node)
+		{
+			$obj->prearchiving =  $node->firstChild->nodeValue;
+		}
+
+		$xpath_query = '//publisher/postprints/postarchiving';
+		$nodeCollection = $xpath->query ($xpath_query);
+		foreach($nodeCollection as $node)
+		{
+			$obj->postarchiving =  $node->firstChild->nodeValue;
+		}
+
+		$xpath_query = '//publisher/pdfversion/pdfarchiving';
+		$nodeCollection = $xpath->query ($xpath_query);
+		foreach($nodeCollection as $node)
+		{
+			$obj->pdfarchiving =  $node->firstChild->nodeValue;
+		}
+
+		$xpath_query = '//publisher[1]/paidaccess/paidaccessnotes';
+		$nodeCollection = $xpath->query ($xpath_query);
+		foreach($nodeCollection as $node)
+		{
+			$obj->paidaccessnotes =  $node->firstChild->nodeValue;
+		}
+	}
+	
+	
+	api_output($obj, $callback);
+
+}
+
+
 
 
 //--------------------------------------------------------------------------------------------------
@@ -750,6 +814,16 @@ function main()
 				if (isset($_GET['count']) )
 				{
 					display_article_count('issn', $callback);
+					$handled = true;
+				}			
+			}
+
+			
+			if (!$handled)
+			{
+				if (isset($_GET['romeo']) )
+				{
+					display_romeo($issn, $callback);
 					$handled = true;
 				}			
 			}
