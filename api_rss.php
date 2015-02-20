@@ -108,7 +108,14 @@ function api_rss($limit = 50)
 					
 					// title
 					$title = $entry->appendChild($feed->createElement('title'));
-					$title->appendChild($feed->createTextNode($result->doc->title));
+					if (isset($result->doc->title))
+					{
+						$title->appendChild($feed->createTextNode($result->doc->title));
+					}
+					else
+					{
+						$title->appendChild($feed->createTextNode("Untitled"));
+					}
 
 					// link
 					$link = $entry->appendChild($feed->createElement('link'));
@@ -128,7 +135,7 @@ function api_rss($limit = 50)
 					$id->appendChild($feed->createTextNode($result->doc->_id));
 
 					$description = '<div>' . $result->doc->citation_string;
-					if ($result->doc->thumbnail)
+					if (isset($result->doc->thumbnail))
 					{
 						$description .= '<div>' . '<img src="' . $result->doc->thumbnail . '" height="100" />' . '</div>';
 					}
@@ -206,7 +213,7 @@ function api_rss($limit = 50)
 
 function main()
 {
-	$xml = api_rss(50);
+	$xml = api_rss(20);
 	
 	header("Content-type: text/xml;charset=utf-8");
 	echo $xml;

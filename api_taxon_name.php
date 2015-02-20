@@ -169,9 +169,12 @@ function publications_with_name_simple($name, $fields=array('all'), $callback = 
 	if ($include_docs)
 	{
 		$documents = array();
-		foreach ($obj->publications as $id)
+		if (isset($obj->publications))
 		{
-			$documents[] = api_get_document_simplified($id, $fields);
+			foreach ($obj->publications as $id)
+			{
+				$documents[] = api_get_document_simplified($id, $fields);
+			}
 		}
 		$obj->publications = $documents;
 	}
@@ -646,24 +649,22 @@ function name_related($name, $callback = '')
 	}
 	
 	// Remove duplicates
-	$obj->related = array_unique($obj->related);
-	
-	// Make sure this name isn't in list of "related" names
 	if (isset($obj->related))
 	{
+		$obj->related = array_unique($obj->related);
+
 		// http://stackoverflow.com/a/8135667/9684
 		$key = array_search($name,$obj->related);
 		if($key!==false){
     		unset($obj->related[$key]);
+    	}
+
+		// Ensure array is list of values without keys
+		$obj->related = array_values($obj->related);
+		if (count($obj->related) > 0)
+		{
+			$obj->status = 200;
 		}
-	}
-	
-	// Ensure array is list of values without keys
-	$obj->related = array_values($obj->related);
-	
-	if (count($obj->related) > 0)
-	{
-		$obj->status = 200;
 	}
 	
 	api_output($obj, $callback);

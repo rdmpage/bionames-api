@@ -147,7 +147,10 @@ function reference_to_citeprocjs($reference, $id = 'ITEM-1')
 	if (isset($reference->journal))
 	{
 		$citeproc_obj['container-title'] = $reference->journal->name;
-		$citeproc_obj['volume'] = $reference->journal->volume;
+		if (isset($reference->journal->volume))
+		{
+			$citeproc_obj['volume'] = $reference->journal->volume;
+		}
 		if (isset($reference->journal->issue))
 		{
 			$citeproc_obj['issue'] = $reference->journal->issue;
@@ -209,7 +212,10 @@ function reference_to_openurl($reference)
 	$openurl .= 'ctx_ver=Z39.88-2004';
 
 	// Local publication identifier
-	$openurl .= '&amp;rfe_id=' . urlencode($reference->id);
+	if (isset($reference->id))
+	{
+		$openurl .= '&amp;rfe_id=' . urlencode($reference->id);
+	}
 	
 	//print_r($reference);
 	
