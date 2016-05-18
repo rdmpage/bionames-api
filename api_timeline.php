@@ -25,7 +25,7 @@ function display_group_timeline ($group, $callback = '')
 	$path_array = json_decode(stripcslashes($group));
 	
 	$startkey = array($path_array, (Integer)0);
-	$endkey = array($path_array, (Integer)2014);
+	$endkey = array($path_array, (Integer)2016);
 	
 	$url = '_design/ion/_view/group?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&group_level=2';
 	
@@ -140,7 +140,7 @@ function display_group_count ($group, $callback = '')
 	$path_array = json_decode(stripcslashes($group));
 	
 	$startkey = array($path_array, (Integer)0);
-	$endkey = array($path_array, (Integer)2014);
+	$endkey = array($path_array, (Integer)2016);
 	
 	$url = '_design/ion/_view/group?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&reduce=true';
 	
