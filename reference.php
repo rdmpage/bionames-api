@@ -158,20 +158,67 @@ function reference_to_citeprocjs($reference, $id = 'ITEM-1')
 		$citeproc_obj['page'] = str_replace('--', '-', $reference->journal->pages);
 	}
 	
+	$url = '';
+	
 	if (isset($reference->identifier))
 	{
 		foreach ($reference->identifier as $identifier)
 		{
 			switch ($identifier->type)
 			{
+				// DOI
 				case 'doi':
 					$citeproc_obj['DOI'] = $identifier->id;
+					break;
+					
+				// Convert identifiers to URLs
+				case 'ark':
+					$url = 'http://gallica.bnf.fr/ark:/' . $identifier->id;
+					break;
+					
+				case 'biostor':
+					$url = 'http://biostor.org/' . $identifier->id;
+					break;
+					
+				case 'handle':
+					if ($url == '')
+					{
+						$url = 'http://hdl.handle.net/' . $identifier->id;
+					}
+					break;
+					
+				case 'jstor':
+					$url = 'http://www.jstor.org/' . $identifier->id;
 					break;
 					
 				default:
 					break;
 			}
 		}
+	}
+	
+	if ($url == '')
+	{
+		if (isset($reference->link))
+		{
+			foreach ($reference->link as $link)
+			{
+				switch ($link->anchor)
+				{
+					case 'LINK':
+						$url = $link->url;
+						break;
+					
+					default:
+						break;
+				}
+			}
+		}
+	}
+	
+	if ($url != '')
+	{
+		$citeproc_obj['URL'] = $url;
 	}
 	
 	return $citeproc_obj;
