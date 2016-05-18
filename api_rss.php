@@ -107,15 +107,40 @@ function api_rss($limit = 50)
 					$entry = $rss->appendChild($entry);
 					
 					// title
-					$title = $entry->appendChild($feed->createElement('title'));
+					
+					
+					$title_text = '';
 					if (isset($result->doc->title))
 					{
-						$title->appendChild($feed->createTextNode($result->doc->title));
+						$title_text = $result->doc->title;
 					}
 					else
 					{
-						$title->appendChild($feed->createTextNode("Untitled"));
+						$title_text = "Untitled";
 					}
+					
+					
+					// doi
+					if (isset($result->doc->identifier))
+					{
+						$doi = '';
+						foreach ($result->doc->identifier as $identifier)
+						{
+							if ($identifier->type == 'doi')
+							{
+								$doi = $identifier->id;
+							}
+						}
+						if ($doi != '')
+						{
+							$title_text .= ' http://dx.doi.org/' . $doi;
+						}
+					}
+					
+						
+					$title = $entry->appendChild($feed->createElement('title'));
+					$title->appendChild($feed->createTextNode($title_text));
+					
 
 					// link
 					$link = $entry->appendChild($feed->createElement('link'));
