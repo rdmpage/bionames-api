@@ -273,11 +273,12 @@ function display_article_decade_volumes ($namespace, $value, $callback = '')
 			break;
 			
 		case 'issn':
-		default:
 			$startkey = array($value);
 			$endkey = array($value, new stdclass);
 		
 			$url = '_design/issn/_view/year?startkey=' . json_encode($startkey) . '&endkey=' . json_encode($endkey) . '&group_level=4';
+			
+		default:
 			break;			
 	}
 	
