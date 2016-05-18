@@ -72,6 +72,8 @@ function find_micro(&$openurl_result)
 	// punctuation
 	$journal = preg_replace('/[\.|,|\'|\(|\)]+/', '', $journal);
 	
+	$openurl_result->journal = $journal;
+	
 	
 	
 	//echo "journal=$journal\n";
@@ -112,6 +114,35 @@ function find_micro(&$openurl_result)
 		// fudge
 		switch ($journal)
 		{
+			case 'actatheriol':
+				$issn = '0001-7051';
+				break;
+				
+			case 'actazoolacadscienthungaricae':
+				$issn = '1217-8837';
+				break;
+				
+			case 'animconserv':
+				$issn = '0365-4508';
+				break;
+				
+			case 'anthropolpapamermusnathist':
+				$issn = '0065-9452';
+				break;
+				
+			case 'arquivosmuseunacionalriojaneiro':
+			case 'arquivosdemuseunacionalriodejaneiro':
+				$issn = '0365-4508';
+				break;
+			
+			case 'actualidadesbiologicas':
+				$issn = '0304-3584';
+				break;
+			
+			case 'amjprimatol':
+				$issn = '0275-2565';
+				break;
+		
 			case 'ammusnovit':
 				$issn = '0003-0082';
 				break;
@@ -129,12 +160,37 @@ function find_micro(&$openurl_result)
 				$issn = '0041-1752';
 				break;
 				
+			case 'austmammal':
+				$issn = '0310-0049';
+				break;
+				
 			case 'ausjzool':
 				$issn = '0004-959X';
 				break;
 				
+			case 'australianzool':
+				$issn = '0067-2238';
+				break;
+				
+			case 'biotemas':				
+				$issn = '0103-1643';
+				break;
+				
 			case 'bullamnathist':
+			case 'bullammusnathist':
 				$issn = '0003-0090';
+				break;
+				
+			case 'bolmusparaemiliogoeldiserzool':
+				$issn = '0077-2232';
+				break;
+				
+			case 'bonnzoolbeitr':
+				$issn = '0006-7172';
+				break;
+				
+			case 'bullinstroyscinatbelgiquebiol':
+				$issn = '0374-6429';
 				break;
 				
 			case 'bullnathistmuslondzool':
@@ -149,8 +205,16 @@ function find_micro(&$openurl_result)
 				$issn = '0037-962X';
 				break;
 				
+			case 'fieldianazoolns':
+				$issn = '0015-0754';
+				break;
+				
 			case 'fieldmusnathistpublzoolser':
 				$issn = '0895-0237';
+				break;
+				
+			case 'goeldianazoologia':
+				$issn = '0103-6076';
 				break;
 				
 			case 'intjprimatol':
@@ -161,12 +225,51 @@ function find_micro(&$openurl_result)
 				$oclc = 1824093;
 				break;
 				
+			case 'jzool':
+				$issn = '0952-8369';
+				break;
+				
+			case 'mammbiol':
+				$issn = '1616-5047';
+				break;
+
+			case 'mammstudy':
+				$issn = '1343-4152';
+				break;
+				
+			case 'marmamsci':
+				$issn = '0824-0469';
+				break;
+				
+			case 'mastozooltrop':
+				$issn = '0327-9383';
+				break;
+				
 			case 'mittzoolmusberlin':
 				$issn = '0373-8493';
-				break;			
+				break;		
 				
+			case 'memfundlasalleciencnat':
+				$issn = '0037-8518';
+				break;
+				
+			case 'memqldmus':
 			case 'memqueenslmus':
 				$issn = '0079-8835';
+				break;
+
+			case 'nature':
+				$issn = '0028-0836';
+				break;
+				
+			case 'occpapmustexastechuniv':
+				$issn = '0149-175X';
+				break;
+				
+			// Papeis Avulsos de Zoologia (São Paolo)
+			case 'papeisavulsosdezoologia':
+			case 'papeisavulsosdezoologiasaopaolo':
+				$issn = '0031-1049';
 				break;
 				
 			case 'proccaliforniaacadsci':
@@ -184,15 +287,51 @@ function find_micro(&$openurl_result)
 			case 'proczoolsoclond':
 				$issn = '0370-2774';
 				break;			
-			
-			
+				
+			case 'publzoolunivcalpress':
+				$issn = '0068-6506';
+				break;			
+						
 			case 'recwaustmus':
 			case 'recwestaustmus':
 				$issn = '0312-3162';
 				break;
 				
+			case 'rafflesbulletinzoology':
+				$issn = '0217-2445';
+				break;
+				
+			case 'revacadcolombcienc':
+				$issn = '0370-3908';
+				break;
+				
+			case 'revbraszool':
+				$issn = '0101-8175';
+				break;
+				
+			case 'revchilenahistnat':
+				$issn = '0716-078X';
+				break;
+				
 			case 'revsuissezool':
 				$issn = '0035-418X';
+				break;
+				
+			case 'russianjtheriol':
+			case 'russianjournaltheriology':
+			case 'russianjournaloftheriology':
+				$issn = '1682-3559';
+				break;
+				
+				
+			case 'safrjzool':
+				$issn = '0254-1858';
+				break;
+				
+				
+			case 'senkbiol':
+			case 'senckenbergianabiologica':
+				$issn = '0037-2102';
 				break;
 				
 			case 'smithsmisccoll':
@@ -201,8 +340,32 @@ function find_micro(&$openurl_result)
 				$oclc = 1824093;
 				break;
 				
+			case 'studneotropfaunaenvir':
+			case 'studiesonneotropicalfaunaandenvironment':
+				$issn = '0165-0521';
+				break;
+				
 			case 'transrsocsaust':
 				$issn = '0372-1426';
+				break;
+				
+			case 'tropzool':
+			case 'tropicalzoology':
+				$issn = '0394-6975';
+				break;
+
+			case 'zoolresearch':
+				$issn = '0254-5853';
+				break;
+
+			case 'zoolsci':
+				$issn = '0289-0003';
+				break;
+
+			case 'zsaugetierk':
+			case 'zsaeugetierk':
+			case 'zsäugetierk':
+				$issn = '0044-3468';
 				break;
 				
 			default:
@@ -322,7 +485,7 @@ function main()
 	global $config;
 	global $couch;
 	
-	print_r($_GET);
+	//print_r($_GET);
 	
 	$callback = '';
 			
@@ -357,7 +520,7 @@ function main()
 	}
 	
 	$openurl_result = new stdclass;
-	$openurl_result->status = 404;
+	//$openurl_result->status = 404;
 	
 	$openurl_result->results = array();
 	
