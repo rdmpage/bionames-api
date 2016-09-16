@@ -1057,6 +1057,197 @@ function possible_synonyms($name, $callback = '')
 }
 
 
+//--------------------------------------------------------------------------------------------------
+// Return taxon concepts that include this name (by identifier)
+function name_to_microreference($id, $callback = '')
+{
+	global $config;
+	global $couch;
+	
+	global $stale_ok;
+	
+	$resp = $couch->send("GET", "/" . $config['couchdb_options']['database'] . "/" . urlencode($id));
+	
+	//echo $resp;
+	
+	$response_obj = json_decode($resp);
+	
+	$obj = new stdclass;
+	$obj->status = 404;
+	
+	if (isset($response_obj->error))
+	{
+		$obj->error = $response_obj->error;
+	}
+	else
+	{
+		if (isset($response_obj->publishedInCitation) && isset($response_obj->microreference))
+		{
+			$name_found  = false;
+			$obj->nameComplete = $response_obj->nameComplete;
+			$obj->publishedInCitation = $response_obj->publishedInCitation[0];
+			$obj->microreference = $response_obj->microreference[0];
+			
+			$url = 'http://bionames.org/api/id/' . $obj->publishedInCitation;
+			$json = get($url);
+			$reference = json_decode($json);
+			
+			if (isset($reference->names))
+			{
+				$n = count($reference->names);
+				$i = 0;
+				while (!$name_found && ($i < $n))
+				{
+					$namestring = $reference->names[$i]->namestring;
+					
+					// clean posible GNRD crap
+					$namestring = preg_replace('/\s+sp$/u', '', $namestring);
+					
+					
+					if ($namestring == $obj->nameComplete)
+					{
+						$name_found = true;
+						break;
+					}
+					$i++;
+				}
+	
+				if ($name_found) 
+				{					
+					//print_r($reference->names[$i]);
+		
+					// do page numbers match?
+					$start_page = 0;
+					if (isset($reference->journal->pages))
+					{
+						if (preg_match('/^(?<spage>.*)--(?<epage>.*)/', $reference->journal->pages, $m))
+						{
+							$start_page =  $m['spage'];
+						}
+						else
+						{
+							$start_page = $reference->journal->pages;
+						}
+					}
+		
+					$page_found = false;
+		
+					foreach ($reference->names[$i]->pages as $page)
+					{
+						// This gets messy
+						// BHL
+						if (isset($reference->bhl_pages))
+						{
+							$local_page = array_search($page, $reference->bhl_pages);
+				
+							$candidate_page = -1;
+				
+							if (is_numeric($local_page))
+							{
+								$candidate_page = $start_page + $local_page;
+							}
+				
+							if (!$page_found && ($candidate_page != -1))
+							{
+								if ($candidate_page == $obj->microreference)
+								{
+									$page_found = true;
+						
+									$hit = new stdclass;
+									$hit->container = $obj->publishedInCitation;
+									$hit->page_number = $candidate_page;
+									$hit->fragment_identifier = '#' . ($local_page + 1); // BHL pages are zero-offset
+									$hit->bhl = $reference->bhl_pages[$local_page];
+									$hit->url = 'http://biodiversitylibrary.org/page/' . $reference->bhl_pages[$local_page];
+									$hit->image = 'http://biodiversitylibrary.org/pagethumb/' . $reference->bhl_pages[$local_page]. ',500,500"';
+									//$hit->text = 'http://biodiversitylibrary.org/pagethumb/' . $reference->bhl_pages[$local_page]. ',500,500"';
+						
+									$obj->results[] = $hit;
+									
+									$obj->status = 200;
+								}
+							}
+						}
+						else
+						{
+							// PDF
+							
+							// Some PDFs have a cover page
+							$page_offset = 0;
+							
+							if (isset($reference->link))
+							{
+								$pdf = '';
+								foreach ($reference->link as $link)
+								{
+									if ($link->anchor == 'PDF')
+									{
+										$pdf = $link->url;
+									}
+								}
+								// Matching rules to handle offset
+								if ($pdf != '')
+								{
+									if (preg_match('/http:\/\/www1.montpellier.inra.fr/', $pdf))
+									{
+										$page_offset = 1;
+									}
+									if (preg_match('/http:\/\/retro.seals.ch/', $pdf))
+									{
+										$page_offset = 1;
+									}
+									
+								}
+							}
+							
+							
+							$n = count($page);
+				
+							$candidate_page = -1;
+				
+							$i = 0;
+							while (!$page_found && ($i < $n))
+							{
+								if (preg_match('/^(?<sha1>.*)\-(?<page>\d+)$/', $page, $m))
+								{
+					
+									$sha1 = $m['sha1'];
+									$local_page = $m['page'];
+						
+									$candidate_page = $start_page + $local_page - 1 - $page_offset;
+						
+									if (!$page_found && ($candidate_page != -1))
+									{
+										if ($candidate_page == $obj->microreference)
+										{
+											$page_found = true;
+					
+											$hit = new stdclass;
+											$hit->offset = $page_offset;
+											$hit->container = $obj->publishedInCitation;
+											$hit->page_number = $candidate_page;
+											$hit->fragment_identifier = '#' . $local_page;
+											$hit->image = 'http://bionames.org/bionames-archive/documentcloud/pages/' . $sha1 . '/' . $local_page . '-normal';
+											$hit->sha1 = $sha1;
+					
+											$obj->results[] = $hit;
+											
+											$obj->status = 200;
+										}
+									}
+								}
+
+								$i++;
+							}
+						}
+					}
+				}			
+			}
+		}
+	}
+	api_output($obj, $callback);
+}
+
 
 
 //--------------------------------------------------------------------------------------------------
@@ -1110,6 +1301,16 @@ function main()
 					$handled = true;
 				}
 			}
+			
+			if (!$handled)
+			{
+				if (isset($_GET['microreference']))
+				{	
+					name_to_microreference($id, $callback);
+					$handled = true;
+				}
+			}
+			
 		}
 			
 

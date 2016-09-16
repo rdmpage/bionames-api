@@ -116,7 +116,10 @@ function reference_to_citeprocjs($reference, $id = 'ITEM-1')
 {
 	$citeproc_obj = array();
 	$citeproc_obj['id'] = $id;
-	$citeproc_obj['title'] = $reference->title;
+	if (isset($reference->title))
+	{
+		$citeproc_obj['title'] = $reference->title;
+	}
 	
 	if (isset($reference->journal))
 	{	
@@ -325,8 +328,10 @@ function reference_to_openurl($reference)
 		{
 			$openurl .= '&amp;rft.title=' . urlencode($reference->title);		
 		}
-		
-		$openurl .= '&amp;rft.pages=' . $reference->journal->pages;
+		if (isset($reference->journal->pages))
+		{
+			$openurl .= '&amp;rft.pages=' . $reference->journal->pages;
+		}
 		
 	}
 	

@@ -164,7 +164,7 @@ function display_record_namespace ($id, $namespace, $callback = '')
 	}
 
 
-	if ($status == 404)
+	if ($obj->status == 404)
 	{
 		header('HTTP/1.1 404 Not Found');
 	}	

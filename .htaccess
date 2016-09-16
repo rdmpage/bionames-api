@@ -103,6 +103,10 @@ RewriteRule ^name/(.*)/didyoumean   api_taxon_name.php?name=$1&didyoumean  [QSA,
 # Concepts [note that this requires name GUID as parameter, not name string]
 RewriteRule ^name/id/(.*)/concepts   api_taxon_name.php?id=$1&concepts [QSA,L]
 
+# Microreference [note that this requires name GUID as parameter, not name string]
+RewriteRule ^name/id/(.*)/microreference   api_taxon_name.php?id=$1&microreference [QSA,L]
+
+
 # Concepts with name
 RewriteRule ^name/(.*)/concepts   api_taxon_name.php?name=$1&concepts [QSA,L]
 
