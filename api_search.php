@@ -202,7 +202,7 @@ function simple_search($query, $callback = '')
 				{
 					$scores[] = levenshtein($query, $v->term);
 				}					
-				array_multisort($obj->results->facets['nameCluster'], SORT_ASC, SORT_NUMERIC, $scores);
+				array_multisort($scores, SORT_ASC, SORT_NUMERIC, $obj->results->facets['nameCluster']);
 			}
 		}
 		
