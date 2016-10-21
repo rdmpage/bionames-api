@@ -1196,6 +1196,20 @@ function name_to_microreference($id, $callback = '')
 									{
 										$page_offset = 1;
 									}
+									if (preg_match('/http:\/\/www.e-periodica.ch/', $pdf))
+									{
+										$page_offset = 1;
+									}
+									if (preg_match('/http[s]?:\/\/www.researchgate.net/', $pdf))
+									{
+										$page_offset = 1;
+									}
+									
+									// DSpace articles with cover page
+									if (preg_match('/jp\/dspace\//', $pdf))
+									{
+										$page_offset = 1;
+									}
 									
 								}
 							}
