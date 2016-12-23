@@ -99,7 +99,8 @@ class BioNamesService extends ReconciliationService
 					
 					$score = min($d / strlen($v1), $d / strlen($v2));
 					
-					if ($score > 0.80)
+					//if ($score > 0.80)
+					if ($score > 0.50)
 					{
 						$hit = new stdclass;
 						$hit->id 	= str_replace('biostor/', '', $row->id);
