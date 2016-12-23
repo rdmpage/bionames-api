@@ -1204,6 +1204,10 @@ function name_to_microreference($id, $callback = '')
 									{
 										$page_offset = 1;
 									}
+									if (preg_match('/http[s]?:\/\/www.linneenne-lyon.org/', $pdf))
+									{
+										$page_offset = 1;
+									}
 									
 									// DSpace articles with cover page
 									if (preg_match('/jp\/dspace\//', $pdf))
